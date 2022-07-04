@@ -1,0 +1,227 @@
+\documentclass[a4paper, 11pt]{article}
+
+\usepackage[top=112pt, bottom=112pt, left=90pt, right=85pt]{geometry}
+\usepackage{geometry, amssymb, csquotes, amsmath, graphicx, mathtools, amsthm, calc, accents} 
+\usepackage[hidelinks]{hyperref}
+\usepackage[utf8]{inputenc}
+\usepackage{xcolor}
+%\usepackage{parskip}
+
+\newcommand{\doubletilde}[1]{\tilde{\raisebox{0pt}[0.85\height]{$\tilde{#1}$}}}
+\newcommand{\tripletilde}[1]{\tilde{\raisebox{0pt}[0.85\height]{$\doubletilde{#1}$}}}
+
+\newtheorem{prop}{Proposition}
+\newtheorem{definition}{Definition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{theor}{Theorem}
+\newtheorem{cor}{Corollary}
+\newtheorem{conjecture}{Conjecture}
+
+\DeclareMathOperator\artanh{artanh}
+\DeclareMathOperator\tr{tr}
+
+\hypersetup{
+  urlcolor = black,
+  citecolor = black,
+  pdftitle = {notes},
+  pdfsubject = {notes},
+  pdfpagemode = UseNone
+}
+
+% \hypersetup{
+%     colorlinks=true,
+%     linkcolor=blue,
+%     filecolor=magenta,      
+%     urlcolor=blue,
+% }
+
+\newcommand\underl[2]{\mathrel{\mathop{#2}\limits_{#1}}}
+
+\title{\textbf{Master equations}}
+\date{\today}
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\end{abstract}
+
+\tableofcontents
+
+\section{Master equation from \cite{PAULSSON2005157}}
+
+The master equation (ME) from \cite{PAULSSON2005157} reads as
+\begin{equation}
+  \begin{split} \label{full_Paulsson_ME}
+    \frac{dP_{n_1,n_2,n_3}(t)}{dt} = &\lambda_1^+\left[(N_1-n_1+1)P_{n_1-1,n_2,n_3}(t) - (N_1-n_1)P_{n_1,n_2,n_3}(t)\right]\\
+    + & \lambda_1^-\left[(n_1+1)P_{n_1+1,n_2,n_3}(t) - n_1P_{n_1,n_2,n_3}(t)\right] \\
+    + & \lambda_2\left[n_1P_{n_1,n_2-1,n_3}(t) - n_1P_{n_1,n_2,n_3}(t)\right]\\
+    + & \tau_2^{-1}\left[(n_2+1)P_{n_1,n_2+1,n_3}(t) - n_2P_{n_1,n_2,n_3}(t)\right]\\
+    + & \lambda_3\left[n_2P_{n_1,n_2,n_3-1}(t) - n_2P_{n_1,n_2,n_3}(t)\right]\\
+    + & \tau_3^{-1}\left[(n_3+1)P_{n_1,n_2,n_3+1}(t) - n_3P_{n_1,n_2,n_3}(t)\right]
+  \end{split}
+\end{equation}
+and takes into account transcription switching of $N_1$ independent copies of the same gene ($n_1$ is the number of active replicas of the gene at any given time), mRNA production and decay ($n_2$ is the number of mRNA molecules), and the production and decay of proteins ($n_3$ is the number of proteins).
+
+\section{Independent gene switching} \label{sec::independent_gene_switching}
+
+We will now demonstrate the approach by solving the problem of independent switching of gene replicas, for which the master equation is given by\footnote{Compare with the first two lines of (\ref{full_Paulsson_ME}).}
+\begin{equation}
+  \begin{split} \label{gene_switching_ME}
+    \frac{dP_{n_1}(t)}{dt} = &\lambda_1^+\left[(N_1-n_1+1)P_{n_1-1}(t) - (N_1-n_1)P_{n_1}(t)\right]\\
+    + & \lambda_1^-\left[(n_1+1)P_{n_1+1}(t) - n_1P_{n_1}(t)\right],
+  \end{split}
+\end{equation}
+where $n_1$ is the number of active genes.
+
+The generating function of the distribution $P_{n_1}(t)$ is defined as
+\begin{equation} \label{gen_func_def} 
+  G(z_1; t) = \sum_{n_1=1}^{\infty}P_{n_1}(t)z_1^{n_1},
+\end{equation}
+and allows recasting the master equation (\ref{gene_switching_ME}) in a PDE form as follows.
+
+First, we multiply both sides of the ME (\ref{gene_switching_ME}) by $z_1^{n_1}$ and take a sum over $n_1$
+\begin{equation}
+  \begin{split}
+    \sum_{n_1=1}^{\infty}\frac{dP_{n_1}(t)}{dt}z_1^{n_1} = &\lambda_1^+\sum_{n_1=1}^{\infty}\left[(N_1-n_1+1)P_{n_1-1}(t) - (N_1-n_1)P_{n_1}(t)\right]z_1^{n_1}\\
+    + & \lambda_1^-\sum_{n_1=1}^{\infty}\left[(n_1+1)P_{n_1+1}(t) - n_1P_{n_1}(t)\right]z_1^{n_1}.
+  \end{split}
+\end{equation}
+Then, using the definition of the generating function (\ref{gen_func_def}) and the following identities
+\begin{align*}
+  & \sum_{n_1=1}^{\infty}P_{n_1-1}(t)z_1^{n_1} = z_1\sum_{n_1=1}^{\infty}P_{n_1-1}(t)z_1^{n_1-1} = z_1G(z_1;t)\\
+  & \sum_{n_1=1}^{\infty}P_{n_1+1}(t)z_1^{n_1} = \frac{1}{z_1}\sum_{n_1=1}^{\infty}P_{n_1+1}(t)z_1^{n_1+1} = \frac{1}{z_1}G(z_1;t)\\
+  & \sum_{n_1=1}^{\infty}n_1P_{n_1}(t)z_1^{n_1} = z_1\frac{\partial}{\partial z_1}\sum_{n_1=1}^{\infty}P_{n_1}(t)z_1^{n_1} = z_1\frac{\partial G(z_1; t)}{\partial z_1}\\
+  & \sum_{n_1=1}^{\infty}n_1P_{n_1-1}(t)z_1^{n_1} = z_1\frac{\partial}{\partial z_1}\sum_{n_1=1}^{\infty}P_{n_1-1}(t)z_1^{n_1} = z_1\frac{\partial}{\partial z_1} \left(z_1G(z_1; t)\right)\\
+  & \sum_{n_1=1}^{\infty}n_1P_{n_1+1}(t)z_1^{n_1} = z_1\frac{\partial}{\partial z_1}\sum_{n_1=1}^{\infty}P_{n_1+1}(t)z_1^{n_1} = z_1\frac{\partial}{\partial z_1} \left(\frac{1}{z_1}G(z_1; t)\right)
+\end{align*}
+
+Note that the moments of the probability distribution $P_{n_1}$ can be found from the derivatives of the generating function with respect to the corresponding variables, i.e.
+\begin{align}
+  \frac{\partial G(z_1; t)}{\partial z_1}\bigg\rvert_{z_1=1} &= \sum_{n_1=1}^{\infty} n_1P_{n_1}(t) = \langle n_1\rangle(t);\\
+  \frac{\partial^2 G(z_1; t)}{\partial z_1^2}\bigg\rvert_{z_1=1} &= \sum_{n_1=1}^{\infty} n_1(n_1-1)P_{n_1}(t) = \langle n_1\rangle^2(t) - \langle n_1\rangle(t).
+\end{align}
+
+For the generating function, the equation (\ref{gene_switching_ME}) gives the following first-order partial differential equation (PDE)
+\begin{equation} \label{gene_switching_PDE}
+  \frac{\partial G(z_1;t)}{\partial t} + (\lambda_1^+z_1 + \lambda_1^-)(z_1-1)\frac{\partial G(z_1;t)}{\partial z_1} = \lambda_1^+N_1(z_1-1)G(z_1;t),
+\end{equation}
+which can be solved using the method of characteristics.
+
+For convenience we introduce new variable as
+\begin{equation*}
+  x_1 := z_1 - 1
+\end{equation*}
+and denote
+\begin{equation}
+  \mathcal G(x_1; t) = G(z_1(x_1); t).
+\end{equation}
+in terms of which the PDE (\ref{gene_switching_PDE}) becomes
+\begin{equation} \label{gene_switching_PDE_x}
+  \frac{\partial \mathcal G(x_1;t)}{\partial t} + (\lambda_1^+x_1 + \frac{1}{\tau_1})x_1\frac{\partial \mathcal G(x_1;t)}{\partial x_1} = \lambda_1^+N_1x_1\mathcal G(x_1;t),
+\end{equation}
+where $\tau_1 := (\lambda_1^+ + \lambda_1^-)^{-1}$.
+The characteristic equations for the nonhomogeneous quasilinear PDE (\ref{gene_switching_PDE}) are given by
+\begin{equation*}
+  \begin{dcases}
+    \dot t = \tau;\\
+    \dot x_1 = \lambda_1^+x_1^2 + \frac{1}{\tau_1}x_1;\\
+    \dot G = \lambda_1^+N_1x_1G,
+  \end{dcases}
+\end{equation*}
+which have the following {\it first integrals}
+\begin{align*}
+  C_1& = -\left(P_\text{on}+\frac{1}{x_1}\right)\mathrm e^{t/\tau_1}\\
+  C_2& = \left(\frac{-\mathrm e^{t/\tau_1}}{x_1P_{on}}\right)^{N_1}G,
+\end{align*}
+where
+\begin{equation}
+  P_\text{on} = \frac{\lambda_1^+}{\lambda_1^+ + \lambda_1^-} = \lambda_1^+\tau_1.
+\end{equation}
+
+The general solution is given by\footnote{As an exercise one can check this solution by direct substitution to (\ref{gene_switching_PDE_x}).}
+\begin{equation}\label{n1_general_solution}
+  \mathcal G(x_1;t) = \left(-x_1P_{\text{on}}\mathrm e^{-t/\tau_1}\right)^{N_1}f\left(\left(P_{on}+\frac{1}{x_1}\right)\mathrm e^{t/\tau_1}\right),
+\end{equation}
+where $f(.)$ is an arbitrary function defined by the initial conditions.
+
+Assuming that the initial number of active genes was $m$, i.e.
+\begin{equation}\label{initial_condition}
+  P_{n_1}(t=0) = \delta_{n_1,m} \implies \mathcal G(x_1; t=0) = (x_1+1)^m,
+\end{equation}
+we arrive to
+\begin{equation}
+  f(\xi) = \left(\frac{\xi - P_\text{on}}{-P_{\text{on}}}\right)^{N_1}\cdot\left(\frac{1+\xi-P_\text{on}}{\xi-P_{\text{on}}}\right)^m,
+\end{equation}
+from which (\ref{n1_general_solution}) reads as\footnote{Which, of course, can also be checked by the direct substitution to the PDE (\ref{gene_switching_PDE_x}) and the initial condition (\ref{initial_condition}).}
+\begin{equation}\label{n1_special_solution}
+  \mathcal G(x_1; t) = \left(x_1P_\text{on}\left(1-\mathrm e^{-t/\tau_1}\right)+1\right)^{N_1}\cdot\left(\frac{x_1\mathrm e^{-t/\tau_1}}{x_1P_\text{on}\left(1-\mathrm e^{-t/\tau_1}\right)+1} + 1\right)^m.
+\end{equation}
+
+%% \begin{equation}
+%%   \mathcal G(x_1; t) = \left(x_1P_{\text{on}}\left(1-\mathrm e^{-t/\tau_1}\right)\right),
+%% \end{equation}
+%% and finally
+
+Note that, as any generating function, $\mathcal G(x_1=0; t)=1$, and from (\ref{n1_special_solution}) it is clear that
+\begin{equation}\label{binomial_gen_function}
+  \lim_{t\to\infty}\mathcal G(x_1; t) = \left(1 + x_1P_\text{on}\right)^{N_1},
+\end{equation}
+which is expected, since (\ref{binomial_gen_function}) is the generating function of the binomial distribution with the probability of success $P_\text{on}$.
+
+\section{Full master equation (\ref{full_Paulsson_ME})}
+Using the method as we did in Section \ref{sec::independent_gene_switching}, the PDE for the generating function is found to be
+\begin{equation*} \label{full_Paulsson_PDE}
+  \begin{split}
+    \frac{\partial G}{\partial t} + \left[\lambda_1^+z_1(z_1-1) + \lambda_1^-(z_1-1) - \lambda_2(z_2-1)z_1\right]\frac{\partial G}{\partial z_1}\\ + \left[\frac{1}{\tau_2}(z_2-1) - \lambda_3(z_3-1)z_2\right]\frac{\partial G}{\partial z_2} + \frac{1}{\tau_3}(z_3-1)\frac{\partial G}{\partial z_3} = \lambda_1^+N_1(z_1-1)G,
+  \end{split}
+\end{equation*}
+or, in terms of $\mathbf x = \mathbf z - \mathbf 1$ and $\mathcal G$
+\begin{equation} \label{full_Paulsson_PDE_x}
+  \begin{split}
+    \frac{\partial \mathcal G}{\partial t} + \left[(\lambda_1^+x_1+\frac{1}{\tau_1})x_1  - \lambda_2x_2(x_1+1)\right]\frac{\partial \mathcal G}{\partial x_1}\\ + \left[\frac{1}{\tau_2}x_2 - \lambda_3x_3(x_2+1)\right]\frac{\partial \mathcal G}{\partial x_2} + \frac{1}{\tau_3}x_3\frac{\partial \mathcal G}{\partial x_3} = \lambda_1^+N_1x_1\mathcal G,
+  \end{split}
+\end{equation}
+where $\tau_1 = ()$
+
+Characteristic equations are given by
+\begin{equation} \label{full_characteristics}
+  \begin{dcases}
+    \dot t = 1\\
+    \dot x_1 = \lambda_1^+(x_1+1)x_1 + \lambda_1^-x_1 - \lambda_2x_2(x_1+1)\\
+    \dot x_2 = \frac{1}{\tau_2}x_2 - \lambda_3x_3(x_2+1)\\
+    \dot x_3 = \frac{1}{\tau_3}x_3\\
+    \dot {\mathcal G} = \lambda_1^+N_1x_1\mathcal G
+  \end{dcases}
+\end{equation}
+and we need to find its first integrals $\{C_i(\mathbf x; t; \mathcal G)|i=1,2,3,4\}$.
+
+After using the first characteristic equation and setting $t = \xi$ (where $\xi$ is the parameter of the characteristics) the system of ODEs (\ref{full_characteristics}) can be approached by solving the 4-th ODE for $x_3$, which gives
+\begin{equation}
+  x_3 = C_1\mathrm e^{t/\tau_3} \left(\implies C_1(\mathbf x; t; \mathcal G) = x_3e^{-t/\tau_3}\right),
+\end{equation}
+then substituting the result into the ODE for $x_2$, which gives
+\begin{equation}
+  \begin{split}
+    x_2 = -\lambda_3C_1\exp\left(\frac{t}{\tau_2}-\lambda_3C_1\tau_3\mathrm e^{t/\tau_3}\right)\int\exp\left[t\left(\frac{1}{\tau_3} - \frac{1}{\tau_2}\right) + \lambda_3C_1\tau_3\mathrm e^{t/\tau_3}\right]dt\\ + C_2\exp\left(\frac{t}{\tau_2}-\lambda_3C_1\tau_3\mathrm e^{t/\tau_3}\right)
+  \end{split}
+\end{equation}
+then solving the second ODE for $x_1$, and then substituting $x_1$ to the last characteristic equation, which can be solved by separation.
+
+Unfortunately, it seems that the expressions are too complicated to obtain the first integrals in a manageable way. Therefore, we need some simplifications/approximations.
+
+\subsection{Simplifications}
+
+The first simplification is to find the stationary distribution.
+
+\textcolor{blue}{The second simplification is to linearise the coefficient of the PDE (\ref{full_Paulsson_PDE_x}) about $\mathbf x = 0$ since we only need to know the behaviour (the derivatives) of the generating function in the viscinity of $\mathbf x = 0$. Unfortunately, such linearisation seems to be insufficient to find second and higher moments of the distribution $P_{\mathbf n}(t)$.} \textcolor{red}{I think, the expression (4) from \cite{PAULSSON2005157} was obtained by constructing the asymptotic expansion (perturbation theory) for $\mathcal G(\mathbf x; t\to\infty)$ near $\mathbf x=\mathbf 0$ up to the second order in $\mathbf x$.}
+
+
+
+\section{Master equation for the simple neuron model}
+\textcolor{blue}{For the simple neuron model with several spatial compartments we may probably assume that $N_1=1$ (there is only one copy of the gene encoding the protein of interest).}
+
+
+\bibliographystyle{unsrt}
+\bibliography{bibliography.bib}
+
+\end{document}
