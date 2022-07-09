@@ -107,6 +107,7 @@ For the generating function, the equation (\ref{gene_switching_ME}) gives the fo
 \end{equation}
 which can be solved using the method of characteristics.
 
+\subsection{Finding the generating function exactly}
 For convenience we introduce new variable as
 \begin{equation*}
   x_1 := z_1 - 1
@@ -219,6 +220,7 @@ We will now consider the problem of hopping between two spatial compartments, wh
   \end{split}
 \end{equation}
 
+\subsection{Finding the generating function exactly}
 The corresponding PDE for the generating function is given by
 \begin{equation}\label{hopping_PDE}
   \frac{\partial\mathcal G(\mathbf x; t)}{\partial t} + \nu^+(x_0-x_1)\frac{\partial\mathcal G(\mathbf x; t)}{\partial x_0} + \nu^-(x_1-x_0)\frac{\partial\mathcal G(\mathbf x; t)}{\partial x_1} = 0,
@@ -511,13 +513,13 @@ In what follows we will denote the probability of state $\mathbf s$ at time $t$ 
 In this section we attempt to find the means and the variances of the protein counts in the simplest possible model of neuron of our kind.
 
 \subsubsection{Master equation}
-The model should capture the following
+The model should capture the following:
 \begin{enumerate}
 \item \textcolor{red}{Gene activation/deactivation};
 \item \textcolor{green}{mRNA production (only in the soma) and degradation (in both compartments)};
 \item \textcolor{blue}{mRNA hopping};
 \item \textcolor{brown}{Free protein production (in both compartments) and degradation (in both compartments, but not in the synapse)};
-\item \textcolor{cyan}{Protein hopping};
+\item \textcolor{cyan}{Free protein hopping};
 \item \textcolor{pink}{Protein binding/unbinding from the synapse}.
 \end{enumerate}
 The master equation that captures these processes reads as
@@ -525,10 +527,21 @@ The master equation that captures these processes reads as
 \begin{equation}
   \begin{split}
     \frac{dP_{\mathbf s}(t)}{dt} &= \textcolor{red}{\lambda_1^+\left[\left(N-n+1\right)P_{n-1}^{\mathbf s}(t) - \left(N-n\right)P_{\mathbf s}(t)\right] + \lambda_1^-\left[(n+1)P^{\mathbf s}_{n+1}(t) - nP_{\mathbf s}(t)\right]}\\
-    & \textcolor{green}{+ \lambda_2\left[nP^{\mathbf s}_{m_0-1}(t) - nP_{\mathbf s}(t)\right] + \frac{1}{\tau_2}\left[(m_0+1)P^{\mathbf s}_{m_0+1}(t) - m_0P_{\mathbf s}(t)\right]}\\ &\textcolor{green}{+ \frac{1}{\tau_2}\left[(m_1+1)P^{\mathbf s}_{m_1+1}(t) - m_1P_{\mathbf s}\right]} \textcolor{blue}{+ \nu_{01}\left[\right]}
-    
+    & \textcolor{green}{+ \lambda_2n\left[P^{\mathbf s}_{m_0-1}(t) - P_{\mathbf s}(t)\right] + \frac{1}{\tau_2}\left[(m_0+1)P^{\mathbf s}_{m_0+1}(t) - m_0P_{\mathbf s}(t)\right]}\\ &\textcolor{green}{+ \frac{1}{\tau_2}\left[(m_1+1)P^{\mathbf s}_{m_1+1}(t) - m_1P_{\mathbf s}(t)\right]} \textcolor{blue}{+ \nu_{01}\left[(m_0+1)P^{\mathbf s}_{m_0+1,m_1-1}(t) - m_0P_{\mathbf s}(t)\right]}\\
+    &\textcolor{blue}{+ \nu_{10}\left[(m_1+1)P^{\mathbf s}_{m_0-1,m_1+1}(t) - m_1P_{\mathbf s}(t)\right]} \textcolor{brown}{+ \kappa_0m_0\left[P^{\mathbf s}_{l_0-1}(t) - P_{\mathbf s}(t)\right]}\\ &\textcolor{brown}{+ \kappa_1m_1\left[P^{\mathbf s}_{l_1-1}(t) - P_{\mathbf s}(t)\right] + \frac{1}{\tau_3}\left[(l_0+1)P^{\mathbf s}_{l_0+1}(t) - l_0P_{\mathbf s}(t)\right]}\\&\textcolor{brown}{+ \frac{1}{\tau_3}\left[(l_1+1)P^{\mathbf s}_{l_1+1}(t)-l_1P_{\mathbf s}(t)\right]}\textcolor{pink}{+\eta_{11}\left[(l_1+1)P^{\mathbf s}_{l_1+1, q_{11}-1}(t) - l_1P_{\mathbf s}(t)\right]}\\ &\textcolor{pink}{+ \gamma_{11}\left[(q_{11}+1)P^{\mathbf s}_{l_1-1,q_{11}+1}(t) - q_{11}P_{\mathbd s}(t)\right]}.
   \end{split}
 \end{equation}}
+
+\subsubsection{PDE for the generating function}
+\begin{equation}
+  \begin{split}
+    & \frac{\partial\mathcal G(\mathbf x; t)}{\partial t} + \left(\lambda^+_1x_n^2-\lambda_2x_{m_0}x_n + \frac{1}{\tau_1}x_n - \lambda_2x_{m_0}\right)\frac{\partial\mathcal G(\mathbf x; t)}{\partial x_n}\\
+    &- \left[\kappa_0x_{m_0}x_{l_0} + \kappa_0x_{l_0} + \nu_{01}x_{m_1} - \left(\frac{1}{\tau_2}+\nu_{01}\right)x_{m_0}\right]\frac{\partial \mathcal G(\mathbf x; t)}{\partial x_{m_0}}\\ & -\left[\kappa_1x_{m_1}x_{l_1} + \kappa_1x_{l_1} + \nu_{10}x_{m_0} - \left(\nu_{10}+\frac{1}{\tau_2}\right)x_{m_1}\right]\frac{\partial\mathcal G(\mathbf x; t)}{\partial x_{m_1}}\\
+    &+\left[\left(\frac{1}{\tau_3}+\theta_{01}\right)x_{l_0} - \theta_{01}x_{l_1}\right]\frac{\partial\mathcal G(\mathbf x; t)}{\partial z_{l_0}}\\
+    & + \left[\left(\frac{1}{\tau_3} + \theta_{10} + \eta_{11}\right)x_{l_1} - \theta_{10}x_{l_0} -\eta_{11}\right]\frac{\partial\mathcal G(\mathbf x; t)}{\partial x_{l_1}}\\
+    &+\gamma_{11}(x_{q_{11}} - x_{l_1})\frac{\partial\mathcal G(\mathbf x; t)}{\partial x_{q_{11}}} = \lambda_1^+x_nN\mathcal G(\mathbf x; t)
+  \end{split}
+\end{equation}
 
 \bibliographystyle{unsrt}
 \bibliography{bibliography.bib}
