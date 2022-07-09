@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="109.23987mm"
+   height="49.358078mm"
+   viewBox="0 0 109.23987 49.358078"
+   version="1.1"
+   id="svg5"
+   inkscape:export-filename="simplest_neuron.png"
+   inkscape:export-xdpi="300"
+   inkscape:export-ydpi="300"
+   inkscape:version="1.2 (dc2aeda, 2022-05-15)"
+   sodipodi:docname="drawin.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="1"
+     inkscape:cx="202.5"
+     inkscape:cy="-17"
+     inkscape:window-width="1440"
+     inkscape:window-height="900"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs2">
+    <rect
+       x="292.5"
+       y="148"
+       width="64"
+       height="55"
+       id="rect7399" />
+    <rect
+       x="284"
+       y="142.5"
+       width="130.5"
+       height="54"
+       id="rect7227" />
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-35.556126,-60.310303)">
+    <g
+       id="g5412">
+      <circle
+         style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1.5;stroke-dasharray:none;stroke-opacity:1"
+         id="path2541"
+         cx="60.235165"
+         cy="84.989342"
+         r="23.929039" />
+      <path
+         id="path2547"
+         style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1.5;stroke-dasharray:none;stroke-opacity:1"
+         d="M 83.221277,78.270158 V 91.944259 H 144.04599 V 78.270158 Z" />
+      <rect
+         style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1.5;stroke-dasharray:none;stroke-opacity:1"
+         id="rect2605"
+         width="13.437982"
+         height="4.4793272"
+         x="110.56866"
+         y="73.555275" />
+    </g>
+    <rect
+       style="fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:1.03271;stroke-dasharray:none;stroke-opacity:1"
+       id="rect5704"
+       width="13.927366"
+       height="11.141777"
+       x="77.424286"
+       y="79.535881" />
+    <rect
+       style="fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0.983067;stroke-dasharray:none;stroke-opacity:1"
+       id="rect6694"
+       width="10.955445"
+       height="3.4635735"
+       x="111.80901"
+       y="77.110519" />
+    <text
+       xml:space="preserve"
+       transform="scale(0.26458333)"
+       id="text7225"
+       style="white-space:pre;shape-inside:url(#rect7227);fill:#ffffff;fill-opacity:1;stroke:#010101;stroke-width:3.77953;stroke-dasharray:none;stroke-opacity:1" />
+    <text
+       xml:space="preserve"
+       style="font-size:8.46667px;fill:#000000;fill-opacity:1;stroke:#010101;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+       x="57.017708"
+       y="87.709373"
+       id="text7233"><tspan
+         sodipodi:role="line"
+         style="font-size:8.46667px;fill:#000000;fill-opacity:1;stroke-width:0.2;stroke-dasharray:none"
+         x="57.017708"
+         y="87.709373"
+         id="tspan7389">0</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:8.46667px;fill:#000000;fill-opacity:1;stroke:#010101;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+       x="94.853134"
+       y="87.709373"
+       id="text7395"><tspan
+         sodipodi:role="line"
+         id="tspan7393"
+         style="stroke-width:0.2"
+         x="94.853134"
+         y="87.709373">1</tspan></text>
+    <text
+       xml:space="preserve"
+       transform="matrix(0.26458333,0,0,0.26458333,37.041667,34.13125)"
+       id="text7397"
+       style="font-size:32px;white-space:pre;shape-inside:url(#rect7399);fill:#000000;fill-opacity:1;stroke:#010101;stroke-width:0.755906;stroke-dasharray:none;stroke-opacity:1"><tspan
+         x="292.5"
+         y="177.19457"
+         id="tspan7471">2</tspan></text>
+  </g>
+</svg>
