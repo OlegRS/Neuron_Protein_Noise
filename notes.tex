@@ -5,8 +5,10 @@
 \usepackage[hidelinks]{hyperref}
 \usepackage[utf8]{inputenc}
 \usepackage{xcolor}
+\usepackage{todonotes}
 %\usepackage{parskip}
 
+\newcommand{\rem}[2][noinline]{\todo[#1, color=gray!20!white,size=\footnotesize]{\texttt{Rem}: #2}}
 \newcommand{\doubletilde}[1]{\tilde{\raisebox{0pt}[0.85\height]{$\tilde{#1}$}}}
 \newcommand{\tripletilde}[1]{\tilde{\raisebox{0pt}[0.85\height]{$\doubletilde{#1}$}}}
 
@@ -37,7 +39,7 @@
 
 \newcommand\underl[2]{\mathrel{\mathop{#2}\limits_{#1}}}
 
-\title{\textbf{Notes of finding moments from Master Equations}}
+\title{\textbf{Finding moments from master equation}}
 \date{\today}
 \begin{document}
 \maketitle
@@ -68,6 +70,9 @@ and takes into account activation/deactivation of $N_1$ independent copies of th
 In this introductory section we will show how to find the means, variances and correlations of all variables ${n_1, n_2, n_3}$ from the  probability distribution satisfying the equation (\ref{full_Paulsson_ME}) at stationarity\footnote{Note that the method is not limited to stationarity.}. Before that, we will demonstrate the method on two simple examples which are, in fact, identical, but we solve them differently to demonstrate the issues that arise from not embedding all the information to the master equation (which reduces dimensionality).
 
 \subsection{Independent gene switching} \label{sec::independent_gene_switching}
+\rem[inline]{I dont see very well what is the jump process in this case. A very natural way to describe a jump process is to give its infinitesimal generator $\mathbf A$ which is somehow the adjoint of the Fokker Planck equation. Formally, $\mathbf Af(x) = \lim\limits_{\delta\to 0}(E_x(f(X_\delta))-x)/\delta$
+	
+In your case, I'd say that \[(\mathbf Ah)(n) = \lambda_1^+1_{n<N_1}\left(f(n+1)-f(n)\right) + \lambda_1^-1_{n>0}\left(f(n-1)-f(n)\right) \]}
 We will now demonstrate the approach by solving the problem of independent switching of $N_1$ gene replicas, for which the master equation is given by\footnote{Compare with the first two lines of (\ref{full_Paulsson_ME}).}
 \begin{equation} \label{gene_switching_ME}
   \begin{split} 
@@ -79,28 +84,28 @@ where $n_1$ is the number of active genes.
 
 The generating function of the distribution $P_{n_1}(t)$ is defined as
 \begin{equation} \label{gen_func_def} 
-  G(z_1; t) = \sum_{n_1=1}^{\infty}P_{n_1}(t)z_1^{n_1}.
+  G(z_1; t) = \sum_{n_1=0}^{\infty}P_{n_1}(t)z_1^{n_1}.
 \end{equation}
 Note that the moments of the probability distribution $P_{n_1}$ can be found from the derivatives of the generating function with respect to the corresponding variables, i.e.
 \begin{align}
-  \frac{\partial G(z_1; t)}{\partial z_1}\bigg\rvert_{z_1=1} &= \sum_{n_1=1}^{\infty} n_1P_{n_1}(t) = \langle n_1\rangle(t); \label{1st_der_of_GF}\\
-  \frac{\partial^2 G(z_1; t)}{\partial z_1^2}\bigg\rvert_{z_1=1} &= \sum_{n_1=1}^{\infty} n_1(n_1-1)P_{n_1}(t) = \langle n_1\rangle^2(t) - \langle n_1\rangle(t)\label{2nd_der_of_GF}.
+  \frac{\partial G(z_1; t)}{\partial z_1}\bigg\rvert_{z_1=1} &= \sum_{n_1=0}^{\infty} n_1P_{n_1}(t) = \langle n_1\rangle(t); \label{1st_der_of_GF}\\
+  \frac{\partial^2 G(z_1; t)}{\partial z_1^2}\bigg\rvert_{z_1=1} &= \sum_{n_1=0}^{\infty} n_1(n_1-1)P_{n_1}(t) = \langle n_1\rangle^2(t) - \langle n_1\rangle(t)\label{2nd_der_of_GF}.
 \end{align}
 
 The generating function allows recasting the master equation (\ref{gene_switching_ME}) in a PDE form as follows. First, we multiply both sides of the ME (\ref{gene_switching_ME}) by $z_1^{n_1}$ and sum over $n_1$, which gives
 \begin{equation*}
   \begin{split}
-    \sum_{n_1=1}^{\infty}\frac{dP_{n_1}(t)}{dt}z_1^{n_1} = &\lambda_1^+\sum_{n_1=1}^{\infty}\left[(N_1-n_1+1)P_{n_1-1}(t) - (N_1-n_1)P_{n_1}(t)\right]z_1^{n_1}\\
-    + & \lambda_1^-\sum_{n_1=1}^{\infty}\left[(n_1+1)P_{n_1+1}(t) - n_1P_{n_1}(t)\right]z_1^{n_1}.
+    \sum_{n_1=0}^{\infty}\frac{dP_{n_1}(t)}{dt}z_1^{n_1} = &\lambda_1^+\sum_{n_1=0}^{\infty}\left[(N_1-n_1+1)P_{n_1-1}(t) - (N_1-n_1)P_{n_1}(t)\right]z_1^{n_1}\\
+    + & \lambda_1^-\sum_{n_1=0}^{\infty}\left[(n_1+1)P_{n_1+1}(t) - n_1P_{n_1}(t)\right]z_1^{n_1}.
   \end{split}
 \end{equation*}
 Then, using the definition of the generating function (\ref{gen_func_def}) and the following identities
 \begin{align*}
-  & \sum_{n_1=1}^{\infty}P_{n_1-1}(t)z_1^{n_1} = z_1\sum_{n_1=1}^{\infty}P_{n_1-1}(t)z_1^{n_1-1} = z_1G(z_1;t);\\
-  & \sum_{n_1=1}^{\infty}P_{n_1+1}(t)z_1^{n_1} = \frac{1}{z_1}\sum_{n_1=1}^{\infty}P_{n_1+1}(t)z_1^{n_1+1} = \frac{1}{z_1}G(z_1;t);\\
-  & \sum_{n_1=1}^{\infty}n_1P_{n_1}(t)z_1^{n_1} = z_1\frac{\partial}{\partial z_1}\sum_{n_1=1}^{\infty}P_{n_1}(t)z_1^{n_1} = z_1\frac{\partial G(z_1; t)}{\partial z_1};\\
-  & \sum_{n_1=1}^{\infty}n_1P_{n_1-1}(t)z_1^{n_1} = z_1\frac{\partial}{\partial z_1}\sum_{n_1=1}^{\infty}P_{n_1-1}(t)z_1^{n_1} = z_1\frac{\partial}{\partial z_1} \left(z_1G(z_1; t)\right);\\
-  & \sum_{n_1=1}^{\infty}n_1P_{n_1+1}(t)z_1^{n_1} = z_1\frac{\partial}{\partial z_1}\sum_{n_1=1}^{\infty}P_{n_1+1}(t)z_1^{n_1} = z_1\frac{\partial}{\partial z_1} \left(\frac{1}{z_1}G(z_1; t)\right),
+  & \sum_{n_1=0}^{\infty}P_{n_1-1}(t)z_1^{n_1} = z_1\sum_{n_1=0}^{\infty}P_{n_1-1}(t)z_1^{n_1-1} = z_1G(z_1;t);\\
+  & \sum_{n_1=0}^{\infty}P_{n_1+1}(t)z_1^{n_1} = \frac{1}{z_1}\sum_{n_1=0}^{\infty}P_{n_1+1}(t)z_1^{n_1+1} = \frac{1}{z_1}G(z_1;t);\\
+  & \sum_{n_1=0}^{\infty}n_1P_{n_1}(t)z_1^{n_1} = z_1\frac{\partial}{\partial z_1}\sum_{n_1=0}^{\infty}P_{n_1}(t)z_1^{n_1} = z_1\frac{\partial G(z_1; t)}{\partial z_1};\\
+  & \sum_{n_1=0}^{\infty}n_1P_{n_1-1}(t)z_1^{n_1} = z_1\frac{\partial}{\partial z_1}\sum_{n_1=0}^{\infty}P_{n_1-1}(t)z_1^{n_1} = z_1\frac{\partial}{\partial z_1} \left(z_1G(z_1; t)\right);\\
+  & \sum_{n_1=0}^{\infty}n_1P_{n_1+1}(t)z_1^{n_1} = z_1\frac{\partial}{\partial z_1}\sum_{n_1=0}^{\infty}P_{n_1+1}(t)z_1^{n_1} = z_1\frac{\partial}{\partial z_1} \left(\frac{1}{z_1}G(z_1; t)\right),
 \end{align*}
 we recast the equation (\ref{gene_switching_ME}) in the form of the following first-order partial differential equation (PDE)
 \begin{equation*} \label{gene_switching_PDE}
@@ -171,7 +176,7 @@ Note that, as any generating function, $\mathcal G(x_1=0; t)=1$, and from (\ref{
 which is expected, since (\ref{binomial_gen_function}) is the generating function of the binomial distribution with the probability of success $P_\text{on}$.
 
 \subsubsection{Asymptotic expansion of the stationary solution} \label{switching_asymptotic_expansion}
-Unfortunately, it is rarely possible to find the generating function exactly, but since the moments of the probability distribution only depend on the behaviour of $\mathcal G(x_1;t)$ in the vicinity of $x_1=0$, they can be obtained by means of an asymptotic expansion of $\mathcal G(x_1;t)$ around this point. In this section we exemplify this method on the model above, which exact solution can be used for verification. To do this we substitute the function $\mathcal G$ in the form of its asymptotic expansion at $x_1=0$
+Unfortunately, it is rarely possible to find the generating function exactly, but since the moments of the probability distribution only depend on the behaviour of $\mathcal G(x_1;t)$ in the vicinity of $x_1=0$, they can be obtained by means of an asymptotic expansion of $\mathcal G(x_1;t)$ around this point. In this section we exemplify this method on the model above, whose exact solution can be used for verification. To do this we substitute the function $\mathcal G$ in the form of its asymptotic expansion at $x_1=0$
 \begin{equation}\label{two_compartment_hopping_expansion}
   \mathcal G(x_1;t) = 1 + \mathcal G^{(1)}(t)x_1 + \frac{1}{2}\mathcal G^{(2)}(t) x_1^2 + ... = 1 + \langle n_1\rangle(t) x_1 + \left[\langle n_1^2 \rangle(t)-\langle n_1\rangle(t)\right]x_1^2 + ...
 \end{equation}
@@ -184,10 +189,9 @@ or equivalently
   (P_{\text{on}}x_1 + 1)x_1\frac{d\mathcal G(x_1)}{dx_1} = P_{\text{on}}N_1x_1\mathcal G(x_1).
 \end{equation*}
 This substitution leads to
-{\small
 \begin{equation*}
-  \left(P_{\text{on}}-\frac{1}{2}P_{\text{on}}N_1\right)\mathcal G^{(2)}x_1^3 + \left(\mathcal G^{(2)} + \mathcal G^{(1)}P_{\text{on}} - P_{\text{on}}N_1G^{(1)}\right)x_1^2 + \left(G^{(1)}-P_{\text{on}}N_1\right)x_1 = 0.
-\end{equation*}}
+  \left(P_{\text{on}}-\frac{1}{2}P_{\text{on}}N_1\right)\mathcal G^{(2)}x_1^3 + \left(\mathcal G^{(2)} + \mathcal G^{(1)}P_{\text{on}} - P_{\text{on}}N_1G^{(1)}\right)x_1^2 + \left(G^{(1)}-P_{\text{on}}N_1\right)x_1 = 0,
+\end{equation*}
 where the $\mathcal O(x^3)$ terms must be ignored, since we only do the expansion up to the second order. The unknown coefficients $\{\mathcal G^{(i)}\}$ are found by voiding all consecutive orders in $x$ up to two, which gives a non-degenerate system of two linear equations for two unknowns
 \begin{equation*}
   \begin{dcases}
@@ -330,10 +334,9 @@ where $\tau = (\nu^- + \nu^+)^{-1}$, and in the second order
   \langle(m_0 + m_1)^2\rangle = \langle m_0^2\rangle + \langle m_1^2\rangle + 2\langle m_0m_1\rangle = M^2, 
 \end{equation*}
 from which
-{\small
 \begin{equation*}
   \langle m_0^2\rangle - \langle m_0\rangle + \langle m_1^2\rangle - \langle m_1\rangle + 2\langle m_0m_1\rangle = \left(\mathcal G_{00}^{(2)} + \mathcal G_{11}^{(2)} + 2\mathcal G_{01}^{(2)} \right) = M^2 - M\tau\nu^- - M\tau\nu^-, 
-\end{equation*}}
+\end{equation*}
 and finally
 \begin{equation*}
   \beta\left({\nu^-}^2 + {\nu^+}^2 + 2\nu^-\nu^+\right) = M(M-1),
@@ -423,7 +426,6 @@ which leads to
   {\mathcal G}_2\lambda_3 = \frac{1}{\tau_3}{\mathcal G}_3 \implies &\langle n_3\rangle = {\mathcal G}_3 = \lambda_3\tau_3{\mathcal G}_2 = \lambda_3\tau_3\lambda_2\tau_2P_{on}N_1
 \end{align*}
 The second order gives
-{\small
 \begin{equation*}
   \begin{split}
     \left(\frac{1}{\tau_1}{\mathcal G}_{11} - \lambda_1^+{\mathcal G}_1\left(N_1-1\right)\right)x_1^2
@@ -433,9 +435,8 @@ The second order gives
     + \left(\frac{\tau_1+\tau_3}{\tau_1\tau_3}{\mathcal G}_{31} - \lambda_3{\mathcal G}_{21} - \lambda_1^+N_1{\mathcal G}_3\right)x_1x_3\\
     + \left(\frac{\tau_2+\tau_3}{\tau_2\tau_3}{\mathcal G}_{23} - \lambda_2{\mathcal G}_{13} - \lambda_3{\mathcal G}_{22} - \lambda_3{\mathcal G}_2\right)x_2x_3 = 0,
   \end{split}
-\end{equation*}}
+\end{equation*}
 which leads to the nondegenerate system of six linear equations for six independent components of $\boldsymbol{\mathcal G}^{(2)}$, which are found to be
-{\small
 \begin{align}
       {\mathcal G}_{11}& = P_{\text{on}}^2N_1(N_1-1) \label{G_11_Paulsson}\\
       {\mathcal G}_{12}& = \frac{\tau_1}{\tau_1+\tau_2}\tau_2\lambda_2P_{\text{on}}N_1\left[P_{\text{on}}\left(N_1-1\right)+\lambda_1^+N_1\tau_2+1\right]\\
@@ -447,7 +448,7 @@ which leads to the nondegenerate system of six linear equations for six independ
       \begin{split}
         {\mathcal G}_{33}& = \frac{\tau_2}{\tau_2+\tau_3}(\tau_3\lambda_3)^2\tau_2\lambda_2P_{\text{on}}N_1\Bigg[1 + \frac{\tau_1\tau_2\lambda_2}{\tau_1+\tau_2}\left(P_{\text{on}}(N_1-1)+\lambda_1^+N_1\tau_2+1\right)\\& + \lambda_2\frac{\tau_1\tau_3}{\tau_1+\tau_3}\left(\lambda_1^+N_1\tau_3 + \frac{\tau_1}{\tau_1+\tau_2}\left(N_1(\lambda_1^+\tau_2+P_{\text{on}})+1-P_{\text{on}}\right)\right)\Bigg] \label{G_33_Paulsson}
       \end{split}
-\end{align}}
+\end{align}
 Note from the following expression for the variance
 \begin{equation}\label{sigma2_from_G}
   \sigma_i^2 = {\mathcal G}_{ii} + {\mathcal G}_i - {\mathcal G}_i^2
@@ -524,7 +525,6 @@ The model should capture the following:
 \item \textcolor{pink}{Protein binding/unbinding from the synapse}.
 \end{enumerate}
 The master equation that captures these processes reads as
-{\small
 \begin{equation*}
   \begin{split}
     \frac{dP_{\mathbf s}(t)}{dt} &= \textcolor{red}{\lambda_1^+\left[\left(N-n+1\right)P_{n-1}^{\mathbf s}(t) - \left(N-n\right)P_{\mathbf s}(t)\right] + \lambda_1^-\left[(n+1)P^{\mathbf s}_{n+1}(t) - nP_{\mathbf s}(t)\right]}\\
@@ -534,7 +534,7 @@ The master equation that captures these processes reads as
     &\textcolor{cyan}{+ \theta_{10}\left[(l_1+1)P^{\mathbf s}_{l_0-1,l_1+1}(t) - l_1P_{\mathbf s}(t)\right]} \textcolor{pink}{+\eta_{11}\left[(l_1+1)P^{\mathbf s}_{l_1+1, q_{11}-1}(t) - l_1P_{\mathbf s}(t)\right]} \\
     &\textcolor{pink}{+ \gamma_{11}\left[(q_{11}+1)P^{\mathbf s}_{l_1-1,q_{11}+1}(t) - q_{11}P_{\mathbd s}(t)\right]}.
   \end{split}
-\end{equation*}}
+\end{equation*}
 
 \subsubsection{PDE for the generating function}
 \begin{equation*}
@@ -546,6 +546,8 @@ The master equation that captures these processes reads as
     &+\gamma_{11}(x_{q_{11}} - x_{l_1})\frac{\partial\mathcal G(\mathbf x; t)}{\partial x_{q_{11}}} = \lambda_1^+x_nN\mathcal G(\mathbf x; t)
   \end{split}
 \end{equation*}
+
+\textcolor{red}{To be continued...}
 
 \bibliographystyle{unsrt}
 \bibliography{bibliography.bib}
