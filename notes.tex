@@ -541,8 +541,8 @@ The master equation that captures these processes reads as
   \begin{split}
     & \frac{\partial\mathcal G(\mathbf x; t)}{\partial t} + \left(\lambda^+_1x_n^2-\lambda_2x_{m_0}x_n + \frac{1}{\tau_1}x_n - \lambda_2x_{m_0}\right)\frac{\partial\mathcal G(\mathbf x; t)}{\partial x_n}\\
     &- \left[\kappa_0x_{m_0}x_{l_0} + \kappa_0x_{l_0} + \nu_{01}x_{m_1} - \left(\frac{1}{\tau_2}+\nu_{01}\right)x_{m_0}\right]\frac{\partial \mathcal G(\mathbf x; t)}{\partial x_{m_0}}\\ & -\left[\kappa_1x_{m_1}x_{l_1} + \kappa_1x_{l_1} + \nu_{10}x_{m_0} - \left(\nu_{10}+\frac{1}{\tau_2}\right)x_{m_1}\right]\frac{\partial\mathcal G(\mathbf x; t)}{\partial x_{m_1}}\\
-    &+\left[\left(\frac{1}{\tau_3}+\theta_{01}\right)x_{l_0} - \theta_{01}x_{l_1}\right]\frac{\partial\mathcal G(\mathbf x; t)}{\partial z_{l_0}}\\
-    & + \left[\left(\frac{1}{\tau_3} + \theta_{10} + \eta_{11}\right)x_{l_1} - \theta_{10}x_{l_0} -\eta_{11}\right]\frac{\partial\mathcal G(\mathbf x; t)}{\partial x_{l_1}}\\
+    &+\left[\left(\frac{1}{\tau_3}+\theta_{01}\right)x_{l_0} - \theta_{01}x_{l_1}\right]\frac{\partial\mathcal G(\mathbf x; t)}{\partial x_{l_0}}\\
+    & + \left[\left(\frac{1}{\tau_3} + \theta_{10} + \eta_{11}\right)x_{l_1} - \theta_{10}x_{l_0} -\eta_{11}x_{q_{11}}\right]\frac{\partial\mathcal G(\mathbf x; t)}{\partial x_{l_1}}\\
     &+\gamma_{11}(x_{q_{11}} - x_{l_1})\frac{\partial\mathcal G(\mathbf x; t)}{\partial x_{q_{11}}} = \lambda_1^+x_nN\mathcal G(\mathbf x; t)
   \end{split}
 \end{equation*}
