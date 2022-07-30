@@ -547,22 +547,28 @@ The master equation that captures these processes reads as
   \end{split}
 \end{equation*}
 
-Renaming
-\begin{equation}
-  (x_n, x_{m_0}, x_{m_1}, x_{l_0}, x_{l_1}, x_{q_{11}}) \equiv (x_1, x_2, x_3, x_4, x_5, x_6)
-\end{equation}
+%% Renaming
+%% \begin{equation}
+%%   (x_n, x_{m_0}, x_{m_1}, x_{l_0}, x_{l_1}, x_{q_{11}}) \equiv (x_1, x_2, x_3, x_4, x_5, x_6)
+%% \end{equation}
 
 First order:
-\begin{equation}
+\begin{align*}
+  \mathcal G_1 &= \tau_1\lambda_1^+N\\
+  \mathcal G_2 &= \frac{\lambda_2\tau_2(\tau_2\nu_{10}+1)}{\tau_2(\nu_{01}+\nu_{10})+1}\tau_1\lambda_1^+N\\
+  \mathcal G_3 &= \frac{\lambda_2\tau_2^2\nu_{01}}{\tau_2(\nu_{01}+\nu_{10})+1}\tau_1\lambda_1^+N\\
+  \mathcal G_4 &= \frac{\kappa_0(\nu_{10}\tau_2+1)(\tau_3\theta_{10}+1) + \kappa_1\nu_{01}\tau_2\tau_3\theta_{10}}{\left[\tau_2(\nu_{01}+\nu_{10})+1\right]\left[\tau_3(\theta_{01}+\theta_{10})+1\right]}\tau_3\lambda_2\tau_2\lambda_1^+\tau_1N\\
   \begin{split}
-    \mathcal G_1 &= \tau_1\lambda_1^+N\\
-    \mathcal G_2 &= \frac{\lambda_2\tau_2(\tau_2\nu_{10}+1)}{\tau_2(\nu_{01}+\nu_{10})+1}\tau_1\lambda_1^+N\\
-    \mathcal G_3 &= \frac{\lambda_2\tau_2^2\nu_{01}}{\tau_2(\nu_{01}+\nu_{10})+1}\tau_1\lambda_1^+N\\
-    \mathcal G_4 &= \frac{\kappa_0(\nu_{10}\tau_2+1)(\tau_3\theta_{10}+1) + \kappa_1\nu_{01}\tau_2\tau_3\theta_{10}}{\left[\tau_2(\nu_{01}+\nu_{10})+1\right]\left[\tau_3(\theta_{01}+\theta_{10})+1\right]}\tau_3\lambda_2\tau_2\lambda_1^+\tau_1N\\
     \mathcal G_5 &= \frac{\kappa_1\nu_{01}\tau_2\left[\tau_3(\theta_{01}+\theta_{10})+1\right] + \tau_3\theta_{01}\left[\kappa_0(\nu_{10}\tau_2+1)(\tau_3\theta_{10}+1) + \kappa_1\nu_{01}\tau_2\tau_3\theta_{10}\right]}{\left[\tau_2(\nu_{01}+\nu_{10})+1\right]\left(\tau_3\theta_{10}+1\right)\left[\tau_3(\theta_{01}+\theta_{10})+1\right]}\tau_3\lambda_2\tau_2\lambda_1^+\tau_1N\\
+    &=\left[\kappa_1\nu_{01}\tau_2 + \frac{\tau_3\theta_{01}\left[\kappa_0(\nu_{10}\tau_2+1)(\tau_3\theta_{10}+1)+\kappa_1\nu_{01}\tau_2\tau_3\theta_{10}\right]}{\tau_3(\theta_{01}+\theta_{10})+1}\right]\frac{\tau_3\lambda_2\tau_2\lambda_1^+\tau_1N}{\left[\tau_2(\nu_{01}+\nu_{10})+1\right](\tau_3\theta_{10}+1)}
+  \end{split}\\
+  \begin{split}
     \mathcal G_6 &= \frac{\eta_{11}}{\gamma_{11}}\frac{\kappa_1\nu_{01}\tau_2\left[\tau_3(\theta_{01}+\theta_{10})+1\right] + \tau_3\theta_{01}\left[\kappa_0(\nu_{10}\tau_2+1)(\tau_3\theta_{10}+1) + \kappa_1\nu_{01}\tau_2\tau_3\theta_{10}\right]}{\left[\tau_2(\nu_{01}+\nu_{10})+1\right]\left(\tau_3\theta_{10}+1\right)\left[\tau_3(\theta_{01}+\theta_{10})+1\right]}\tau_3\lambda_2\tau_2\lambda_1^+\tau_1N\\
+    &= \left[\kappa_1\nu_{01}\tau_2 + \frac{\tau_3\theta_{01}\left[\kappa_0(\nu_{10}\tau_2+1)(\tau_3\theta_{10}+1)+\kappa_1\nu_{01}\tau_2\tau_3\theta_{10}\right]}{\tau_3(\theta_{01}+\theta_{10})+1}\right]\frac{\eta_{11}\tau_3\lambda_2\tau_2\lambda_1^+\tau_1N}{\gamma_{11}\left[\tau_2(\nu_{01}+\nu_{10})+1\right](\tau_3\theta_{10}+1)}
   \end{split}
-\end{equation}
+\end{align*}
+
+Second order:
 
 \textcolor{red}{To be continued...}
 
