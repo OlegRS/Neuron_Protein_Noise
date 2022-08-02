@@ -25,6 +25,29 @@ tau3 = symbols('tau3')
 
 Pon = l1p/(l1p+l1m)
 
+
+N_ = 3
+l1p_ = 1
+l1m_ = 1
+l2_ = 1
+l3_ = 1
+theta01_ = 1
+theta10_ = 1
+eta11_ = 1
+gamma11_ = 1
+
+k0_ = 1
+k1_ = 1
+nu01_ = 1
+nu10_ = 1
+
+tau1_ = 1/(l1p_+l1m_)
+tau2_ = 1
+tau3_ = 1
+
+Pon_ = l1p_/(l1p_+l1m_)
+
+
 x1 = symbols('x1')
 x2 = symbols('x2')
 x3 = symbols('x3')
@@ -139,34 +162,52 @@ pretty_print(X6)
 print("\n")
 
 
-# print("============ SOLVING FIRST ORDER... ===========")
+print("============ SOLVING FIRST ORDER... ===========")
 
-# O1 = linsolve([X1, X2, X3, X4, X5, X6], G1, G2, G3, G4, G5, G6)
+O1 = linsolve([X1, X2, X3, X4, X5, X6], G1, G2, G3, G4, G5, G6)
 
-# G1_ = factor(O1.args[0][0])
-# G2_ = factor(O1.args[0][1])
-# G3_ = factor(O1.args[0][2])
-# G4_ = factor(O1.args[0][3])
-# G5_ = factor(O1.args[0][4])
-# G6_ = factor(O1.args[0][5])
+G1_ = factor(O1.args[0][0])
+G2_ = factor(O1.args[0][1])
+G3_ = factor(O1.args[0][2])
+G4_ = factor(O1.args[0][3])
+G5_ = factor(O1.args[0][4])
+G6_ = factor(O1.args[0][5])
 
-# print('G1=')
-# pretty_print(G1_)
-# print("------------------------------------------------")
-# print('G2=')
-# pretty_print(G2_)
-# print("------------------------------------------------")
-# print('G3=')
-# pretty_print(G3_)
-# print("------------------------------------------------")
-# print('G4=')
-# pretty_print(G4_)
-# print("------------------------------------------------")
-# print('G5=')
-# pretty_print(G5_)
-# print("------------------------------------------------")
-# print('G6=')
-# pretty_print(G6_)
+print('G1=')
+pretty_print(G1_)
+print("------------------------------------------------")
+print('G2=')
+pretty_print(G2_)
+print("------------------------------------------------")
+print('G3=')
+pretty_print(G3_)
+print("------------------------------------------------")
+print('G4=')
+pretty_print(G4_)
+print("------------------------------------------------")
+print('G5=')
+pretty_print(G5_)
+print("------------------------------------------------")
+print('G6=')
+pretty_print(G6_)
+
+
+print("\n========= FIRST ORDER NUMERICAL SOLUTIONS: =========")
+G1_num = G1_.subs([(N,N_), (l1p,l1p_), (l1m,l1m_), (l2,l2_), (l3,l3_), (theta01,theta01_), (theta10,theta10_), (eta11,eta11_), (gamma11,gamma11_), (k0,k0_), (k1,k1_), (nu01,nu01_), (nu10,nu10_), (tau1,tau1_), (tau2,tau2_), (tau3,tau3_), (Pon, Pon_)])
+print("G1=", G1_num)
+G2_num = G2_.subs([(N,N_), (l1p,l1p_), (l1m,l1m_), (l2,l2_), (l3,l3_), (theta01,theta01_), (theta10,theta10_), (eta11,eta11_), (gamma11,gamma11_), (k0,k0_), (k1,k1_), (nu01,nu01_), (nu10,nu10_), (tau1,tau1_), (tau2,tau2_), (tau3,tau3_), (Pon, Pon_)])
+print("G2=", G2_num)
+G3_num = G3_.subs([(N,N_), (l1p,l1p_), (l1m,l1m_), (l2,l2_), (l3,l3_), (theta01,theta01_), (theta10,theta10_), (eta11,eta11_), (gamma11,gamma11_), (k0,k0_), (k1,k1_), (nu01,nu01_), (nu10,nu10_), (tau1,tau1_), (tau2,tau2_), (tau3,tau3_), (Pon, Pon_)])
+print("G3=", G3_num)
+G4_num = G4_.subs([(N,N_), (l1p,l1p_), (l1m,l1m_), (l2,l2_), (l3,l3_), (theta01,theta01_), (theta10,theta10_), (eta11,eta11_), (gamma11,gamma11_), (k0,k0_), (k1,k1_), (nu01,nu01_), (nu10,nu10_), (tau1,tau1_), (tau2,tau2_), (tau3,tau3_), (Pon, Pon_)])
+print("G4=", G4_num)
+G5_num = G5_.subs([(N,N_), (l1p,l1p_), (l1m,l1m_), (l2,l2_), (l3,l3_), (theta01,theta01_), (theta10,theta10_), (eta11,eta11_), (gamma11,gamma11_), (k0,k0_), (k1,k1_), (nu01,nu01_), (nu10,nu10_), (tau1,tau1_), (tau2,tau2_), (tau3,tau3_), (Pon, Pon_)])
+print("G5=", G5_num)
+G6_num = G6_.subs([(N,N_), (l1p,l1p_), (l1m,l1m_), (l2,l2_), (l3,l3_), (theta01,theta01_), (theta10,theta10_), (eta11,eta11_), (gamma11,gamma11_), (k0,k0_), (k1,k1_), (nu01,nu01_), (nu10,nu10_), (tau1,tau1_), (tau2,tau2_), (tau3,tau3_), (Pon, Pon_)])
+print("G6=", G6_num)
+
+
+##################### SECOND ORDER #########################
 
 print("-------------- SECOND ORDER ------------------\n")
 
@@ -355,29 +396,74 @@ print("\n")
 #               ])
 
 
-print("============ SOLVING EQUATIONS 1,2,3 ==============")
-O2_1_2_3 = linsolve([X11, X12, X13], G11, G12, G13)
+print("\n============ SOLVING EQUATION 1 FOR ACTIVE GENE VARIANCE ==============")
+O2_1_2_3 = linsolve([X11], G11)
 
-G11 = O2_1_2_3.args[0][0]
-G12 = O2_1_2_3.args[0][1]
-G13 = O2_1_2_3.args[0][2]
+G11_ = O2_1_2_3.args[0][0]
 
-print("============ SOLVING EQUATIONS 4,5,6 ==============")
+G11__ = G11_.subs([(N,N_), (l1p,l1p_), (l1m,l1m_), (l2,l2_), (l3,l3_), (theta01,theta01_), (theta10,theta10_), (eta11,eta11_), (gamma11,gamma11_), (k0,k0_), (k1,k1_), (nu01,nu01_), (nu10,nu10_), (tau1,tau1_), (tau2,tau2_), (tau3,tau3_), (Pon, Pon_)])
+G11_num = G11__.subs([(G1,G1_num), (G2,G2_num), (G3,G3_num), (G4,G4_num), (G5,G5_num), (G6,G6_num)])
+print("G11=", G11__, '=', G11_num)
+
+print("\n============ SOLVING EQUATIONS 2,3 FOR GENE-mRNA CORRELATIONS ==============")
+O2_1_2_3 = linsolve([X12, X13], G12, G13)
+G12_ = O2_1_2_3.args[0][0]
+G13_ = O2_1_2_3.args[0][1]
+
+G12__ = G12_.subs([(N,N_), (l1p,l1p_), (l1m,l1m_), (l2,l2_), (l3,l3_), (theta01,theta01_), (theta10,theta10_), (eta11,eta11_), (gamma11,gamma11_), (k0,k0_), (k1,k1_), (nu01,nu01_), (nu10,nu10_), (tau1,tau1_), (tau2,tau2_), (tau3,tau3_), (Pon, Pon_)])
+G12_num = G12__.subs([(G1,G1_num), (G2,G2_num), (G3,G3_num), (G4,G4_num), (G5,G5_num), (G6,G6_num), (G11, G11_num)])
+
+G13__ = G13_.subs([(N,N_), (l1p,l1p_), (l1m,l1m_), (l2,l2_), (l3,l3_), (theta01,theta01_), (theta10,theta10_), (eta11,eta11_), (gamma11,gamma11_), (k0,k0_), (k1,k1_), (nu01,nu01_), (nu10,nu10_), (tau1,tau1_), (tau2,tau2_), (tau3,tau3_), (Pon, Pon_)])
+G13_num = G13__.subs([(G1,G1_num), (G2,G2_num), (G3,G3_num), (G4,G4_num), (G5,G5_num), (G6,G6_num), (G11, G11_num)])
+print("G12=", G12__, '=', G12_num)
+print("G13=", G13__, '=', G13_num)
+
+
+print("\n============ SOLVING EQUATIONS 4,5,6 FOR GENE-PROTEIN CORRELATIONS ==============")
 O2_4_5_6 = linsolve([X14, X15, X16], G14, G15, G16)
 
-G14 = O2_4_5_6.args[0][0]
-G15 = O2_4_5_6.args[0][1]
-G16 = O2_4_5_6.args[0][2]
+G14_ = O2_4_5_6.args[0][0]
+G15_ = O2_4_5_6.args[0][1]
+G16_ = O2_4_5_6.args[0][2]
+
+G14__ = G14_.subs([(N,N_), (l1p,l1p_), (l1m,l1m_), (l2,l2_), (l3,l3_), (theta01,theta01_), (theta10,theta10_), (eta11,eta11_), (gamma11,gamma11_), (k0,k0_), (k1,k1_), (nu01,nu01_), (nu10,nu10_), (tau1,tau1_), (tau2,tau2_), (tau3,tau3_), (Pon, Pon_)])
+G14_num = G14__.subs([(G1,G1_num), (G2,G2_num), (G3,G3_num), (G4,G4_num), (G5,G5_num), (G6,G6_num), (G11, G11_num), (G12,G12_num), (G13,G13_num)])
+
+G15__ = G15_.subs([(N,N_), (l1p,l1p_), (l1m,l1m_), (l2,l2_), (l3,l3_), (theta01,theta01_), (theta10,theta10_), (eta11,eta11_), (gamma11,gamma11_), (k0,k0_), (k1,k1_), (nu01,nu01_), (nu10,nu10_), (tau1,tau1_), (tau2,tau2_), (tau3,tau3_), (Pon, Pon_)])
+G15_num = G15__.subs([(G1,G1_num), (G2,G2_num), (G3,G3_num), (G4,G4_num), (G5,G5_num), (G6,G6_num), (G11, G11_num), (G12,G12_num), (G13,G13_num)])
+
+G16__ = G16_.subs([(N,N_), (l1p,l1p_), (l1m,l1m_), (l2,l2_), (l3,l3_), (theta01,theta01_), (theta10,theta10_), (eta11,eta11_), (gamma11,gamma11_), (k0,k0_), (k1,k1_), (nu01,nu01_), (nu10,nu10_), (tau1,tau1_), (tau2,tau2_), (tau3,tau3_), (Pon, Pon_)])
+G16_num = G16__.subs([(G1,G1_num), (G2,G2_num), (G3,G3_num), (G4,G4_num), (G5,G5_num), (G6,G6_num), (G11, G11_num), (G12,G12_num), (G13,G13_num)])
+
+print("G14=", G14__, '=', G14_num)
+print("G15=", G15__, '=', G15_num)
+print("G16=", G16__, '=', G16_num)
 
 
-print("============ SOLVING EQUATIONS 7,8,12 ==============")
+print("\n======== SOLVING EQUATIONS 7,8,12 FOR mRNA-mRNA CORRELATIONS AND VARIANCES =========")
 O2_7_8_12 = linsolve([X22, X23, X33], G22, G23, G33)
 
-G22 = O2_7_8_12.args[0][0]
-G23 = O2_7_8_12.args[0][1]
-G33 = O2_7_8_12.args[0][2]
+G22_ = O2_7_8_12.args[0][0]
+G23_ = O2_7_8_12.args[0][1]
+G33_ = O2_7_8_12.args[0][2]
 
-# print("============ SOLVING EQUATIONS 9,10,11,13,14,15 ==============")
+G22__ = G22_.subs([(N,N_), (l1p,l1p_), (l1m,l1m_), (l2,l2_), (l3,l3_), (theta01,theta01_), (theta10,theta10_), (eta11,eta11_), (gamma11,gamma11_), (k0,k0_), (k1,k1_), (nu01,nu01_), (nu10,nu10_), (tau1,tau1_), (tau2,tau2_), (tau3,tau3_), (Pon, Pon_)])
+G22_num = G22__.subs([(G1,G1_num), (G2,G2_num), (G3,G3_num), (G4,G4_num), (G5,G5_num), (G6,G6_num), (G11, G11_num), (G12,G12_num), (G13,G13_num), (G14,G14_num), (G15,G15_num), (G16,G16_num)])
+
+
+G23__ = G23_.subs([(N,N_), (l1p,l1p_), (l1m,l1m_), (l2,l2_), (l3,l3_), (theta01,theta01_), (theta10,theta10_), (eta11,eta11_), (gamma11,gamma11_), (k0,k0_), (k1,k1_), (nu01,nu01_), (nu10,nu10_), (tau1,tau1_), (tau2,tau2_), (tau3,tau3_), (Pon, Pon_)])
+G23_num = G23__.subs([(G1,G1_num), (G2,G2_num), (G3,G3_num), (G4,G4_num), (G5,G5_num), (G6,G6_num), (G11, G11_num), (G12,G12_num), (G13,G13_num), (G14,G14_num), (G15,G15_num), (G16,G16_num)])
+
+
+G33__ = G33_.subs([(N,N_), (l1p,l1p_), (l1m,l1m_), (l2,l2_), (l3,l3_), (theta01,theta01_), (theta10,theta10_), (eta11,eta11_), (gamma11,gamma11_), (k0,k0_), (k1,k1_), (nu01,nu01_), (nu10,nu10_), (tau1,tau1_), (tau2,tau2_), (tau3,tau3_), (Pon, Pon_)])
+G33_num = G33__.subs([(G1,G1_num), (G2,G2_num), (G3,G3_num), (G4,G4_num), (G5,G5_num), (G6,G6_num), (G11, G11_num), (G12,G12_num), (G13,G13_num), (G14,G14_num), (G15,G15_num), (G16,G16_num)])
+
+print("G22=", G22__, '=', G22_num)
+print("G23=", G23__, '=', G23_num)
+print("G33=", G33__, '=', G33_num)
+
+
+# print("\n============ SOLVING EQUATIONS 9,10,11,13,14,15 FOR mRNA-PROTEIN CORRELATIONS ==============")
 # O2_9_10_11_13_14_15 = linsolve([X24, X25, X26, X34, X35, X36], G24, G25, G26, G34, G35, G36)
 
 # G24 = O2_9_10_11_13_14_15.args[0][0]
@@ -447,7 +533,7 @@ B = - Matrix([[B1], [B2], [B3], [B4], [B5], [B6]])
 
 
 
-# print("============ SOLVING EQUATIONS 16,17,18,19,20,21 ==============")
+# print("\n===== SOLVING EQUATIONS 16,17,18,19,20,21 FOR PROTEIN-PROTEIN CORRELATIONS AND VARIANCES ======")
 # O2_16_17_18_19_20_21 = linsolve([X44, X45, X46, X55, X56, X66], G44, G45, G46, G55, G56, G66)
 
 
@@ -469,13 +555,44 @@ R = - Matrix([[k0*G24], [k0*G25+k1*G34], [k0*G26], [k1*G35], [k1*G36]])
 
 
 
-# print("============ SOLVING NEXT 17 EQUATIONS... ==============")
 
-# O2_next_17 = linsolve([X14, X15, X16, X22, X23, X24, X25, X26, X33, X34, X35, X36, X44, X45, X46, X55, X56],
-#                       G14, G15, G16, G22, G23, G24, G25, G26, G33, G34, G35, G36, G44, G45, G46, G55, G56)
-                      
-# O2 = linsolve([X11, X12, X13, X14, X15, X16, X22, X23, X24, X25, X26, X33, X34, X35, X36, X44, X45, X46, X55, X56, X66],
-#       G11, G12, G13, G14, G15, G16, G22, G23, G24, G25, G26, G33, G34, G35, G36, G44, G45, G46, G55, G56, G66)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
