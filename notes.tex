@@ -510,7 +510,7 @@ In what follows we will denote the probability of state $\mathbf s$ at time $t$ 
     \includegraphics[width=7cm]{img/simplest_neuron.png}
   \end{center}  
   \caption{The simplest (of its kind) model of a neuron with two spatial compartments soma (``$0$'') and unbranched dendrite (``$1$'') with a single synapse (``$2$''). Transcription happens in the soma, while mRNAs and proteins travel between the soma and dendrite degrading over time. Proteins can bind to or unbind from the synapse. Proteins bound to the synapse do not decay.}
-  \label{50_node_triad_sample}
+  \label{fig:simplest_neuron}
 \end{figure}
 In this section we attempt to find the means and the variances of the protein counts in the simplest possible model of neuron of our kind.
 
@@ -571,6 +571,47 @@ First order:
 Second order:
 
 \textcolor{red}{To be continued...}
+
+\subsection{General rules}
+In this section we give the general rules for constructing a {\it master equation} from the neuron's compartments diagram analogous to the one in Figure \ref{fig:simplest_neuron}.
+\subsubsection{Soma}
+Soma is always indexed as $0$.
+
+Parameters: $\{N$, $\lambda_1^+$, $\lambda_1^-$, ($\tau_1=(\lambda_1^+ + \lambda_1^-)^{-1}$), $\lambda_2$, $\tau_2$, $\kappa_0$, $\tau_3\}$.
+
+
+Additional terms in the {\it master equation}:
+\begin{equation}
+  \begin{split}
+    &\textcolor{red}{\lambda_1^+\left[\left(N-n+1\right)P_{n-1}^{\mathbf s}(t) - \left(N-n\right)P_{\mathbf s}(t)\right] + \lambda_1^-\left[(n+1)P^{\mathbf s}_{n+1}(t) - nP_{\mathbf s}(t)\right]}\\
+    &\textcolor{green}{+ \lambda_2n\left[P^{\mathbf s}_{m_0-1}(t) - P_{\mathbf s}(t)\right] + \frac{1}{\tau_2}\left[(m_0+1)P^{\mathbf s}_{m_0+1}(t) - m_0P_{\mathbf s}(t)\right]}\\
+    &\textcolor{brown}{+ \kappa_0m_0\left[P^{\mathbf s}_{l_0-1}(t) - P_{\mathbf s}(t)\right] + \frac{1}{\tau_3}\left[(l_0+1)P^{\mathbf s}_{l_0+1}(t) - l_0P_{\mathbf s}(t)\right]}
+  \end{split}
+\end{equation}
+
+\subsubsection{Dendrite $i$ from the soma}
+Additional terms in the {\it master equation}:
+\begin{equation}
+  \begin{split}
+    & \textcolor{green}{\frac{1}{\tau_2}\left[(m_i+1)P_{m_i+1}^{\mathbf s} - m_iP_{\mathbf s}\right]} \textcolor{blue}{+\nu_{0i}\left[(m_0+1)P_{m_0+1, m_i-1}^{\mathbf s}-m_0P_{\mathbf s}\right]}\\
+    &\textcolor{blue}{+\nu_{i0}\left[(m_i+1)P_{m_0-1,m_i+1}^{\mathbf s} - m_iP_{\mathbf s}\right]}
+  \end{split}
+\end{equation}
+
+
+\subsubsection{Branching of dendritic branch $i$ to branches $j$ and $k$}
+\subsubsection{Synapse $j$ on dendrite $i$}
+
+\subsection{The simple model of neuron}
+Now we consider a model of neuron with a branched dendrite and six synapses. Similarly to the case of the simplest neuron model above, the model should capture the following processes:
+\begin{enumerate}
+\item \textcolor{red}{Gene activation/deactivation};
+\item \textcolor{green}{mRNA production (only in the soma) and degradation (in all compartments)};
+\item \textcolor{blue}{mRNA hopping};
+\item \textcolor{brown}{Free protein production (in all compartments) and degradation (in all compartments, but not in the synapses)};
+\item \textcolor{cyan}{Free protein hopping};
+\item \textcolor{pink}{Protein binding/unbinding from the synapses}.
+\end{enumerate}
 
 \bibliographystyle{unsrt}
 \bibliography{bibliography.bib}
