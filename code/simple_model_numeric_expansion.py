@@ -69,27 +69,48 @@ kb_p = 0. # /hour; protein backward trafficking rate (0 for CaMKII)
 # beta_3_event = beta_3[1]
 
 ######################################
-
 N_ = 1
 l1p_ = 1
 l1m_ = 0 # This results to a single gene which is always active
 l2_ = alpha_1
 theta01_ = kf_p + d_p
 theta10_ = kb_p + d_p
+theta12_ = kf_p + d_p
+theta21_ = kb_p + d_p
+theta13_ = kf_p + d_p
+theta31_ = kb_p + d_p
+
 eta11_ = alpha_3
+eta12_ = alpha_3
+eta21_ = alpha_3
+eta22_ = alpha_3
+eta31_ = alpha_3
+eta32_ = alpha_3
+
 gamma11_ = beta_3
+gamma12_ = beta_3
+gamma21_ = beta_3
+gamma22_ = beta_3
+gamma31_ = beta_3
+gamma32_ = beta_3
 
 k0_ = alpha_2
 k1_ = alpha_2
+k2_ = alpha_2
+k3_ = alpha_2
+
 nu01_ = d_m + kf_m
 nu10_ = d_m + kb_m
+nu12_ = d_m + kf_m
+nu21_ = d_m + kb_m
+nu13_ = d_m + kf_m
+nu31_ = d_m + kb_m
 
 tau1_ = 1/(l1p_+l1m_)
 tau2_ = 1/beta_1
 tau3_ = 1/beta_2
 
 Pon_ = l1p_/(l1p_+l1m_)
-
 
 x = Matrix(symbols('x0:15'))
 
@@ -148,8 +169,7 @@ G = 1 + (transpose(E)*x + 1/2*transpose(x)*G_2*x)[0,0]
 dGdx = Matrix(symbols('dGdx0:15'))
 # G_ = symbols('G')
 
-dGdt = l1p*(x[0]*N*G - (x[0]+1)*x[0]*dGdx[0]) - l1m*x[0]*dGdx[0] + l2*x[1]*(x[0]+1)*dGdx[0] - 1/tau2*(x[1]*dGdx[1]+x[2]*dGdx[2]+x[3]*dGdx[3]+x[4]*dGdx[4]) + nu01*(x[2]-x[1])*dGdx[1] + nu10*(x[1]-x[2])*dGdx[2] + nu12*(x[3]-x[2])*dGdx[2] + nu21*(x[2]-x[3])*dGdx[3] + nu13*(x[4]-x[2])*dGdx[2] + nu31*(x[2]-x[4])*dGdx[4] + k0*(x[1]+1)*x[5]*dGdx[1] + k1*(x[2]+1)*x[6]*dGdx[2] + k2*(x[3]+1)*x[7]*dGdx[3] + k3*(x[4]+1)*x[8]*dGdx[4] - 1/tau3*(x[5]*dGdx[5] + x[6]*dGdx[6] + x[7]*dGdx[7]) + theta01*(x[6]-x[5])*dGdx[5] + theta10*(x[5]-x[6])*dGdx[6] + theta12*(x[7]-x[6])*dGdx[6] + theta21*(x[6]-x[7])*dGdx[7] + theta13*(x[8]-x[6])*dGdx[6] + theta31*(x[6]-x[8])*dGdx[8] + eta11*(x[9]-x[6])*dGdx[6] + eta12*(x[10]-x[6])*dGdx[6] + eta21*(x[11]-x[7])*dGdx[7] + eta22*(x[12]-x[7])*dGdx[7] + eta31*(x[13]-x[8])*dGdx[8] + eta32*(x[14]-x[8])*dGdx[8] + gamma11*(x[6]-x[9])*dGdx[9] + gamma12*(x[6]-x[10])*dGdx[10] + gamma21*(x[7]-x[11])*dGdx[11] + gamma22*(x[7]-x[12])*dGdx[12] + gamma31*(x[8]-x[13])*dGdx[13] + gamma32*(x[8]-x[14])*dGdx[14] 
-
+dGdt = l1p*(x[0]*N*G - (x[0]+1)*x[0]*dGdx[0]) - l1m*x[0]*dGdx[0] + l2*x[1]*(x[0]+1)*dGdx[0] - 1/tau2*(x[1]*dGdx[1]+x[2]*dGdx[2]+x[3]*dGdx[3]+x[4]*dGdx[4]) + nu01*(x[2]-x[1])*dGdx[1] + nu10*(x[1]-x[2])*dGdx[2] + nu12*(x[3]-x[2])*dGdx[2] + nu21*(x[2]-x[3])*dGdx[3] + nu13*(x[4]-x[2])*dGdx[2] + nu31*(x[2]-x[4])*dGdx[4] + k0*(x[1]+1)*x[5]*dGdx[1] + k1*(x[2]+1)*x[6]*dGdx[2] + k2*(x[3]+1)*x[7]*dGdx[3] + k3*(x[4]+1)*x[8]*dGdx[4] - 1/tau3*(x[5]*dGdx[5] + x[6]*dGdx[6] + x[7]*dGdx[7] + x[8]*dGdx[8]) + theta01*(x[6]-x[5])*dGdx[5] + theta10*(x[5]-x[6])*dGdx[6] + theta12*(x[7]-x[6])*dGdx[6] + theta21*(x[6]-x[7])*dGdx[7] + theta13*(x[8]-x[6])*dGdx[6] + theta31*(x[6]-x[8])*dGdx[8] + eta11*(x[9]-x[6])*dGdx[6] + eta12*(x[10]-x[6])*dGdx[6] + eta21*(x[11]-x[7])*dGdx[7] + eta22*(x[12]-x[7])*dGdx[7] + eta31*(x[13]-x[8])*dGdx[8] + eta32*(x[14]-x[8])*dGdx[8] + gamma11*(x[6]-x[9])*dGdx[9] + gamma12*(x[6]-x[10])*dGdx[10] + gamma21*(x[7]-x[11])*dGdx[11] + gamma22*(x[7]-x[12])*dGdx[12] + gamma31*(x[8]-x[13])*dGdx[13] + gamma32*(x[8]-x[14])*dGdx[14]
 
 # A = list(symbols('A0:15')) # PDE coefficients
 # A[0] = -collect(dGdt, dGdx[0], evaluate=False)[dGdx[0]]
@@ -177,38 +197,75 @@ dGdt = dGdt.subs([(dGdx[i], diff(G, x)[i]) for i in range(0,15)])
 # print('dGdt=')
 # pretty_print(dGdt)
 
+
+################ FIRST ORDER ###################
 print("============ SOLVING FIRST ORDER... ===========")
+G = 1 + (transpose(E)*x)[0,0] # Neglexting second order for now
+
+# Setting the PDE
+dGdt = l1p*(x[0]*N*G - (x[0]+1)*x[0]*dGdx[0]) - l1m*x[0]*dGdx[0] + l2*x[1]*(x[0]+1)*dGdx[0] - 1/tau2*(x[1]*dGdx[1]+x[2]*dGdx[2]+x[3]*dGdx[3]+x[4]*dGdx[4]) + nu01*(x[2]-x[1])*dGdx[1] + nu10*(x[1]-x[2])*dGdx[2] + nu12*(x[3]-x[2])*dGdx[2] + nu21*(x[2]-x[3])*dGdx[3] + nu13*(x[4]-x[2])*dGdx[2] + nu31*(x[2]-x[4])*dGdx[4] + k0*(x[1]+1)*x[5]*dGdx[1] + k1*(x[2]+1)*x[6]*dGdx[2] + k2*(x[3]+1)*x[7]*dGdx[3] + k3*(x[4]+1)*x[8]*dGdx[4] - 1/tau3*(x[5]*dGdx[5] + x[6]*dGdx[6] + x[7]*dGdx[7] + x[8]*dGdx[8]) + theta01*(x[6]-x[5])*dGdx[5] + theta10*(x[5]-x[6])*dGdx[6] + theta12*(x[7]-x[6])*dGdx[6] + theta21*(x[6]-x[7])*dGdx[7] + theta13*(x[8]-x[6])*dGdx[6] + theta31*(x[6]-x[8])*dGdx[8] + eta11*(x[9]-x[6])*dGdx[6] + eta12*(x[10]-x[6])*dGdx[6] + eta21*(x[11]-x[7])*dGdx[7] + eta22*(x[12]-x[7])*dGdx[7] + eta31*(x[13]-x[8])*dGdx[8] + eta32*(x[14]-x[8])*dGdx[8] + gamma11*(x[6]-x[9])*dGdx[9] + gamma12*(x[6]-x[10])*dGdx[10] + gamma21*(x[7]-x[11])*dGdx[11] + gamma22*(x[7]-x[12])*dGdx[12] + gamma31*(x[8]-x[13])*dGdx[13] + gamma32*(x[8]-x[14])*dGdx[14]
+
+dGdt = dGdt.subs([(dGdx[i], diff(G, x)[i]) for i in range(0,15)])
+
 
 X = Matrix(symbols('X0:15'))
 for i in range(0,15):
     X[i] = (collect(expand(dGdt), x[i], evaluate=False)[x[i]]).subs([(x[j],0) for j in range(0, 15)])
 
+#======== CONSTRUCTING A MATRIX ==========
+M1 = Matrix(np.zeros([15,15]))
+for i in range(0,15):
+    for j in range(0,15):
+        C = collect(X[i], E[j], evaluate=False)
+        M1[i,j] = C[E[j]] if E[j] in C else 0
+B1 = -X.subs([(E[j],0) for j in range(0, 15)])
 
-# O1 = linsolve([X1, X2, X3, X4, X5, X6], G1, G2, G3, G4, G5, G6)
+#======== NUMERICS ==========
+subs1 = [(N,N_), (l1p,l1p_), (l1m,l1m_), (l2,l2_),(theta01,theta01_), (theta10,theta10_), (theta12,theta12_), (theta21,theta21_), (theta13,theta13_), (theta31,theta31_), (eta11,eta11_), (eta12,eta12_), (eta21,eta21_), (eta22,eta22_), (eta31,eta31_), (eta32,eta32_),(gamma11,gamma11_), (gamma12,gamma12_), (gamma21,gamma21_), (gamma22,gamma22_), (gamma31,gamma31_), (gamma32,gamma32_),(k0,k0_), (k1,k1_), (k2,k2_), (k3,k3_),(nu01,nu01_), (nu10,nu10_), (nu12,nu12_), (nu21,nu21_), (nu13,nu13_), (nu31,nu31_),(tau1,tau1_), (tau2,tau2_), (tau3,tau3_)]
 
-# G1_ = factor(O1.args[0][0])
-# G2_ = factor(O1.args[0][1])
-# G3_ = factor(O1.args[0][2])
-# G4_ = factor(O1.args[0][3])
-# G5_ = factor(O1.args[0][4])
-# G6_ = factor(O1.args[0][5])
+M1_num, B1_num = M1.subs(subs1), B1.subs(subs1)
 
-# print('G1=')
-# pretty_print(G1_)
-# print("------------------------------------------------")
-# print('G2=')
-# pretty_print(G2_)
-# print("------------------------------------------------")
-# print('G3=')
-# pretty_print(G3_)
-# print("------------------------------------------------")
-# print('G4=')
-# pretty_print(G4_)
-# print("------------------------------------------------")
-# print('G5=')
-# pretty_print(G5_)
-# print("------------------------------------------------")
-# print('G6=')
-# pretty_print(G6_)
+E_num = M1_num.inv()*B1_num
+
+pretty_print(E_num)
+
+################ SECOND ORDER ###################
+print("============ SOLVING SECOND ORDER... ===========")
+G = 1 + (transpose(E)*x + 1/2*transpose(x)*G_2*x)[0,0]
+
+# Setting the PDE
+dGdt = l1p*(x[0]*N*G - (x[0]+1)*x[0]*dGdx[0]) - l1m*x[0]*dGdx[0] + l2*x[1]*(x[0]+1)*dGdx[0] - 1/tau2*(x[1]*dGdx[1]+x[2]*dGdx[2]+x[3]*dGdx[3]+x[4]*dGdx[4]) + nu01*(x[2]-x[1])*dGdx[1] + nu10*(x[1]-x[2])*dGdx[2] + nu12*(x[3]-x[2])*dGdx[2] + nu21*(x[2]-x[3])*dGdx[3] + nu13*(x[4]-x[2])*dGdx[2] + nu31*(x[2]-x[4])*dGdx[4] + k0*(x[1]+1)*x[5]*dGdx[1] + k1*(x[2]+1)*x[6]*dGdx[2] + k2*(x[3]+1)*x[7]*dGdx[3] + k3*(x[4]+1)*x[8]*dGdx[4] - 1/tau3*(x[5]*dGdx[5] + x[6]*dGdx[6] + x[7]*dGdx[7] + x[8]*dGdx[8]) + theta01*(x[6]-x[5])*dGdx[5] + theta10*(x[5]-x[6])*dGdx[6] + theta12*(x[7]-x[6])*dGdx[6] + theta21*(x[6]-x[7])*dGdx[7] + theta13*(x[8]-x[6])*dGdx[6] + theta31*(x[6]-x[8])*dGdx[8] + eta11*(x[9]-x[6])*dGdx[6] + eta12*(x[10]-x[6])*dGdx[6] + eta21*(x[11]-x[7])*dGdx[7] + eta22*(x[12]-x[7])*dGdx[7] + eta31*(x[13]-x[8])*dGdx[8] + eta32*(x[14]-x[8])*dGdx[8] + gamma11*(x[6]-x[9])*dGdx[9] + gamma12*(x[6]-x[10])*dGdx[10] + gamma21*(x[7]-x[11])*dGdx[11] + gamma22*(x[7]-x[12])*dGdx[12] + gamma31*(x[8]-x[13])*dGdx[13] + gamma32*(x[8]-x[14])*dGdx[14]
+
+dGdt = dGdt.subs([(dGdx[i], diff(G, x)[i]) for i in range(0,15)])
+dGdt = dGdt.subs([(E[j],E_num[j]) for j in range(0,15)])
+dGdt = dGdt.subs(subs1)
+    
+XX = Matrix(symbols('X0:120'))
+XXX = np.zeros([120,120])
+
+denom = 1e7
+k = 0
+for i_ in range(0,15):
+    for j_ in range(i_,15):
+        XX[k] = ((dGdt/(x[i_]*x[j_])).subs([(x[i_],denom, x[j_],denom)])).subs([(x[j],1/denom) for j in range(1,15)])
+        C = collect(XX[0], G_2, evaluate=False)[G_2[i,j]]
+        for i in range(0,15):
+            for j in range(i,15):
+                if(abs(C) > 1e-10):
+                    XXX[i,j] += C
+        k+=1
+        
+# O2 = linsolve([X11], G11)
 
 
+    
+
+
+
+# #======== CONSTRUCTING A MATRIX ==========
+# M1 = Matrix(np.zeros([15,15]))
+# for i in range(0,15):
+#     for j in range(0,15):
+#         C = collect(X[i], E[j], evaluate=False)
+#         M1[i,j] = C[E[j]] if E[j] in C else 0
+# B1 = -X.subs([(E[j],0) for j in range(0, 15)])
