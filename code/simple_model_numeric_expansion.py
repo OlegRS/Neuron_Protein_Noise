@@ -215,8 +215,8 @@ for i in range(0,15):
 #======== CONSTRUCTING A MATRIX ==========
 M1 = Matrix(np.zeros([15,15]))
 for i in range(0,15):
+    C = collect(X[i], E, evaluate=False)
     for j in range(0,15):
-        C = collect(X[i], E[j], evaluate=False)
         M1[i,j] = C[E[j]] if E[j] in C else 0
 B1 = -X.subs([(E[j],0) for j in range(0, 15)])
 
@@ -241,25 +241,47 @@ dGdt = dGdt.subs([(E[j],E_num[j]) for j in range(0,15)])
 dGdt = dGdt.subs(subs1)
     
 XX = Matrix(symbols('X0:120'))
-XXX = np.zeros([120,120])
+XXX = Matrix(np.zeros([120,120]))
 
-denom = 1e7
+# denom = 1e10
+# k = 0
+# for i_ in range(0,15):
+#     for j_ in range(i_,15):
+#         XX[k] = ((dGdt/(x[i_]*x[j_])).subs([(x[i_],denom), (x[j_],denom)])).subs([(x[j],1) for j in range(0,15)])
+#         C = collect(XX[k], G_2, evaluate=False)
+#         l = 0
+#         for i in range(0,15):
+#             for j in range(i,15):
+#                 # print('abs(C[G_2[i,j]]) = ', abs(C[G_2[i,j]]))
+#                 if(abs(C[G_2[i,j]]) > .00000001):
+#                     print('k=', k, 'l=', l, 'i=',i, ' j=',j)
+#                     XXX[k,j] += C[G_2[i,j]]
+#                 l+=1
+#         k+=1
+
 k = 0
 for i_ in range(0,15):
     for j_ in range(i_,15):
-        XX[k] = ((dGdt/(x[i_]*x[j_])).subs([(x[i_],denom, x[j_],denom)])).subs([(x[j],1/denom) for j in range(1,15)])
-        C = collect(XX[0], G_2, evaluate=False)[G_2[i,j]]
+        XX[k] = collect(expand(dGdt), x[i_]*x[j_], evaluate=False)[x[i_]*x[j_]].subs([(x[j],0) for j in range(0,15)])
+        C = collect(XX[k], G_2, evaluate=False)
+        l = 0
+        print('k = ', k)
         for i in range(0,15):
             for j in range(i,15):
-                if(abs(C) > 1e-10):
-                    XXX[i,j] += C
+                XXX[k,l] = C[G_2[i,j]] if G_2[i,j] in C else 0
+                l+=1
         k+=1
-        
+
+for i_ in range(0,15):
+    for j_ in range(i_,15):
+        BB[k] = collect(XX[k], G_2, evaluate=False)[1]
+        k+=1
+
+XXX_ = np.array(XXX_, dtype=float)
+XXX_inv = np.linalg.inv(XXX_)
+
+
 # O2 = linsolve([X11], G11)
-
-
-    
-
 
 
 # #======== CONSTRUCTING A MATRIX ==========
