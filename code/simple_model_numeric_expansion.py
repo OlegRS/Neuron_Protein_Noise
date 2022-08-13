@@ -227,6 +227,7 @@ M1_num, B1_num = M1.subs(subs1), B1.subs(subs1)
 
 E_num = M1_num.inv()*B1_num
 
+print('Expectations:')
 pretty_print(E_num)
 
 ################ SECOND ORDER ###################
@@ -272,13 +273,72 @@ for i_ in range(0,15):
                 l+=1
         k+=1
 
+k = 0
+RHS = Matrix(symbols('X0:120'))
+conv = np.zeros([15, 15], dtype=int)
 for i_ in range(0,15):
     for j_ in range(i_,15):
-        BB[k] = collect(XX[k], G_2, evaluate=False)[1]
-        k+=1
+        RHS[k] = -XX[k].subs([(x[j],0) for j in range(0,15)]
+                           +[(GG,0)]
+                           +[(GM[j],0) for j in range(0,len(GM))]
+                           +[(GP[j],0) for j in range(0,len(GP))]
+                           +[(MM[j],0) for j in range(0,len(MM))]
+                           +[(MP[j],0) for j in range(0,len(MP))]
+                           +[(PP[j],0) for j in range(0,len(PP))]
+                           )
+        conv[i_,j_]=k
+        conv[j_,i_]=k        
+        k+=1        
+        
+RHS = np.array(RHS, dtype=float)
+XXX = np.array(XXX, dtype=float)
+print('Inverting the matrix...')
+XXX_inv = np.linalg.inv(XXX)
+O2 = np.dot(XXX_inv, RHS)
 
-XXX_ = np.array(XXX_, dtype=float)
-XXX_inv = np.linalg.inv(XXX_)
+RMSs = np.zeros(15)
+# print('Second order:\n', O2)
+
+print('RMSs:\n')
+E_num = np.array(E_num)
+for i in range(0,15):
+    RMSs[i] = sqrt(O2[conv[i,i]] - (E_num[i] - 1)*E_num[i])
+
+SN_ratios = [sqrt(O2[conv[i,i]] - (E_num[i] - 1)*E_num[i])/E_num[i]*100 for i in range(0,15)] # Signal to noise ratios %
+
+print('Signal to Noise ratios:', SN_ratios)
+
+
+
+
+
+
+
+# for i_ in range(0,15):
+#     for j_ in range(i_,15):
+#         BB[k] = collect(XX[k], G_2, evaluate=False)[1]
+#         k+=1
+
+# k = 0
+# RHS = Matrix(symbols('X0:120'))
+# for i_ in range(0,15):
+#     for j_ in range(i_,15):
+#         RHS[k] = -XX[k].subs([(x[j],0) for j in range(0,15)]
+#                            +[(GG,0)]
+#                            +[(GM[j],0) for j in range(0,len(GM))]
+#                            +[(GP[j],0) for j in range(0,len(GP))]
+#                            +[(MM[j],0) for j in range(0,len(MM))]
+#                            +[(MP[j],0) for j in range(0,len(MP))]
+#                            +[(PP[j],0) for j in range(0,len(PP))]
+#                            )
+#         k+=1
+
+# RHS = np.array(RHS, dtype=float)
+# XXX_ = np.array(XXX_, dtype=float)
+# print('Inverting the matrix...')
+# XXX_inv = np.linalg.inv(XXX_)
+
+# print('Second order', np.dot(XXX_inv, RHS))
 
 
 # O2 = linsolve([X11], G11)
