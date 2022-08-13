@@ -572,6 +572,78 @@ Second order:
 
 \textcolor{red}{To be continued...}
 
+\subsection{Simple neuron model}
+In Table \ref{table:expectations_errors} are the expectations, fluctuations and noise to signal ratios.
+%% \begin{center}
+%% \begin{tabular}{ |c|c| } 
+%%   \hline
+%%   $\langle n\rangle$ & $1$\\                 \hline
+%%   $\langle m_0\rangle$  & $1.79590072201514$\\  \hline
+%%   $\langle m_1\rangle$  & $1.2981274878913$S\\   \hline
+%%   $\langle m_2\rangle$  & $0.952985895047784$\\ \hline
+%%   $\langle m_3\rangle$  & $0.952985895046793$\\ \hline
+%%   $\langle l_0\rangle$  & $28966.7621095089$\\  \hline
+%%   $\langle l_1\rangle$  & $28522.7399412071$\\  \hline
+%%   $\langle l_2\rangle$  & $14643.6787267151$\\  \hline
+%%   $\langle l_3\rangle$  & $14643.6787267138$\\  \hline
+%%   $\langle q_{11}\rangle$  & $2852.27399412071$\\  \hline
+%%   $\langle q_{12}\rangle$  & $2852.27399412071$\\  \hline
+%%   $\langle q_{21}\rangle$  & $1464.36787267151$\\  \hline
+%%   $\langle q_{22}\rangle$  & $1464.36787267151$\\  \hline
+%%   $\langle q_{31}\rangle$  & $1464.36787267138$\\  \hline
+%%   $\langle q_{32}\rangle$  & $1464.36787267138$\\
+%%  \hline
+%% \end{tabular}
+%% \end{center}
+
+\begin{table}
+  \begin{tabular}{ |c|c|c|c| }
+    \hline
+    Variable &Expectation & RMS    & RMS/Expectation\%\\  \hline
+    $n$      & $1$                 & $0$ & $0$ \\                 \hline
+    $m_0$    & $1.79590072201514$  & $1.3401122038414643$ & $74.6206172431264$\\  \hline
+    $m_1$    & $1.2981274878913$   & $1.139353975003979$ & $87.7690354477251$\\   \hline
+    $m_2$    & $0.952985895047784$ & $0.9762099620737184$ & $102.436979093460$\\ \hline
+    $m_3$    & $0.952985895046793$ & $0.9762099634821508$ & $102.436979241358$\\ \hline
+    $l_0$    & $28966.7621095089$  & $3600.673144730757$ & $12.4303611536505$\\  \hline
+    $l_1$    & $28522.7399412071$  & $3640.7733140368373$ & $12.7644585391917$\\  \hline
+    $l_2$    & $14643.6787267151$  & $2356.5543166178854$ & $16.0926387460190$\\  \hline
+    $l_3$    & $14643.6787267138$  & $2356.5543207336664$ & $16.0926387741265$\\  \hline
+    $q_{11}$ & $2852.27399412071$  & $367.58407810640534$ & $12.8874041857162$\\  \hline
+    $q_{12}$ & $2852.27399412071$  & $367.5840781064142$ & $12.8874041857165$\\  \hline
+    $q_{21}$ & $1464.36787267151$  & $238.43365659083406$ & $16.2823605352560$\\  \hline
+    $q_{22}$ & $1464.36787267151$  & $238.433656590837$ & $16.2823605352562$ \\  \hline
+    $q_{31}$ & $1464.36787267138$  & $238.433656997613$ & $16.2823605630359$ \\  \hline
+    $q_{32}$ & $1464.36787267138$ & $238.43365699761108$ & $16.2823605630358$ \\
+    \hline
+  \end{tabular}
+  \caption{\label{table:expectations_errors}Expectations, noise and noise to signal ratios.}
+\end{table}
+
+%% \begin{center}
+%%   \begin{tabular}{ |c|c| }
+%%     \hline
+%%     Variable & RMS$(.)/\langle .\rangle\cdot100\%$\\  \hline
+%%     $n$     & $0$\\                 \hline
+%%     $m_0$   & $74.6206172431264$\\  \hline
+%%     $m_1$   & $87.7690354477251$\\   \hline
+%%     $m_2$   & $102.436979093460$\\ \hline
+%%     $m_3$   & $102.436979241358$\\ \hline
+%%     $l_0$   & $12.4303611536505$\\  \hline
+%%     $l_1$   & $12.7644585391917$\\  \hline
+%%     $l_2$   & $16.0926387460190$\\  \hline
+%%     $l_3$   & $16.0926387741265$\\  \hline
+%%     $q_{11}$ & $12.8874041857162$\\  \hline
+%%     $q_{12}$ & $12.8874041857165$\\  \hline
+%%     $q_{21}$ & $16.2823605352560$\\  \hline
+%%     $q_{22}$ & $16.2823605352562$\\  \hline
+%%     $q_{31}$ & $16.2823605630359$\\  \hline
+%%     $q_{32}$ & $16.2823605630358$\\
+%%     \hline
+%%   \end{tabular}
+%% \end{center}
+
+
 \subsection{General rules}
 In this section we give the general rules for constructing a {\it master equation} from the neuron's compartments diagram analogous to the one in Figure \ref{fig:simplest_neuron}.
 \subsubsection{Soma}

@@ -1,20 +1,34 @@
-RHS = np.array(RHS, dtype=float)
-XXX = np.array(XXX, dtype=float)
-print('Inverting the matrix...')
-XXX_inv = np.linalg.inv(XXX)
-O2 = np.dot(XXX_inv, RHS)
+PC = np.zeros([15,15]) #Pearson correlation coefficient
+for i in range(0, 15):
+    PC[i,i] = 1
+    for j in range(i+1, 15):
+        PC[i,j] = (O2[conv[i,i]] - E_num[i]*E_num[j])/(RMSs[i]*RMSs[j])
+        PC[j,i] = PC[i,j]
+print('Pearson correlation matrix:', PC)
 
-RMSs = np.zeros(15)
-# print('Second order:\n', O2)
 
-print('RMSs:\n')
-E_num = np.array(E_num)
-for i in range(0,15):
-    RMSs[i] = sqrt(O2[conv[i,i]] - (E_num[i] - 1)*E_num[i])
+# PC = np.zeros([15,15]) #Pearson correlation coefficient
+# for i in range(0, 15):
+#     for j in range(i+1, 15):
+#         PC[i,j] = (O2[conv[i,j]] - E[i]*E[j])/(RMSs[i]*RMSs[j])
 
-SN_ratios = [sqrt(O2[conv[i,i]] - (E_num[i] - 1)*E_num[i])/E_num[i]*100 for i in range(0,15)] # Signal to noise ratios %
+# RHS = np.array(RHS, dtype=float)
+# XXX = np.array(XXX, dtype=float)
+# print('Inverting the matrix...')
+# XXX_inv = np.linalg.inv(XXX)
+# O2 = np.dot(XXX_inv, RHS)
 
-print('Signal to Noise ratios:', SN_ratios)
+# RMSs = np.zeros(15)
+# # print('Second order:\n', O2)
+
+# print('RMSs:\n')
+# E_num = np.array(E_num)
+# for i in range(0,15):
+#     RMSs[i] = sqrt(O2[conv[i,i]] - (E_num[i] - 1)*E_num[i])
+
+# SN_ratios = [sqrt(O2[conv[i,i]] - (E_num[i] - 1)*E_num[i])/E_num[i]*100 for i in range(0,15)] # Signal to noise ratios %
+
+# print('Signal to Noise ratios %:', SN_ratios)
 
 
 ############################################################################################

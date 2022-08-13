@@ -9,8 +9,6 @@ tau1 = 1/(l1p+l1m)
 tau2 = symbols('tau2')  # mRNA lifetime
 tau3 = symbols('tau3')  # Protein lifetime
 
-Pon = l1p/(l1p+l1m)
-
 theta01 = symbols('theta01') # Rate of protein hopping from compartment 0 to compartment 1
 theta10 = symbols('theta10') # Rate of protein hopping from compartment 1 to compartment 0
 theta12 = symbols('theta12') # Rate of protein hopping from compartment 1 to compartment 2
@@ -75,9 +73,9 @@ l1m_ = 0 # This results to a single gene which is always active
 l2_ = alpha_1
 theta01_ = kf_p + d_p
 theta10_ = kb_p + d_p
-theta12_ = kf_p + d_p
+theta12_ = (kf_p + d_p)/2 # Splitting the flux at the dendrite branching point
 theta21_ = kb_p + d_p
-theta13_ = kf_p + d_p
+theta13_ = (kf_p + d_p)/2 # Splitting the flux at the dendrite  branching point
 theta31_ = kb_p + d_p
 
 eta11_ = alpha_3
@@ -101,19 +99,19 @@ k3_ = alpha_2
 
 nu01_ = d_m + kf_m
 nu10_ = d_m + kb_m
-nu12_ = d_m + kf_m
+nu12_ = (d_m + kf_m)/2 # Splitting the flux at the dendrite  branching point
 nu21_ = d_m + kb_m
-nu13_ = d_m + kf_m
+nu13_ = (d_m + kf_m)/2 # Splitting the flux at the dendrite  branching point
 nu31_ = d_m + kb_m
 
 tau1_ = 1/(l1p_+l1m_)
 tau2_ = 1/beta_1
 tau3_ = 1/beta_2
 
-Pon_ = l1p_/(l1p_+l1m_)
-
 x = Matrix(symbols('x0:15'))
 
+############# Creating the Hessian G_2 ##############
+# Creating semantically distinct groups of 2nd order coefficients
 E = Matrix(symbols('E0:15'))   # Expectations (1st order)
 GG  = symbols('GG')    # Gene-Gene (2nd order)
 GM = symbols('GM0:4')  # Gene-mRNA correlations (2nd order)
@@ -122,8 +120,7 @@ MM = symbols('MM0:10') # mRNA-mRNA
 MP = symbols('MP0:40') # mRNA-Protein
 PP = symbols('PP0:55') # Protein-Protein
 
-# Now we fill G_2 (2nd order) matrix
-
+# Filling the Hessian with the above coefficients
 G_2 = Matrix(np.zeros((15,15)))
 
 G_2[0,0] = GG
@@ -167,7 +164,6 @@ G = 1 + (transpose(E)*x + 1/2*transpose(x)*G_2*x)[0,0]
 
 ############## DEFINING THE PDE ################
 dGdx = Matrix(symbols('dGdx0:15'))
-# G_ = symbols('G')
 
 dGdt = l1p*(x[0]*N*G - (x[0]+1)*x[0]*dGdx[0]) - l1m*x[0]*dGdx[0] + l2*x[1]*(x[0]+1)*dGdx[0] - 1/tau2*(x[1]*dGdx[1]+x[2]*dGdx[2]+x[3]*dGdx[3]+x[4]*dGdx[4]) + nu01*(x[2]-x[1])*dGdx[1] + nu10*(x[1]-x[2])*dGdx[2] + nu12*(x[3]-x[2])*dGdx[2] + nu21*(x[2]-x[3])*dGdx[3] + nu13*(x[4]-x[2])*dGdx[2] + nu31*(x[2]-x[4])*dGdx[4] + k0*(x[1]+1)*x[5]*dGdx[1] + k1*(x[2]+1)*x[6]*dGdx[2] + k2*(x[3]+1)*x[7]*dGdx[3] + k3*(x[4]+1)*x[8]*dGdx[4] - 1/tau3*(x[5]*dGdx[5] + x[6]*dGdx[6] + x[7]*dGdx[7] + x[8]*dGdx[8]) + theta01*(x[6]-x[5])*dGdx[5] + theta10*(x[5]-x[6])*dGdx[6] + theta12*(x[7]-x[6])*dGdx[6] + theta21*(x[6]-x[7])*dGdx[7] + theta13*(x[8]-x[6])*dGdx[6] + theta31*(x[6]-x[8])*dGdx[8] + eta11*(x[9]-x[6])*dGdx[6] + eta12*(x[10]-x[6])*dGdx[6] + eta21*(x[11]-x[7])*dGdx[7] + eta22*(x[12]-x[7])*dGdx[7] + eta31*(x[13]-x[8])*dGdx[8] + eta32*(x[14]-x[8])*dGdx[8] + gamma11*(x[6]-x[9])*dGdx[9] + gamma12*(x[6]-x[10])*dGdx[10] + gamma21*(x[7]-x[11])*dGdx[11] + gamma22*(x[7]-x[12])*dGdx[12] + gamma31*(x[8]-x[13])*dGdx[13] + gamma32*(x[8]-x[14])*dGdx[14]
 
@@ -192,17 +188,19 @@ dGdt = l1p*(x[0]*N*G - (x[0]+1)*x[0]*dGdx[0]) - l1m*x[0]*dGdx[0] + l2*x[1]*(x[0]
 
 dGdt = collect(dGdt, dGdx)
 
+
+############# Substituting the expansion to the PDE ###############
 dGdt = dGdt.subs([(dGdx[i], diff(G, x)[i]) for i in range(0,15)])
 
 # print('dGdt=')
 # pretty_print(dGdt)
 
 
-################ FIRST ORDER ###################
+################ Computing the gradient of G ###################
 print("============ SOLVING FIRST ORDER... ===========")
 G = 1 + (transpose(E)*x)[0,0] # Neglexting second order for now
 
-# Setting the PDE
+# Setting the PDE with the 1st order expansion
 dGdt = l1p*(x[0]*N*G - (x[0]+1)*x[0]*dGdx[0]) - l1m*x[0]*dGdx[0] + l2*x[1]*(x[0]+1)*dGdx[0] - 1/tau2*(x[1]*dGdx[1]+x[2]*dGdx[2]+x[3]*dGdx[3]+x[4]*dGdx[4]) + nu01*(x[2]-x[1])*dGdx[1] + nu10*(x[1]-x[2])*dGdx[2] + nu12*(x[3]-x[2])*dGdx[2] + nu21*(x[2]-x[3])*dGdx[3] + nu13*(x[4]-x[2])*dGdx[2] + nu31*(x[2]-x[4])*dGdx[4] + k0*(x[1]+1)*x[5]*dGdx[1] + k1*(x[2]+1)*x[6]*dGdx[2] + k2*(x[3]+1)*x[7]*dGdx[3] + k3*(x[4]+1)*x[8]*dGdx[4] - 1/tau3*(x[5]*dGdx[5] + x[6]*dGdx[6] + x[7]*dGdx[7] + x[8]*dGdx[8]) + theta01*(x[6]-x[5])*dGdx[5] + theta10*(x[5]-x[6])*dGdx[6] + theta12*(x[7]-x[6])*dGdx[6] + theta21*(x[6]-x[7])*dGdx[7] + theta13*(x[8]-x[6])*dGdx[6] + theta31*(x[6]-x[8])*dGdx[8] + eta11*(x[9]-x[6])*dGdx[6] + eta12*(x[10]-x[6])*dGdx[6] + eta21*(x[11]-x[7])*dGdx[7] + eta22*(x[12]-x[7])*dGdx[7] + eta31*(x[13]-x[8])*dGdx[8] + eta32*(x[14]-x[8])*dGdx[8] + gamma11*(x[6]-x[9])*dGdx[9] + gamma12*(x[6]-x[10])*dGdx[10] + gamma21*(x[7]-x[11])*dGdx[11] + gamma22*(x[7]-x[12])*dGdx[12] + gamma31*(x[8]-x[13])*dGdx[13] + gamma32*(x[8]-x[14])*dGdx[14]
 
 dGdt = dGdt.subs([(dGdx[i], diff(G, x)[i]) for i in range(0,15)])
@@ -212,142 +210,90 @@ X = Matrix(symbols('X0:15'))
 for i in range(0,15):
     X[i] = (collect(expand(dGdt), x[i], evaluate=False)[x[i]]).subs([(x[j],0) for j in range(0, 15)])
 
-#======== CONSTRUCTING A MATRIX ==========
+#======== Constructing the matrix of 1st order eqns ==========
 M1 = Matrix(np.zeros([15,15]))
 for i in range(0,15):
     C = collect(X[i], E, evaluate=False)
     for j in range(0,15):
         M1[i,j] = C[E[j]] if E[j] in C else 0
-B1 = -X.subs([(E[j],0) for j in range(0, 15)])
+RHS1 = -X.subs([(E[j],0) for j in range(0, 15)])
 
 #======== NUMERICS ==========
 subs1 = [(N,N_), (l1p,l1p_), (l1m,l1m_), (l2,l2_),(theta01,theta01_), (theta10,theta10_), (theta12,theta12_), (theta21,theta21_), (theta13,theta13_), (theta31,theta31_), (eta11,eta11_), (eta12,eta12_), (eta21,eta21_), (eta22,eta22_), (eta31,eta31_), (eta32,eta32_),(gamma11,gamma11_), (gamma12,gamma12_), (gamma21,gamma21_), (gamma22,gamma22_), (gamma31,gamma31_), (gamma32,gamma32_),(k0,k0_), (k1,k1_), (k2,k2_), (k3,k3_),(nu01,nu01_), (nu10,nu10_), (nu12,nu12_), (nu21,nu21_), (nu13,nu13_), (nu31,nu31_),(tau1,tau1_), (tau2,tau2_), (tau3,tau3_)]
 
-M1_num, B1_num = M1.subs(subs1), B1.subs(subs1)
+M1_num, RHS1_num = M1.subs(subs1), RHS1.subs(subs1)
 
-E_num = M1_num.inv()*B1_num
+E_num = M1_num.inv()*RHS1_num
 
 print('Expectations:')
 pretty_print(E_num)
 
-################ SECOND ORDER ###################
+################ Computing the Hessian ###################
 print("============ SOLVING SECOND ORDER... ===========")
 G = 1 + (transpose(E)*x + 1/2*transpose(x)*G_2*x)[0,0]
 
-# Setting the PDE
+# Setting the PDE with the 2nd order expansion
 dGdt = l1p*(x[0]*N*G - (x[0]+1)*x[0]*dGdx[0]) - l1m*x[0]*dGdx[0] + l2*x[1]*(x[0]+1)*dGdx[0] - 1/tau2*(x[1]*dGdx[1]+x[2]*dGdx[2]+x[3]*dGdx[3]+x[4]*dGdx[4]) + nu01*(x[2]-x[1])*dGdx[1] + nu10*(x[1]-x[2])*dGdx[2] + nu12*(x[3]-x[2])*dGdx[2] + nu21*(x[2]-x[3])*dGdx[3] + nu13*(x[4]-x[2])*dGdx[2] + nu31*(x[2]-x[4])*dGdx[4] + k0*(x[1]+1)*x[5]*dGdx[1] + k1*(x[2]+1)*x[6]*dGdx[2] + k2*(x[3]+1)*x[7]*dGdx[3] + k3*(x[4]+1)*x[8]*dGdx[4] - 1/tau3*(x[5]*dGdx[5] + x[6]*dGdx[6] + x[7]*dGdx[7] + x[8]*dGdx[8]) + theta01*(x[6]-x[5])*dGdx[5] + theta10*(x[5]-x[6])*dGdx[6] + theta12*(x[7]-x[6])*dGdx[6] + theta21*(x[6]-x[7])*dGdx[7] + theta13*(x[8]-x[6])*dGdx[6] + theta31*(x[6]-x[8])*dGdx[8] + eta11*(x[9]-x[6])*dGdx[6] + eta12*(x[10]-x[6])*dGdx[6] + eta21*(x[11]-x[7])*dGdx[7] + eta22*(x[12]-x[7])*dGdx[7] + eta31*(x[13]-x[8])*dGdx[8] + eta32*(x[14]-x[8])*dGdx[8] + gamma11*(x[6]-x[9])*dGdx[9] + gamma12*(x[6]-x[10])*dGdx[10] + gamma21*(x[7]-x[11])*dGdx[11] + gamma22*(x[7]-x[12])*dGdx[12] + gamma31*(x[8]-x[13])*dGdx[13] + gamma32*(x[8]-x[14])*dGdx[14]
 
 dGdt = dGdt.subs([(dGdx[i], diff(G, x)[i]) for i in range(0,15)])
 dGdt = dGdt.subs([(E[j],E_num[j]) for j in range(0,15)])
 dGdt = dGdt.subs(subs1)
     
-XX = Matrix(symbols('X0:120'))
-XXX = Matrix(np.zeros([120,120]))
-
-# denom = 1e10
-# k = 0
-# for i_ in range(0,15):
-#     for j_ in range(i_,15):
-#         XX[k] = ((dGdt/(x[i_]*x[j_])).subs([(x[i_],denom), (x[j_],denom)])).subs([(x[j],1) for j in range(0,15)])
-#         C = collect(XX[k], G_2, evaluate=False)
-#         l = 0
-#         for i in range(0,15):
-#             for j in range(i,15):
-#                 # print('abs(C[G_2[i,j]]) = ', abs(C[G_2[i,j]]))
-#                 if(abs(C[G_2[i,j]]) > .00000001):
-#                     print('k=', k, 'l=', l, 'i=',i, ' j=',j)
-#                     XXX[k,j] += C[G_2[i,j]]
-#                 l+=1
-#         k+=1
+#======== Constructing the matrix of 1st order eqns ==========
+M2 = Matrix(np.zeros([120,120]))
+Eqns = Matrix(symbols('X0:120')) # Array for equations
 
 k = 0
 for i_ in range(0,15):
     for j_ in range(i_,15):
-        XX[k] = collect(expand(dGdt), x[i_]*x[j_], evaluate=False)[x[i_]*x[j_]].subs([(x[j],0) for j in range(0,15)])
-        C = collect(XX[k], G_2, evaluate=False)
+        Eqns[k] = collect(expand(dGdt), x[i_]*x[j_], evaluate=False)[x[i_]*x[j_]].subs([(x[j],0) for j in range(0,15)])
+        C = collect(Eqns[k], G_2, evaluate=False)
         l = 0
-        print('k = ', k)
+        print('k = ', k, 'out of 120')
         for i in range(0,15):
             for j in range(i,15):
-                XXX[k,l] = C[G_2[i,j]] if G_2[i,j] in C else 0
+                M2[k,l] = C[G_2[i,j]] if G_2[i,j] in C else 0
                 l+=1
         k+=1
 
 k = 0
-RHS = Matrix(symbols('X0:120'))
-conv = np.zeros([15, 15], dtype=int)
+RHS2 = Matrix(symbols('X0:120'))
+conv = np.zeros([15, 15], dtype=int) # Conversion from double to single index
 for i_ in range(0,15):
     for j_ in range(i_,15):
-        RHS[k] = -XX[k].subs([(x[j],0) for j in range(0,15)]
-                           +[(GG,0)]
-                           +[(GM[j],0) for j in range(0,len(GM))]
-                           +[(GP[j],0) for j in range(0,len(GP))]
-                           +[(MM[j],0) for j in range(0,len(MM))]
-                           +[(MP[j],0) for j in range(0,len(MP))]
-                           +[(PP[j],0) for j in range(0,len(PP))]
-                           )
+        RHS2[k] = -Eqns[k].subs([(x[j],0) for j in range(0,15)]
+                                +[(GG,0)]
+                                +[(GM[j],0) for j in range(0,len(GM))]
+                                +[(GP[j],0) for j in range(0,len(GP))]
+                                +[(MM[j],0) for j in range(0,len(MM))]
+                                +[(MP[j],0) for j in range(0,len(MP))]
+                                +[(PP[j],0) for j in range(0,len(PP))]
+                                )
         conv[i_,j_]=k
         conv[j_,i_]=k        
         k+=1        
         
-RHS = np.array(RHS, dtype=float)
-XXX = np.array(XXX, dtype=float)
+RHS2 = np.array(RHS2, dtype=float)
+M2 = np.array(M2, dtype=float)
 print('Inverting the matrix...')
-XXX_inv = np.linalg.inv(XXX)
-O2 = np.dot(XXX_inv, RHS)
+M2_inv = np.linalg.inv(M2)
+O2 = np.dot(M2_inv, RHS2)
 
-RMSs = np.zeros(15)
+RMS = np.zeros(15)
 # print('Second order:\n', O2)
 
 print('RMSs:\n')
 E_num = np.array(E_num)
 for i in range(0,15):
-    RMSs[i] = sqrt(O2[conv[i,i]] - (E_num[i] - 1)*E_num[i])
+    RMS[i] = sqrt(O2[conv[i,i]] - (E_num[i] - 1)*E_num[i])
 
-SN_ratios = [sqrt(O2[conv[i,i]] - (E_num[i] - 1)*E_num[i])/E_num[i]*100 for i in range(0,15)] # Signal to noise ratios %
+NS_ratios = [sqrt(O2[conv[i,i]] - (E_num[i] - 1)*E_num[i])/E_num[i]*100 for i in range(0,15)] # Signal to noise ratios %
+print('Noise to Signal ratios:', NS_ratios)
 
-print('Signal to Noise ratios:', SN_ratios)
-
-
-
-
-
-
-
-# for i_ in range(0,15):
-#     for j_ in range(i_,15):
-#         BB[k] = collect(XX[k], G_2, evaluate=False)[1]
-#         k+=1
-
-# k = 0
-# RHS = Matrix(symbols('X0:120'))
-# for i_ in range(0,15):
-#     for j_ in range(i_,15):
-#         RHS[k] = -XX[k].subs([(x[j],0) for j in range(0,15)]
-#                            +[(GG,0)]
-#                            +[(GM[j],0) for j in range(0,len(GM))]
-#                            +[(GP[j],0) for j in range(0,len(GP))]
-#                            +[(MM[j],0) for j in range(0,len(MM))]
-#                            +[(MP[j],0) for j in range(0,len(MP))]
-#                            +[(PP[j],0) for j in range(0,len(PP))]
-#                            )
-#         k+=1
-
-# RHS = np.array(RHS, dtype=float)
-# XXX_ = np.array(XXX_, dtype=float)
-# print('Inverting the matrix...')
-# XXX_inv = np.linalg.inv(XXX_)
-
-# print('Second order', np.dot(XXX_inv, RHS))
-
-
-# O2 = linsolve([X11], G11)
-
-
-# #======== CONSTRUCTING A MATRIX ==========
-# M1 = Matrix(np.zeros([15,15]))
-# for i in range(0,15):
-#     for j in range(0,15):
-#         C = collect(X[i], E[j], evaluate=False)
-#         M1[i,j] = C[E[j]] if E[j] in C else 0
-# B1 = -X.subs([(E[j],0) for j in range(0, 15)])
+PC = np.zeros([15,15]) #Pearson correlation coefficient
+for i in range(0, 15):
+    PC[i,i] = 1
+    for j in range(i+1, 15):
+        PC[i,j] = (O2[conv[i,i]] - E_num[i]*E_num[j])/(RMS[i]*RMS[j])
+        PC[j,i] = PC[i,j]
+print('Pearson correlation matrix:', PC)
