@@ -167,24 +167,24 @@ dGdx = Matrix(symbols('dGdx0:15'))
 
 dGdt = l1p*(x[0]*N*G - (x[0]+1)*x[0]*dGdx[0]) - l1m*x[0]*dGdx[0] + l2*x[1]*(x[0]+1)*dGdx[0] - 1/tau2*(x[1]*dGdx[1]+x[2]*dGdx[2]+x[3]*dGdx[3]+x[4]*dGdx[4]) + nu01*(x[2]-x[1])*dGdx[1] + nu10*(x[1]-x[2])*dGdx[2] + nu12*(x[3]-x[2])*dGdx[2] + nu21*(x[2]-x[3])*dGdx[3] + nu13*(x[4]-x[2])*dGdx[2] + nu31*(x[2]-x[4])*dGdx[4] + k0*(x[1]+1)*x[5]*dGdx[1] + k1*(x[2]+1)*x[6]*dGdx[2] + k2*(x[3]+1)*x[7]*dGdx[3] + k3*(x[4]+1)*x[8]*dGdx[4] - 1/tau3*(x[5]*dGdx[5] + x[6]*dGdx[6] + x[7]*dGdx[7] + x[8]*dGdx[8]) + theta01*(x[6]-x[5])*dGdx[5] + theta10*(x[5]-x[6])*dGdx[6] + theta12*(x[7]-x[6])*dGdx[6] + theta21*(x[6]-x[7])*dGdx[7] + theta13*(x[8]-x[6])*dGdx[6] + theta31*(x[6]-x[8])*dGdx[8] + eta11*(x[9]-x[6])*dGdx[6] + eta12*(x[10]-x[6])*dGdx[6] + eta21*(x[11]-x[7])*dGdx[7] + eta22*(x[12]-x[7])*dGdx[7] + eta31*(x[13]-x[8])*dGdx[8] + eta32*(x[14]-x[8])*dGdx[8] + gamma11*(x[6]-x[9])*dGdx[9] + gamma12*(x[6]-x[10])*dGdx[10] + gamma21*(x[7]-x[11])*dGdx[11] + gamma22*(x[7]-x[12])*dGdx[12] + gamma31*(x[8]-x[13])*dGdx[13] + gamma32*(x[8]-x[14])*dGdx[14]
 
-# A = list(symbols('A0:15')) # PDE coefficients
-# A[0] = -collect(dGdt, dGdx[0], evaluate=False)[dGdx[0]]
-# A[1] = -collect(dGdt, dGdx[1], evaluate=False)[dGdx[1]]
-# A[2] = -collect(dGdt, dGdx[2], evaluate=False)[dGdx[2]]
-# A[3] = -collect(dGdt, dGdx[3], evaluate=False)[dGdx[3]]
-# A[4] = -collect(dGdt, dGdx[4], evaluate=False)[dGdx[4]]
-# A[5] = -collect(dGdt, dGdx[5], evaluate=False)[dGdx[5]]
-# A[6] = -collect(dGdt, dGdx[6], evaluate=False)[dGdx[6]]
-# A[7] = -collect(dGdt, dGdx[7], evaluate=False)[dGdx[7]]
-# A[8] = -collect(dGdt, dGdx[8], evaluate=False)[dGdx[8]]
-# A[9] = -collect(dGdt, dGdx[9], evaluate=False)[dGdx[9]]
-# A[10] = -collect(dGdt, dGdx[10], evaluate=False)[dGdx[10]]
-# A[11] = -collect(dGdt, dGdx[11], evaluate=False)[dGdx[11]]
-# A[12] = -collect(dGdt, dGdx[12], evaluate=False)[dGdx[12]]
-# A[13] = -collect(dGdt, dGdx[13], evaluate=False)[dGdx[13]]
-# A[14] = -collect(dGdt, dGdx[14], evaluate=False)[dGdx[14]]
+A = list(symbols('A0:15')) # PDE coefficients
+A[0] = -collect(expand(dGdt), dGdx[0], evaluate=False)[dGdx[0]]
+A[1] = -collect(expand(dGdt), dGdx[1], evaluate=False)[dGdx[1]]
+A[2] = -collect(expand(dGdt), dGdx[2], evaluate=False)[dGdx[2]]
+A[3] = -collect(expand(dGdt), dGdx[3], evaluate=False)[dGdx[3]]
+A[4] = -collect(expand(dGdt), dGdx[4], evaluate=False)[dGdx[4]]
+A[5] = -collect(expand(dGdt), dGdx[5], evaluate=False)[dGdx[5]]
+A[6] = -collect(expand(dGdt), dGdx[6], evaluate=False)[dGdx[6]]
+A[7] = -collect(expand(dGdt), dGdx[7], evaluate=False)[dGdx[7]]
+A[8] = -collect(expand(dGdt), dGdx[8], evaluate=False)[dGdx[8]]
+A[9] = -collect(expand(dGdt), dGdx[9], evaluate=False)[dGdx[9]]
+A[10] = -collect(expand(dGdt), dGdx[10], evaluate=False)[dGdx[10]]
+A[11] = -collect(expand(dGdt), dGdx[11], evaluate=False)[dGdx[11]]
+A[12] = -collect(expand(dGdt), dGdx[12], evaluate=False)[dGdx[12]]
+A[13] = -collect(expand(dGdt), dGdx[13], evaluate=False)[dGdx[13]]
+A[14] = -collect(expand(dGdt), dGdx[14], evaluate=False)[dGdx[14]]
 
-# RHS = l1p*x[0]*N*G
+RHS = l1p*x[0]*N*G
 
 dGdt = collect(dGdt, dGdx)
 
@@ -249,7 +249,7 @@ for i_ in range(0,15):
         Eqns[k] = collect(expand(dGdt), x[i_]*x[j_], evaluate=False)[x[i_]*x[j_]].subs([(x[j],0) for j in range(0,15)])
         C = collect(Eqns[k], G_2, evaluate=False)
         l = 0
-        print('k = ', k, 'out of 120')
+        print('k = ', k, ' out of 120')
         for i in range(0,15):
             for j in range(i,15):
                 M2[k,l] = C[G_2[i,j]] if G_2[i,j] in C else 0
@@ -296,4 +296,4 @@ for i in range(0, 15):
     for j in range(i+1, 15):
         PC[i,j] = (O2[conv[i,i]] - E_num[i]*E_num[j])/(RMS[i]*RMS[j])
         PC[j,i] = PC[i,j]
-print('Pearson correlation matrix:', PC)
+print('Pearson correlation matrix:\n', PC)

@@ -2,9 +2,9 @@ PC = np.zeros([15,15]) #Pearson correlation coefficient
 for i in range(0, 15):
     PC[i,i] = 1
     for j in range(i+1, 15):
-        PC[i,j] = (O2[conv[i,i]] - E_num[i]*E_num[j])/(RMSs[i]*RMSs[j])
+        PC[i,j] = (O2[conv[i,i]] - E_num[i]*E_num[j])/(RMS[i]*RMS[j])
         PC[j,i] = PC[i,j]
-print('Pearson correlation matrix:', PC)
+print('Pearson correlation matrix:\n', PC)
 
 
 # PC = np.zeros([15,15]) #Pearson correlation coefficient
