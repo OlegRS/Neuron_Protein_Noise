@@ -503,7 +503,6 @@ In what follows we will denote the probability of state $\mathbf s$ at time $t$ 
 
 %% It turns out to be convenient to parametrise the numbers of mRNAs in the compartments as $\{M,m_1,m_2,...\}$, and the number of mRNAs in the soma $m_0$ can be easily obtained from this parametrisation as $m_0=M-m_1-m_2-...-m_D$. Same for the free proteins.
 
-
 \subsection{The simplest model of neuron}
 \begin{figure}
   \begin{center}
@@ -573,6 +572,23 @@ Second order:
 \textcolor{red}{To be continued...}
 
 \subsection{Simple neuron model}
+\subsubsection{PDE for the generating function}
+\begin{equation*}
+  \begin{split}
+    & \frac{\partial\mathcal G(\mathbf x; t)}{\partial t} + \left(\lambda^+_1x_n^2-\lambda_2x_{m_0}x_n + \frac{1}{\tau_1}x_n - \lambda_2x_{m_0}\right)\frac{\partial\mathcal G(\mathbf x; t)}{\partial x_n}\\
+    &- \left[\kappa_0x_{m_0}x_{l_0} + \kappa_0x_{l_0} + \nu_{01}x_{m_1} - \left(\frac{1}{\tau_2}+\nu_{01}\right)x_{m_0}\right]\frac{\partial \mathcal G(\mathbf x; t)}{\partial x_{m_0}}\\
+    & -\left[\kappa_1x_{m_1}x_{l_1} + \kappa_1x_{l_1} + \nu_{10}x_{m_0} - \left(\nu_{10}+\nu_{12}+\nu_{13}+\frac{1}{\tau_2}\right)x_{m_1} + \nu_{12}x_{m_2} + \nu_{13}x_{m_3}\right]\frac{\partial\mathcal G(\mathbf x; t)}{\partial x_{m_1}}\\
+    &-\left[\kappa_2x_{m_2}x_{l_2}+\kappa_2x_{l_2} + \nu_{21}x_{m_1}-\left(\nu_{21}+\frac{1}{\tau_2}\right)x_{m_2}\right]\frac{\partial\mathcal G(\mathbf x; t)}{\partial x_{m_2}}\\
+    &-\left[\kappa_3x_{m_3}x_{l_3}+\kappa_3x_{l_3} + \nu_{31}x_{m_1}-\left(\nu_{31}+\frac{1}{\tau_2}\right)x_{m_3}\right]\frac{\partial\mathcal G(\mathbf x; t)}{\partial x_{m_3}}\\
+    &+\left[\left(\frac{1}{\tau_3}+\theta_{01}\right)x_{l_0} - \theta_{01}x_{l_1}\right]\frac{\partial\mathcal G(\mathbf x; t)}{\partial x_{l_0}}\\ %THIS IS STRANGE BECAUSE THERE IS A FLOW OF PROTEINS FROM THE MAIN DENDRITE
+    & -\left[\eta_{11}x_{q_{11}}+\eta_{12}x_{q_{12}}+\theta_{10}x_{l_0} - \left(\eta_{11}+\eta_{12}+\theta_{10}+\theta_{12}+\theta_{13}+\frac{1}{\tau_3}\right)x_{l_1} + \theta_{12}x_{l_2} + \theta_{13}x_{l_3}\right]\frac{\partial\mathcal G(\mathbf x; t)}{\partial x_{l_1}}\\
+    \text{\textcolor{red}{I am here}}\\
+    & + \left[\left(\frac{1}{\tau_3} + \theta_{10} + \eta_{11}\right)x_{l_1} - \theta_{10}x_{l_0} -\eta_{11}x_{q_{11}}\right]\frac{\partial\mathcal G(\mathbf x; t)}{\partial x_{l_1}}\\
+    &+\gamma_{11}(x_{q_{11}} - x_{l_1})\frac{\partial\mathcal G(\mathbf x; t)}{\partial x_{q_{11}}} = \lambda_1^+x_nN\mathcal G(\mathbf x; t)
+  \end{split}
+\end{equation*}
+
+\subsubsection{Numeric results}
 In Table \ref{table:expectations_errors} are the expectations, fluctuations and noise to signal ratios.
 %% \begin{center}
 %% \begin{tabular}{ |c|c| } 
