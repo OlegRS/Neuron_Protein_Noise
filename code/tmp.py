@@ -1,20 +1,23 @@
-print('RMSs:')
-E_num = np.array(E_num)
-for i in range(0,15):
-    RMS[i] = sqrt((O2[conv[i,i]] - (E_num[i] - 1)*E_num[i])[0])
-print(RMS)
+import pandas as pd 
+pd.DataFrame(PC).to_csv("./simple_model_Pearson_correlations.csv")
 
-NS_ratios = [sqrt((O2[conv[i,i]] - (E_num[i] - 1)*E_num[i])[0])/E_num[i,0]*100 for i in range(0,15)] # Signal to noise ratios %
-print('Noise to Signal ratios:\n', NS_ratios)
+# print('RMSs:')
+# E_num = np.array(E_num)
+# for i in range(0,15):
+#     RMS[i] = sqrt((O2[conv[i,i]] - (E_num[i] - 1)*E_num[i])[0])
+# print(RMS)
 
-PC = np.zeros([15,15]) # Pearson correlation coefficient
-for i in range(0, 15):
-    PC[i,i] = 1
-    for j in range(i+1, 15):
-        PC[i,j] = (O2[conv[i,i]] - E_num[i]*E_num[j])[0]/(RMS[i]*RMS[j]) if  RMS[i]*RMS[j]!=0 else nan
-        print("PC[", i, ',', j, ']= ', PC[i,j])
-        PC[j,i] = PC[i,j]
-print('Pearson correlation matrix:\n', PC)
+# NS_ratios = [sqrt((O2[conv[i,i]] - (E_num[i] - 1)*E_num[i])[0])/E_num[i,0]*100 for i in range(0,15)] # Signal to noise ratios %
+# print('Noise to Signal ratios:\n', NS_ratios)
+
+# PC = np.zeros([15,15]) # Pearson correlation coefficient
+# for i in range(0, 15):
+#     PC[i,i] = 1
+#     for j in range(i+1, 15):
+#         PC[i,j] = (O2[conv[i,i]] - E_num[i]*E_num[j])[0]/(RMS[i]*RMS[j]) if  RMS[i]*RMS[j]!=0 else nan
+#         print("PC[", i, ',', j, ']= ', PC[i,j])
+#         PC[j,i] = PC[i,j]
+# print('Pearson correlation matrix:\n', PC)
 
 
 
