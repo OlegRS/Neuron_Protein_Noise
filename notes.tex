@@ -576,14 +576,14 @@ Second order:
 \begin{equation*}
   \begin{split}
     & \frac{\partial\mathcal G(\mathbf x; t)}{\partial t} + \left(\lambda^+_1x_n^2-\lambda_2x_{m_0}x_n + \frac{1}{\tau_1}x_n - \lambda_2x_{m_0}\right)\frac{\partial\mathcal G(\mathbf x; t)}{\partial x_n}\\
-    &-\left[\kappa_0x_{m_0}x_{l_0} + \kappa_0x_{l_0} + \nu_{01}x_{m_1} - \left(\frac{1}{\tau_2}+\nu_{01}\right)x_{m_0}\right]\frac{\partial \mathcal G(\mathbf x; t)}{\partial x_{m_0}}\\
-    &-\left[\kappa_1x_{m_1}x_{l_1} + \kappa_1x_{l_1} + \nu_{10}x_{m_0} - \left(\nu_{10}+\nu_{12}+\nu_{13}+\frac{1}{\tau_2}\right)x_{m_1} + \nu_{12}x_{m_2} + \nu_{13}x_{m_3}\right]\frac{\partial\mathcal G(\mathbf x; t)}{\partial x_{m_1}}\\
-    &-\left[\kappa_2x_{m_2}x_{l_2}+\kappa_2x_{l_2} + \nu_{21}x_{m_1}-\left(\nu_{21}+\frac{1}{\tau_2}\right)x_{m_2}\right]\frac{\partial\mathcal G(\mathbf x; t)}{\partial x_{m_2}}\\
-    &-\left[\kappa_3x_{m_3}x_{l_3}+\kappa_3x_{l_3} + \nu_{31}x_{m_1}-\left(\nu_{31}+\frac{1}{\tau_2}\right)x_{m_3}\right]\frac{\partial\mathcal G(\mathbf x; t)}{\partial x_{m_3}}\\
+    &+\left[-\kappa_0x_{m_0}x_{l_0} + \left(\frac{1}{\tau_2}+\nu_{01}\right)x_{m_0} - \kappa_0x_{l_0} - \nu_{01}x_{m_1}\right]\frac{\partial \mathcal G(\mathbf x; t)}{\partial x_{m_0}}\\
+    &+\left[- \kappa_1x_{m_1}x_{l_1} +\left(\nu_{10}+\nu_{12}+\nu_{13}+\frac{1}{\tau_2}\right)x_{m_1} - \kappa_1x_{l_1} - \nu_{10}x_{m_0}  - \nu_{12}x_{m_2} - \nu_{13}x_{m_3}\right]\frac{\partial\mathcal G(\mathbf x; t)}{\partial x_{m_1}}\\
+    &+\left[-\kappa_2x_{m_2}x_{l_2} - \kappa_2x_{l_2} - \nu_{21}x_{m_1} + \left(\nu_{21} + \frac{1}{\tau_2}\right)x_{m_2}\right]\frac{\partial\mathcal G(\mathbf x; t)}{\partial x_{m_2}}\\
+    &+\left[-\kappa_3x_{m_3}x_{l_3} - \kappa_3x_{l_3} - \nu_{31}x_{m_1} + \left(\nu_{31} + \frac{1}{\tau_2}\right)x_{m_3}\right]\frac{\partial\mathcal G(\mathbf x; t)}{\partial x_{m_3}}\\
     &+\left[\left(\frac{1}{\tau_3}+\theta_{01}\right)x_{l_0} - \theta_{01}x_{l_1}\right]\frac{\partial\mathcal G(\mathbf x; t)}{\partial x_{l_0}}\\ %THIS IS STRANGE BECAUSE THERE IS A FLOW OF PROTEINS FROM THE MAIN DENDRITE
-    &-\left[\eta_{11}x_{q_{11}}+\eta_{12}x_{q_{12}}+\theta_{10}x_{l_0} - \left(\eta_{11}+\eta_{12}+\theta_{10}+\theta_{12}+\theta_{13}+\frac{1}{\tau_3}\right)x_{l_1} + \theta_{12}x_{l_2} + \theta_{13}x_{l_3}\right]\frac{\partial\mathcal G(\mathbf x; t)}{\partial x_{l_1}}\\
-    &-\left[\eta_{21}x_{q_{21}}+\eta_{22}x_{q_{22}}+\theta_{21}x_{l_1}-x_{l_2}\left(\eta_{21}+\eta_{22}+\theta_{21}+\frac{1}{\tau_3}\right)\right]\frac{\partial\mathcal G(\mathbf x;t)}{\partial x_{l_2}}\\ 
-    &-\left[\eta_{31}x_{q_{31}}+\eta_{32}x_{q_{32}}+\theta_{31}x_{l_1}-x_{l_3}\left(\eta_{31}+\eta_{32}+\theta_{31}+\frac{1}{\tau_3}\right)\right]\frac{\partial\mathcal G(\mathbf x;t)}{\partial x_{l_3}}\\ 
+    &+\left[\left(\eta_{11}+\eta_{12}+\theta_{10}+\theta_{12}+\theta_{13}+\frac{1}{\tau_3}\right)x_{l_1} - \eta_{11}x_{q_{11}} - \eta_{12}x_{q_{12}} - \theta_{10}x_{l_0} - \theta_{12}x_{l_2} - \theta_{13}x_{l_3}\right]\frac{\partial\mathcal G(\mathbf x; t)}{\partial x_{l_1}}\\
+    &+\left[\left(\eta_{21}+\eta_{22}+\theta_{21}+\frac{1}{\tau_3}\right)x_{l_2} - \eta_{21}x_{q_{21}} - \eta_{22}x_{q_{22}} - \theta_{21}x_{l_1}\right]\frac{\partial\mathcal G(\mathbf x;t)}{\partial x_{l_2}}\\ 
+    &+\left[\left(\eta_{31}+\eta_{32}+\theta_{31}+\frac{1}{\tau_3}\right)x_{l_3} - \eta_{31}x_{q_{31}} - \eta_{32}x_{q_{32}} - \theta_{31}x_{l_1} \right]\frac{\partial\mathcal G(\mathbf x;t)}{\partial x_{l_3}}\\ 
     &+\gamma_{11}\left(x_{q_{11}}-x_{l_1}\right)\frac{\partial\mathcal G(\mathbf x;t)}{\partial x_{q_{11}}} + \gamma_{12}\left(x_{q_{12}}-x_{l_1}\right)\frac{\partial\mathcal G(\mathbf x;t)}{\partial x_{q_{12}}}\\
     &+\gamma_{21}\left(x_{q_{21}}-x_{l_2}\right)\frac{\partial\mathcal G(\mathbf x;t)}{\partial x_{q_{21}}} + \gamma_{22}\left(x_{q_{22}}-x_{l_2}\right)\frac{\partial\mathcal G(\mathbf x;t)}{\partial x_{q_{22}}}\\
     &+\gamma_{31}\left(x_{q_{31}}-x_{l_3}\right)\frac{\partial\mathcal G(\mathbf x;t)}{\partial x_{q_{31}}} + \gamma_{32}\left(x_{q_{32}}-x_{l_3}\right)\frac{\partial\mathcal G(\mathbf x;t)}{\partial x_{q_{32}}}\\
