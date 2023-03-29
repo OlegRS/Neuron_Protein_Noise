@@ -6,6 +6,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage{xcolor}
 \usepackage{todonotes}
+% \usepackage[toc]{appendix}
 %\usepackage{parskip}
 
 \newcommand{\rem}[2][noinline]{\todo[#1, color=gray!20!white,size=\footnotesize]{\texttt{Rem}: #2}}
@@ -39,13 +40,13 @@
 
 \newcommand\underl[2]{\mathrel{\mathop{#2}\limits_{#1}}}
 
-\title{\textbf{Finding moments from master equation}}
+\title{\textbf{Exact computation of all variables' moments for linear gene expression models in tree-based compartmentalised neurons}}
 \date{\today}
 \begin{document}
 \maketitle
 
 \begin{abstract}
-  Here we discuss the exact ways of finding the moments of the probability distribution directly from the {\it master equation} (ME). The main method is to perturbatively find the asymptotic expansion (at least to the second order) of the {\it generating function}, which is directly related to the moments of the probability distribution. First we demonstrate the method on simple examples, then we derive the expressions (4,5,6) from \cite{PAULSSON2005157}, and then attempt to apply the method to the simple neuron models \textcolor{red}{(in progress)}. Note that the method gives the exact expressions for the moments, which is demonstrated for the simple examples by finding the generating function exactly.
+  Here we discuss the exact ways of finding the moments of the probability distribution directly from the {\it master equation} (ME). The main method is to find the asymptotic expansion (at least to the second order) of the {\it generating function}, which is directly related to the moments of the probability distribution. First we demonstrate the method on simple examples, then we derive the expressions (4,5,6) from \cite{PAULSSON2005157}, and then attempt to apply the method to simple neuron models. Note that the method gives the exact expressions for the moments, which is demonstrated for the simple examples by finding the generating function exactly.
 \end{abstract}
 
 \tableofcontents
@@ -257,9 +258,9 @@ The solution of the PDE (\ref{hopping_PDE}) with the initial condition (\ref{hop
 where $\tau := (\nu^++\nu^-)^{-1}$ and $P_{on} = \nu^+\tau$.
 \subsection{Asymptotic expansion of the stationary solution}
 In this section we will provide a simple example of finding the first two moments of a probability distribution satisfying a master equation by asymptotic expansion of $\mathcal G(\mathbf x; t)$ in the vicinity of $\mathbf x = \mathbf 0$ in multidimensional case.
-\begin{equation*}
-  \mathcal G(\mathbf x; t)\underl{x\to 0}{=} \boldsymbol{\mathcal G}^{(1)}(t)\mathbf x + \frac{1}{2}\mathbf x^T\boldsymbol{\mathcal G}^{(2)}(t)\mathbf x + \mathcal O(|\mathbf x|^3),
-\end{equation*}
+\begin{equation}\label{eqn:basic_expansion}
+  \mathcal G(\mathbf x; t)\underl{x\to 0}{=} 1 + \boldsymbol{\mathcal G}^{(1)}(t)\mathbf x + \frac{1}{2}\mathbf x^T\boldsymbol{\mathcal G}^{(2)}(t)\mathbf x + \mathcal O(|\mathbf x|^3),
+\end{equation}
 where
 \begin{equation*}
   \boldsymbol{\mathcal G}^{(1)}(t) =
@@ -273,7 +274,7 @@ is the gradient, while
   \boldsymbol{\mathcal G}^{(2)}(t) =
   \left( \begin{array}{cc}
     \langle m_0^2 \rangle - \langle m_0\rangle & \langle m_0m_1\rangle\\
-    \langle m_0m_1\rangle & \langle m_0^2 \rangle - \langle m_0\rangle \\
+    \langle m_0m_1\rangle & \langle m_1^2 \rangle - \langle m_1\rangle \\
   \end{array} \right)
 \end{equation*}
 is the Hessian of $\mathcal G(\mathbf x; t)$ at $\mathbf x = \mathbf 0$.
@@ -484,10 +485,10 @@ In this section we will adopt the following notation.
         $\mathbf s$        &The complete state of the system, i.e. $\{n, \mathbf m,\mathbf l, \mathbf q\}$\\ \hline
         $\lambda_1^+$        &Rate of gene activation\\ \hline
         $\lambda_1^-$        &Rate of gene deactivation\\ \hline
-        $\tau_1$           &$\tau_1 = (\lambda_1^+ + \lambda_1^-)^{-1}$\\ \hline
-        $\lambda_2$        &Rate of mRNA synthesis\\ \hline
+        $\tau_1$           &$(\lambda_1^+ + \lambda_1^-)^{-1}$\\ \hline
+        $\lambda_2$        &Transcription rate\\ \hline
         $\tau_2$           &mRNA lifetime (same for all compartments)\\ \hline
-        $\kappa_i$          &Rate of protein synthesis in $i$-th compartment\\ \hline
+        $\kappa_i$          &Translation rate in $i$-th compartment\\ \hline
         $\tau_3$          &Protein lifetime (same for all compartments)\\ \hline
         $\nu_{ij}$         &Rate of mRNA hopping from compartment $i$ to compartment $j$ \\ \hline
         $\theta_{ij}$      &Rate of protein hopping from compartment $i$ to compartment $j$ \\ \hline
@@ -616,28 +617,31 @@ In Table \ref{table:expectations_errors} are the expectations, fluctuations and 
 %% \end{center}
 
 \begin{table}
-  \begin{tabular}{ |c|c|c|c| }
-    \hline
-    Variable &Expectation & RMS    & RMS/Expectation\%\\  \hline
-    $n$      & $1$                 & $0$ & $0$ \\                 \hline
-    $m_0$    & $1.79590072201514$  & $1.3401122038414643$ & $74.6206172431264$\\  \hline
-    $m_1$    & $1.2981274878913$   & $1.139353975003979$ & $87.7690354477251$\\   \hline
-    $m_2$    & $0.952985895047784$ & $0.9762099620737184$ & $102.436979093460$\\ \hline
-    $m_3$    & $0.952985895046793$ & $0.9762099634821508$ & $102.436979241358$\\ \hline
-    $l_0$    & $28966.7621095089$  & $3600.673144730757$ & $12.4303611536505$\\  \hline
-    $l_1$    & $28522.7399412071$  & $3640.7733140368373$ & $12.7644585391917$\\  \hline
-    $l_2$    & $14643.6787267151$  & $2356.5543166178854$ & $16.0926387460190$\\  \hline
-    $l_3$    & $14643.6787267138$  & $2356.5543207336664$ & $16.0926387741265$\\  \hline
-    $q_{11}$ & $2852.27399412071$  & $367.58407810640534$ & $12.8874041857162$\\  \hline
-    $q_{12}$ & $2852.27399412071$  & $367.5840781064142$ & $12.8874041857165$\\  \hline
-    $q_{21}$ & $1464.36787267151$  & $238.43365659083406$ & $16.2823605352560$\\  \hline
-    $q_{22}$ & $1464.36787267151$  & $238.433656590837$ & $16.2823605352562$ \\  \hline
-    $q_{31}$ & $1464.36787267138$  & $238.433656997613$ & $16.2823605630359$ \\  \hline
-    $q_{32}$ & $1464.36787267138$ & $238.43365699761108$ & $16.2823605630358$ \\
-    \hline
-  \end{tabular}
-  \caption{\label{table:expectations_errors}Expectations, noise and noise to signal ratios.}
+  \begin{center}
+    \begin{tabular}{ |c|c|c|c| }
+      \hline
+      Variable &Expectation          & $\sigma$    & $\sigma$/Expectation\%\\  \hline
+      $n$      & $1$                 & $0$    & $0$ \\                 \hline
+      $m_0$    & $1.79590072201514$  & $1.3401122038414643$ & $74.6206172431264$\\  \hline
+      $m_1$    & $1.2981274878913$   & $1.139353975003979$ & $87.7690354477251$\\   \hline
+      $m_2$    & $0.952985895047784$ & $0.9762099620737184$ & $102.436979093460$\\ \hline
+      $m_3$    & $0.952985895046793$ & $0.9762099634821508$ & $102.436979241358$\\ \hline
+      $l_0$    & $28966.7621095089$  & $3600.673144730757$ & $12.4303611536505$\\  \hline
+      $l_1$    & $28522.7399412071$  & $3640.7733140368373$ & $12.7644585391917$\\  \hline
+      $l_2$    & $14643.6787267151$  & $2356.5543166178854$ & $16.0926387460190$\\  \hline
+      $l_3$    & $14643.6787267138$  & $2356.5543207336664$ & $16.0926387741265$\\  \hline
+      $q_{11}$ & $2852.27399412071$  & $367.58407810640534$ & $12.8874041857162$\\  \hline
+      $q_{12}$ & $2852.27399412071$  & $367.5840781064142$ & $12.8874041857165$\\  \hline
+      $q_{21}$ & $1464.36787267151$  & $238.43365659083406$ & $16.2823605352560$\\  \hline
+      $q_{22}$ & $1464.36787267151$  & $238.433656590837$ & $16.2823605352562$ \\  \hline
+      $q_{31}$ & $1464.36787267138$  & $238.433656997613$ & $16.2823605630359$ \\  \hline
+      $q_{32}$ & $1464.36787267138$ & $238.43365699761108$ & $16.2823605630358$ \\
+      \hline
+    \end{tabular}
+    \caption{\label{table:expectations_errors}Expectations, noise and noise to signal ratios. Note that, in this setting, variances of mRNA distributions are identical to their means, which suggests their Poissonian nature. This, presumably, should not be the case if the gene in not assumed to be always active.}
+  \end{center}
 \end{table}
+
 
 %% \begin{center}
 %%   \begin{tabular}{ |c|c| }
@@ -664,45 +668,363 @@ In Table \ref{table:expectations_errors} are the expectations, fluctuations and 
 
 
 \subsection{General rules}
-In this section we give the general rules for constructing a {\it master equation} from the neuron's compartments diagram analogous to the one in Figure \ref{fig:simplest_neuron}.
-\subsubsection{Soma}
-Soma is always indexed as $0$.
+This section provides the general rules for constructing a {\it master equation} and the corresponding PDE for the generating function from the neuron's compartments diagram analogous to the one in Figure \ref{fig:simplest_neuron}. For this reason we represent a neuron as a graph which nodes represent different compartments of the neuron and the edges represent the junctions between the compartments.
 
-Parameters: $\{N$, $\lambda_1^+$, $\lambda_1^-$, ($\tau_1=(\lambda_1^+ + \lambda_1^-)^{-1}$), $\lambda_2$, $\tau_2$, $\kappa_0$, $\tau_3\}$.
+\subsubsection{The rules}
+              {\bf Soma}
+              
+              {\it Parameters:}
+              \begin{equation*}
+                \{\lambda_1^+, \lambda_1^-, \lambda_2, \tau_2, \tau_3, \kappa_0, N\}
+              \end{equation*}
+
+              {\it Variables:}
+              \begin{equation*}
+                \{n, m_0, l_0\}\ \ \ \left(\{x_n, x_{m_0}, x_{l_0}\}\text{ in the PDE}\right)
+              \end{equation*}
+
+              
+              {\it ME terms:}
+              \begin{equation}
+                \begin{split}
+                  &\textcolor{red}{\lambda_1^+\left[\left(N-n+1\right)P_{n-1}^{\mathbf s}(t) - \left(N-n\right)P_{\mathbf s}(t)\right] + \lambda_1^-\left[(n+1)P^{\mathbf s}_{n+1}(t) - nP_{\mathbf s}(t)\right]}\\
+                  &\textcolor{green}{+ \lambda_2n\left[P^{\mathbf s}_{m_0-1}(t) - P_{\mathbf s}(t)\right] + \frac{1}{\tau_2}\left[(m_0+1)P^{\mathbf s}_{m_0+1}(t) - m_0P_{\mathbf s}(t)\right]}\\
+                  &\textcolor{brown}{+ \kappa_0m_0\left[P^{\mathbf s}_{l_0-1}(t) - P_{\mathbf s}(t)\right] + \frac{1}{\tau_3}\left[(l_0+1)P^{\mathbf s}_{l_0+1}(t) - l_0P_{\mathbf s}(t)\right]}
+                \end{split}
+              \end{equation}
+              
+              {\it Corresponding PDE terms\footnote{Should be understood as $\frac{\partial\mathcal G}{\partial t} =$ (Sum of these PDE terms).}:}
+              \begin{equation}
+                \begin{split}
+                  \lambda_1^+x_nN\mathcal G(\mathbf x, t)
+                  - \left[\lambda_1^+x_n^2 - \lambda_2x_{m_0}x_n + (\lambda_1^++\lambda_1^-)x_n-\lambda_2x_{m_0}\right]\frac{\partial\mathcal G(\mathbf x, t)}{\partial x_n}\\
+                  - \left[-\kappa_0x_{m_0}x_{l_0} - \kappa_0x_{l_0} + \frac{1}{\tau_2}x_{m_0}\right]\frac{\partial\mathcal G(\mathbf x, t)}{\partial x_{m_0}}
+                  -\frac{1}{\tau_3}x_{l_0}\frac{\partial\mathcal G(\mathbf x, t)}{\partial x_{l_0}}
+                \end{split}
+              \end{equation}
 
 
-Additional terms in the {\it master equation}:
+              {\bf Dendritic compartment}
+              
+              {\it Parameters:}
+              \begin{equation*}
+                \{\tau_2, \kappa_i, \tau_3\}
+              \end{equation*}
+
+              {\it Variables:}
+              \begin{equation*}
+                \{m_i, l_i\}\ \ \ \left(\{x_{m_i}, x_{l_i}\}\text{ in the PDE}\right)
+              \end{equation*}
+
+              
+              {\it ME terms:}
+              \begin{equation}
+                \begin{split}
+                  \textcolor{green}{\frac{1}{\tau_2}\left[(m_i+1)P_{m_i+1}^{\mathbf s}(t) - m_iP_{\mathbf s}(t)\right]} \textcolor{brown}{+ \kappa_im_i\left[P_{l_i-1}^{\mathbf s}(t) - P_{\mathbf s}(t)\right]}\\
+                  \textcolor{brown}{+ \frac{1}{\tau_3}\left[(l_i+1)P_{l_i+1}^{\mathbf s}(t) - l_iP_{\mathbf s}(t)\right]}
+                \end{split}
+              \end{equation}
+              
+              {\it Corresponding PDE terms:}
+              \begin{equation}
+                \begin{split}
+                  -\left[-\kappa_ix_{m_i}x_{l_i} - \kappa_ix_{l_i} + \frac{1}{\tau_2}x_{m_i}\right]\frac{\partial \mathcal G(\mathbf x, t)}{\partial x_{m_i}} - \frac{1}{\tau_3}x_{l_i}\frac{\partial\mathcal G(\mathbf x, t)}{\partial x_{l_i}}
+                \end{split}
+              \end{equation}
+
+
+              {\bf Synapse $j$ on dendrite $i$}
+
+              {\it Parameters:}
+              \begin{equation*}
+                \text{\footnotesize{Could be protein decay/production rates, mRNA decay or something else, but empty for now.}}
+              \end{equation*}
+
+              {\it Variables:}
+              \begin{equation*}
+                q_{ij}
+              \end{equation*}
+
+              
+              {\it ME terms:}
+              \begin{equation}
+                \emptyset
+              \end{equation}
+              
+              {\it Corresponding PDE terms:}
+              \begin{equation}
+                \emptyset
+              \end{equation}
+
+
+              {\bf Junction between two non-synaptic compartments}
+              
+              {\it Parameters:}
+              \begin{equation*}
+                \{\nu_{ij}, \nu_{ji}, \theta_{ij}, \theta_{ji}\}
+              \end{equation*}
+
+              {\it Variables:}
+              \begin{equation*}
+                \emptyset
+              \end{equation*}
+
+              
+              {\it ME terms:}
+              \begin{equation}
+                \begin{split}
+                  \textcolor{blue}{\nu_{ij}\left[(m_i+1)P_{m_i+1, m_j-1}^{\mathbf s}(t) - m_iP_{\mathbf s}(t)\right] + \nu_{ji}\left[(m_j+1)P_{m_i-1, m_j+1}^{\mathbf s}(t) - m_jP_{\mathbf s}(t)\right]}\\
+                  \textcolor{cyan}{+ \theta_{ij}\left[(l_i+1)P_{l_i+1, l_j-1}^{\mathbf s}(t) - l_iP_{\mathbf s}(t)\right] + \theta_{ji}\left[(l_j+1)P_{l_i-1, l_j+1}^{\mathbf s}(t) - l_jP_{\mathbf s}(t)\right]}
+                \end{split}
+              \end{equation}
+              
+              {\it Corresponding PDE terms:}
+              \begin{equation}
+                \begin{split}
+                  -\nu_{ij}(x_{m_i}-x_{m_j})\frac{\partial\mathcal G(\mathbf x, t)}{\partial x_{m_i}} - \nu_{ji}(x_{m_j}-x_{m_i})\frac{\partial\mathcal G(\mathbf x, t)}{\partial x_{m_j}}\\
+                  -\theta_{ij}(x_{l_i}-x_{l_j})\frac{\partial\mathcal G(\mathbf x, t)}{\partial x_{l_i}} - \theta_{ji}(x_{l_j}-x_{l_i})\frac{\partial\mathcal G(\mathbf x, t)}{\partial x_{l_j}}
+                \end{split}
+              \end{equation}
+
+              {\bf Junction between the dendrite i and the synapse j on it}
+              
+              {\it Parameters:}
+              \begin{equation*}
+                \{\eta_{ij}, \gamma_{ij}\}
+              \end{equation*}
+
+              {\it Variables:}
+              \begin{equation*}
+                \emptyset
+              \end{equation*}
+
+              {\it ME terms:}
+              \begin{equation}
+                \begin{split}
+                  \textcolor{pink}{\eta_{ij}\left[(l_i+1)P_{l_i+1, q_{ij}-1}^{\mathbf s}(t) - l_iP_{\mathbf s}(t)\right] + \gamma_{ij}\left[(q_{ij}+1)P_{l_i-1, q_{ij}+1}^{\mathbf s}(t) - q_{ij}P_{\mathbf s}(t)\right]}
+                \end{split}
+              \end{equation}
+              
+              {\it Corresponding PDE terms:}
+              \begin{equation}
+                -\eta_{ij}(x_{l_i}-x_{q_{ij}})\frac{\partial\mathcal G(\mathbf x, t)}{\partial x_{l_i}} - \gamma_{ji}(x_{q_{ij}}-x_{l_i})\frac{\partial\mathcal G(\mathbf x, t)}{\partial x_{q_{ij}}}
+              \end{equation}
+              
+              \subsubsection{Second-order expansions}
+              When substituted to the above PDE terms corresponding to the compartments of certain types, the expansion (\ref{eqn:basic_expansion}) gives the following terms in the second order.
+              
+              {\bf Soma}
+              \begin{multline*}
+                \textcolor{blue}{\lambda_1^+Nx_n\boldsymbol{\mathcal G}^{(1)}\mathbf x + \kappa_0x_{m_0}x_{l_0}\mathcal G^{(1)}_{m_0} - \left(\lambda_1^+x_n^2-\lambda_2x_{m_0}x_n\right)\mathcal G_n^{(1)}}\\
+                -\left[\left(\lambda_1^++\lambda_1^-\right)x_n-\lambda_2x_{m_0}\right]\boldsymbol{\mathcal G}_n^{(2)}\mathbf x + \left(\kappa_0x_{l_0}-\frac{1}{\tau_2}x_{m_0}\right)\boldsymbol{\mathcal G}_{m_0}^{(2)}\mathbf x - \frac{1}{\tau_3}x_{l_0}\boldsymbol{\mathcal G}^{(2)}_{l_0}\mathbf x
+              \end{multline*}
+              
+              {\bf Dendritic compartment}
+              \begin{equation*}
+                \textcolor{blue}{\kappa_ix_{m_i}x_{l_i}\mathcal G^{(1)}_{m_i}} + \left(\kappa_ix_{l_i} - \frac{1}{\tau_2}x_{m_i}\right)\boldsymbol{\mathcal G}^{(2)}_{m_i}\mathbf x - \frac{1}{\tau_3}x_{l_i}\boldsymbol{\mathcal G}^{(2)}_{l_i}\mathbf x
+              \end{equation*}
+
+              {\bf Junction between two non-synaptic compartments}
+              \begin{align*}
+                -\nu_{ij}\left(x_{m_i} - x_{m_j}\right)\boldsymbol{\mathcal G}_{m_i}^{(2)}\mathbf x& - \nu_{ji}\left(x_{m_j} - x_{m_i}\right)\boldsymbol{\mathcal G}_{m_j}^{(2)}\mathbf x\\
+                - \theta_{ij}\left(x_{l_i}-x_{l_j}\right)\boldsymbol{\mathcal G}_{l_i}^{(2)}\mathbf x& - \theta_{ji}\left(x_{l_j} - x_{l_i}\right)\boldsymbol{\mathcal G}^{(2)}_{l_j}\mathbf x
+              \end{align*}
+
+              {\bf Junction between dendrite $i$ and synapse $j$}
+              \begin{equation*}
+                -\eta_{ij}\left(x_{l_i}-x_{q_{ij}}\right)\boldsymbol{\mathcal G}^{(2)}_{l_i}\mathbf x - \gamma_{ji}\left(x_{q_{ij}}-x_{l_i}\right)\boldsymbol{\mathcal G}^{(2)}_{q_{ij}}\mathbf x
+              \end{equation*}
+
+              Note that the terms shown in \textcolor{blue}{blue} are obtained from solving the first-order problem and play the role of a ``source'' in the second-order problem for covariances.
+
+              
+
+
+\section{Preliminary numerical results}
+Some preliminary results for stationary problem are shown in Figs.\ref{fig:3_branching_points_numbers},\ref{fig:10_forks_combined},\ref{10_forks_decay_plots},\ref{fig:linear_model_decays},\ref{fig:4_forks_noise},\ref{fig:4_forks_pearson_correlations}.
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=7cm]{img/3_branching_points_numbers.png}
+  \end{center}  
+  \caption{Protein and mRNA counts' stationary expectations in symmetric model similar to the simple model (same parameters and two synapses on every dendritic segment), but with {\bf three} branching points in each full path up the dendritic tree.}
+  \label{fig:3_branching_points_numbers}
+\end{figure}
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=12cm]{img/10_forks_combined.png}
+  \end{center}  
+  \caption{Protein and mRNA counts in symmetric model similar to the simple model (same parameters and two synapses on every dendritic segment), but with {\bf ten} branching points in each full path up the dendritic tree.}
+  \label{fig:10_forks_combined}
+\end{figure}
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=12cm]{img/10_forks_decay_plots.png}
+  \end{center}  
+  \caption{Protein and mRNA counts in symmetric model similar to the simple model (same parameters and two synapses on every dendritic segment), but with {\bf ten} branching points in each full path up the dendritic tree.}
+  \label{10_forks_decay_plots}
+\end{figure}
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=12cm]{img/linear_model_decays.png}
+  \end{center}  
+  \caption{Stationary distributions of molecule numbers in linear (no forks) model with one synapse per dendritic segment. Note how the decay exponent for the synaptic protein counts matches that of the dendritic protein counts (the bottom and the middle panels respectively).}
+  \label{fig:linear_model_decays}
+\end{figure}
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=15cm]{img/4_forks_plots_trimmed.png}
+  \end{center}
+    \caption{Protein and mRNA counts' stationary expectations and standard deviations in symmetric model similar to the simple model (same parameters and two synapses on every dendritic segment), but with {\bf four} branching points in each full path up the dendritic tree.}
+  \label{fig:4_forks_noise}
+\end{figure}
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=15cm]{img/4_forks_pearson_correlations.png}
+  \end{center}
+    \caption{Pearson correlations in the model similar to the simple model (same parameters and two synapses on every dendritic segment), but with {\bf four} branching points in each full path up the dendritic tree. Vertical and horizontal red lines separate the plane in four regions. The square region that contains the origin (0,0) shows mRNA-mRNA Pearson correlations in all compartments; the upper right and the lower left rectangles are responsible for mRNA-protein correlations (note that the matrix is, of course, symmetric); and the lower right square corresponds to protein-protein correlations in all compartments. The dashed pink squares span the two parts of the tree that stem from the first branching point and, due to symmetry, are identical. The high-correlation $3\times3$ squares on the diagonal are produced by dendritic segments (at the top left corner of each square) and the two attached synapses.}
+  \label{fig:4_forks_pearson_correlations}
+\end{figure}
+
+
+\section{Nonstationary problem}
+\subsection{First order}\label{subsec:o1_nonstat_problem}
+In this section we no longer assume stationarity and consider the dynamics of the expectations. When in the PDE for the generating function the coefficients corresponding to certain $x$ are collected and equated, in first order one gets the following inhomogeneous linear system of first-order ODEs
 \begin{equation}
-  \begin{split}
-    &\textcolor{red}{\lambda_1^+\left[\left(N-n+1\right)P_{n-1}^{\mathbf s}(t) - \left(N-n\right)P_{\mathbf s}(t)\right] + \lambda_1^-\left[(n+1)P^{\mathbf s}_{n+1}(t) - nP_{\mathbf s}(t)\right]}\\
-    &\textcolor{green}{+ \lambda_2n\left[P^{\mathbf s}_{m_0-1}(t) - P_{\mathbf s}(t)\right] + \frac{1}{\tau_2}\left[(m_0+1)P^{\mathbf s}_{m_0+1}(t) - m_0P_{\mathbf s}(t)\right]}\\
-    &\textcolor{brown}{+ \kappa_0m_0\left[P^{\mathbf s}_{l_0-1}(t) - P_{\mathbf s}(t)\right] + \frac{1}{\tau_3}\left[(l_0+1)P^{\mathbf s}_{l_0+1}(t) - l_0P_{\mathbf s}(t)\right]}
-  \end{split}
+\frac{d\boldsymbol{\mathcal G}^{(1)}(t)}{dt} = -\mathbf A \boldsymbol{\mathcal G}^{(1)}(t) + \mathbf b,
+\end{equation}
+whose general solution is given by
+\begin{equation}\label{general_solution}
+\boldsymbol{\mathcal G}^{(1)}(t) = \mathbf A^{-1}\mathbf b + \mathrm e^{-\mathbf A t}\mathbf c,
+\end{equation}
+where the vector $\mathbf v$ is given by
+\begin{equation}\label{rhs_vector}
+  b_i=\lambda^+_1N\delta_{i1}
+\end{equation}
+and $\mathbf c$ is the vector determined by the initial conditions. The first term in the above expression determines the stationary expectations while the second term defines the relaxation dynamics from a given initial state.
+
+To quantify the characteristic relaxation times we need to find the spectrum of $\mathbf A$, and it is convenient to use eigen decomposition as follows. Suppose $\mathbf S$ is the matrix consisting of the eigenvectors of $\mathbf A$, i.e. a transition matrix to a basis in which $\mathbf A$ is diagonal, i.e.
+\begin{equation} \label{A_tilde_def}
+  \tilde{\mathbf A} := \mathbf S^{-1}\mathbf A\mathbf S = \text{diag}(\lambda_1, \lambda_2, ..., \lambda_n).
+\end{equation}
+Multiplying both sides of the equation (\ref{general_solution}) by $\mathbf S^{-1}$ and inserting $\mathbf S\mathbf S^{-1}$ in the matrix-vector multiplication on the right-hand side gives
+\begin{equation*}
+  \mathbf S^{-1} \boldsymbol{\mathcal G}^{(1)}(t) = \mathbf S^{-1}\mathbf A^{-1}\mathbf S\mathbf S^{-1}\mathbf b + \mathbf S^{-1}\mathrm e^{-\mathbf A t}\mathbf S\mathbf S^{-1}\mathbf c,
+\end{equation*}
+from which using (\ref{A_tilde_def}) we obtain
+\begin{equation}
+  \boldsymbol{\mathcal G}^{(1)}(t) = \mathbf S\tilde{\mathbf A}^{-1}\mathbf S^{-1}\mathbf b + \mathbf S\mathrm e^{-\tilde{\mathbf A} t}\mathbf S^{-1}\mathbf c.
+\end{equation}
+Computing the right-hand side of the above equation can be done as follows. First we note that%$\mathbf S\tilde{\mathbf A}\mathbf S^{-1}\mathbf b$ is done as follows
+\begin{equation}
+  \mathbf S\tilde{\mathbf A}^{-1}\mathbf S^{-1} = \tilde{\mathbf A}^{-1} + [\mathbf S, \tilde{\mathbf A}^{-1}]\mathbf S^{-1},
+\end{equation}
+where the commutator $[\mathbf S, \tilde{\mathbf A}^{-1}]$ is given by
+\begin{equation}
+  [\mathbf S, \tilde{\mathbf A}^{-1}]_{ij} = [\mathbf S, \text{diag}(\lambda_1^{-1}, \lambda_2^{-1}, ... , \lambda_n^{-1})]_{ij} = (\lambda_k^{-1}-\lambda_i^{-1})S_{ij}
+\end{equation}
+where $\{\lambda_i\}$ are the eigenvales of $\mathbf A$. Similarly,
+\begin{equation}
+  \mathbf S\mathrm e^{-\tilde{\mathbf A} t}\mathbf S^{-1} = \text{diag}(\mathrm e^{-\lambda_1t}, \mathrm e^{-\lambda_2t},\dots,\mathrm e^{-\lambda_nt}) + [\mathbf S, \mathrm e^{-\tilde{\mathbf A} t}]\mathbf S^{-1},
+\end{equation}
+where
+\begin{equation}
+  [\mathbf S, \mathrm e^{-\tilde{\mathbf A} t}]_{ij} = (\mathrm e^{-\lambda_jt}-\mathrm e^{-\lambda_it})S_{ij}.
+\end{equation}
+Recalling the expression for $\mathbf b$ (\ref{rhs_vector}) we arrive to
+\begin{multline}\label{nonstat_expectations_result}
+  \mathcal G^{(1)}_i(t) = \lambda_1^+N\sum_k\lambda_k^{-1}S_{ik}\mathbf S^{-1}_{k1} + \mathrm e^{-\lambda_it}c_i + \sum_{k,l}(\mathrm e^{-\lambda_kt}-\mathrm e^{-\lambda_it})S_{ik}\mathbf S^{-1}_{kl}c_l \\
+  = \lambda_1^+N\sum_k\lambda_k^{-1}S_{ik}\mathbf S^{-1}_{k1} + \sum_{k,l}\mathrm e^{-\lambda_kt}S_{ik}\mathbf S^{-1}_{kl}c_l,
+\end{multline}
+from where
+\begin{equation}
+\mathcal G^{(1)}_i(\infty) = \mathbf A^{-1}\mathbf b = \lambda_1^+N\sum_k\lambda_k^{-1}S_{ik}\mathbf S^{-1}_{k1},
+\end{equation}
+which expresses the stationary expectations through the eigen decomposition of $\mathbf A$.
+The constant vector $\mathbf c$ can be found from (\ref{nonstat_expectations_result}) at $t=0$ as
+\begin{equation}\label{o1_constants_definition}
+  \mathbf c = \boldsymbol{\mathcal G}^{(1)}(0) - \boldsymbol{\mathcal G}^{(1)}(\infty).
 \end{equation}
 
-\subsubsection{Dendrite $i$ from the soma}
-Additional terms in the {\it master equation}:
-\begin{equation}
-  \begin{split}
-    & \textcolor{green}{\frac{1}{\tau_2}\left[(m_i+1)P_{m_i+1}^{\mathbf s} - m_iP_{\mathbf s}\right]} \textcolor{blue}{+\nu_{0i}\left[(m_0+1)P_{m_0+1, m_i-1}^{\mathbf s}-m_0P_{\mathbf s}\right]}\\
-    &\textcolor{blue}{+\nu_{i0}\left[(m_i+1)P_{m_0-1,m_i+1}^{\mathbf s} - m_iP_{\mathbf s}\right]}
-  \end{split}
+Finally, combining the expressions (\ref{nonstat_expectations_result}) and (\ref{o1_constants_definition}) we arrive to the following expression for the first-order expectations\footnote{Note that to compute the expectations numerically we use (\ref{nonstat_expectations_result}) and (\ref{o1_constants_definition}) instead of (\ref{nonstat_expectations_final_result}), as it is usually more optimal to separate time-dependent and time-independent terms.}
+\begin{equation}\label{nonstat_expectations_final_result}
+\mathcal G^{(1)}_i = \lambda_1^+N\sum_k\frac{1-\mathrm e^{-\lambda_kt}}{\lambda_k}S_{ik}\mathbf S^{-1}_{k1} + \sum_{k,l}\mathrm e^{-\lambda_kt}S_{ik}\mathbf S^{-1}_{kl}\mathcal G^{(1)}_l(t=0).
 \end{equation}
 
+The comparison of the above predictions with the results of the corresponding Gillespie simulation is shown in Fig.\ref{fig:Gillespie_simulation}.
 
-\subsubsection{Branching of dendritic branch $i$ to branches $j$ and $k$}
-\subsubsection{Synapse $j$ on dendrite $i$}
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=15cm]{img/protein_numbers.png}
+  \end{center}  
+  \caption{Comparison of theoretical predictions with Gillespie simulation starting from zero active genes, zero mRNAs and zero proteins. \textcolor{red}{Note that standard deviations are shown at their stationary values.}}
+  \label{fig:Gillespie_simulation}
+\end{figure}
 
-%% \subsection{The simple model of neuron}
-%% Now we consider a model of neuron with a branched dendrite and six synapses. Similarly to the case of the simplest neuron model above, the model should capture the following processes:
-%% \begin{enumerate}
-%% \item \textcolor{red}{Gene activation/deactivation};
-%% \item \textcolor{green}{mRNA production (only in the soma) and degradation (in all compartments)};
-%% \item \textcolor{blue}{mRNA hopping};
-%% \item \textcolor{brown}{Free protein production (in all compartments) and degradation (in all compartments, but not in the synapses)};
-%% \item \textcolor{cyan}{Free protein hopping};
-%% \item \textcolor{pink}{Protein binding/unbinding from the synapses}.
-%% \end{enumerate}
+\subsection{Second order}
+When in the PDE for the generating function the coefficients corresponding to certain pairs $x_ix_j$ are collected and equated, one gets an inhomogeneous linear system of first-order ODEs for $\boldsymbol{\mathcal G^{(2)}}$ of the form
+\begin{equation}\label{o2_nonstat_ODE}
+  \frac{d\boldsymbol{\mathcal G}^{(2)}(t)}{dt} = \mathbf D\boldsymbol{\mathcal G}^{(1)}(t) - \mathbf C\boldsymbol{\mathcal G}^{(2)}(t),
+\end{equation}
+where $\boldsymbol{\mathcal G}^{(2)}(t)$ should now be understood as a vector consisting of all independent\footnote{$\boldsymbol{\mathcal G}^{(2)}(t)$ was defined above as a symmetric matrix.} entries of the $\boldsymbol{\mathcal G}^{(2)}$ matrix discussed above ordered in a certain way\footnote{As discussed in Appendix \ref{app:Computational_optimisations}, it makes sense to group the entries of the $\boldsymbol{\mathcal G}^{(2)}$ matrix as gene-gene, gene-mRNA, gene-protein, mRNA-mRNA, mRNA-protein, protein-protein. This grouping simplifies the matrix $\mathbf C$, but, in principle, the 1-d arrangement of $\boldsymbol{\mathcal G}^{(2)}$ elements is arbitrary.}.
+
+The general solution to the system of ODEs (\ref{o2_nonstat_ODE}) is given by
+\begin{equation} \label{o2_nonstat_general_solution}
+  \boldsymbol{\mathcal G}^{(2)}(t) = \mathrm e^{-\mathbf C t}\left(\boldsymbol{\mathcal G}^{(2)}(t=0) + \int_0^t\mathrm e^{\mathbf C\tau}\mathbf D\boldsymbol{\mathcal G}^{(1)}(\tau)d\tau\right),
+\end{equation}
+and, as in Section \ref{subsec:o1_nonstat_problem}, to make its computation tractable, we use eigen decomposition, denoting a matrix consisting of the $\mathbf C$'s eigenvectors as $\mathbf T$, which implies that
+\begin{equation} \label{diagonalisation}
+  \mathbf C = \mathbf T \tilde{\mathbf C} \mathbf T^{-1},
+\end{equation}
+where $\tilde{\mathbf C} = \text{diag}(\{\lambda^{(2)}_i|i=1,\dots,d_2\})$, with $d_2$ being the number of unordered pairs of variables (number of all second moments) and $\{\lambda^{(2)}_i|i=1,\dots,d_2\}$ being an ordered set of all eigenvalues of the matrix $\mathbf C$. Substituting (\ref{diagonalisation}) to (\ref{o2_nonstat_general_solution}) gives
+\begin{multline} \label{nonstationary_o2_solution}
+  \boldsymbol{\mathcal G}^{(2)}(t) = \mathbf T\mathrm e^{-\tilde{\mathbf C}t}\mathbf T^{-1}\left(\boldsymbol{\mathcal G}^{(2)}(t=0) + \int_0^t\mathbf T\mathrm e^{\tilde{\mathbf C}\tau}\mathbf T^{-1}\mathbf D\boldsymbol{\mathcal G}^{(1)}(\tau)d\tau\right)\\
+  = \mathbf T\mathrm e^{-\tilde{\mathbf C}t}\left(\mathbf T^{-1}\boldsymbol{\mathcal G}^{(2)}(t=0) + \int_0^t\mathrm e^{\tilde{\mathbf C}\tau}\mathbf T^{-1}\mathbf D\boldsymbol{\mathcal G}^{(1)}(\tau)d\tau\right),
+\end{multline}
+from which
+\begin{multline} \label{nonstationary_o2_solution}
+  G^{(2)}_i(t) = \sum_{j=1}^{d_2}\mathrm e^{-\lambda^{(2)}_jt}T_{ij}\left\{\sum_{s=1}^{d_2}\mathbf T^{-1}_{js}\mathcal G^{(2)}_s(t=0) + \int_0^t\mathrm e^{\lambda^{(2)}_j\tau}\sum_{k=1}^{d_2}\mathbf T^{-1}_{jk}\sum_{\eta=1}^{d_1}D_{k\eta}\mathcal G^{(1)}_\eta(\tau)d\tau\right\}\\
+  = \sum_{j=1}^{d_2}\mathrm e^{-\lambda^{(2)}_jt}T_{ij}\left\{\sum_{s=1}^{d_2}\mathbf T^{-1}_{js}\mathcal G^{(2)}_s(t=0) + \sum_{k=1}^{d_2}\mathbf T^{-1}_{jk}\sum_{\eta=1}^{d_1}D_{k\eta}\int_0^t\mathrm e^{\lambda^{(2)}_j\tau}\mathcal G^{(1)}_\eta(\tau)d\tau\right\}.
+\end{multline}
+Using the expression (\ref{nonstat_expectations_result}), the integral above is evaluated as
+\begin{equation}
+  \int_0^t\mathrm e^{\lambda_j^{(2)}\tau}\mathcal G^{(1)}_\eta(\tau)d\tau = \frac{\mathrm e^{\lambda_j^{(2)}t} - 1}{\lambda^{(2)}_j}\mathcal G_\eta^{(1)}(t=\infty) + \sum_{\mu=1}^{d_1}\frac{\mathrm e^{(\lambda^{(2)}_j-\lambda_\mu)t}-1}{\lambda^{(2)}_j-\lambda_\mu}S_{\eta\mu}\sum_{\nu=1}^{d_1}\mathbf S^{-1}_{\mu\nu}c_\nu,
+\end{equation}
+and finally
+\begin{multline}
+  \mathcal G^{(2)}_i(t) =  \sum_{j=1}^{d_2}\mathrm e^{-\lambda^{(2)}_jt}T_{ij}\Bigg\{\sum_{s=1}^{d_2}\mathbf T^{-1}_{js}\mathcal G^{(2)}_s(t=0) + \sum_{k=1}^{d_2}\mathbf T^{-1}_{jk}\sum_{\eta=1}^{d_1}D_{k\eta}\Bigg(\frac{\mathrm e^{\lambda_j^{(2)}t} - 1}{\lambda^{(2)}_j}\mathcal G_\eta^{(1)}(t=\infty)\\
+  + \sum_{\mu=1}^{d_1}\frac{\mathrm e^{(\lambda^{(2)}_j-\lambda_\mu)t}-1}{\lambda^{(2)}_j-\lambda_\mu}S_{\eta\mu}\sum_{\nu=1}^{d_1}(\mathbf S^{-1})_{\mu\nu}c_\nu\Bigg)\Bigg\},
+\end{multline}
+or
+\begin{multline} \label{nonstat_covar}
+  \mathcal G^{(2)}_i(t) =  \sum_{j=1}^{d_2}T_{ij}\Bigg\{\mathrm e^{-\lambda^{(2)}_jt}\sum_{s=1}^{d_2}\mathbf T^{-1}_{js}\mathcal G^{(2)}_s(t=0) + \frac{1 - \mathrm e^{-\lambda^{(2)}_jt}}{\lambda^{(2)}_j}\sum_{\eta=1}^{d_1}\left(\sum_{k=1}^{d_2}\mathbf T^{-1}_{jk}D_{k\eta}\right)\mathcal G_\eta^{(1)}(t=\infty)\\
+  + \sum_{\mu=1}^{d_1}\frac{\mathrm e^{-\lambda_\mu t}-\mathrm e^{-\lambda^{(2)}_jt}}{\lambda^{(2)}_j-\lambda_\mu}\left(\sum_{\zeta=1}^{d_1}\left(\sum_{k=1}^{d_2}\mathbf T^{-1}_{jk}D_{k\zeta}\right)S_{\zeta\mu}\right)\sum_{\nu=1}^{d_1}(\mathbf S^{-1})_{\mu\nu}c_\nu\Bigg\},
+\end{multline}
+or, substituting $c_\nu$ from (\ref{o1_constants_definition})
+\begin{multline}
+  \mathcal G^{(2)}_i(t) = \sum_{\eta=1}^{d_1}\sum_{k=1}^{d_2}\sum_{j=1}^{d_2}\frac{T_{ij}\mathbf T^{-1}_{jk}}{\lambda^{(2)}_j}D_{k\eta}\mathcal G_\eta^{(1)}(t=\infty) +\\ \sum_{j=1}^{d_2}\mathrm e^{-\lambda^{(2)}_jt}T_{ij}\left(\sum_{s=1}^{d_2}\mathbf T^{-1}_{js}\mathcal G^{(2)}_s(t=0) - \sum_{\eta=1}^{d_1}\sum_{k=1}^{d_2}\frac{\mathbf T^{-1}_{jk}}{\lambda^{(2)}_j}D_{k\eta}\mathcal G_\eta^{(1)}(t=\infty)\right) +\\
+  \sum_{j=1}^{d_2}\mathrm e^{-\lambda^{(2)}_jt}T_{ij}\sum_{\mu=1}^{d_1}\frac{\mathrm e^{(\lambda^{(2)}_j-\lambda_\mu)t}-1}{\lambda^{(2)}_j-\lambda_\mu}S_{\eta\mu}\sum_{\nu=1}^{d_1}(\mathbf S^{-1})_{\mu\nu}\left(\mathcal G_\nu^{(1)}(t=0)_\nu - \mathcal G_\nu^{(1)}(t=\infty)_\nu\right).
+\end{multline}
+
+The last expression is written in the form that clarifies the meanings of different terms. Indeed, the first term in the above expression gives stationary values of $\boldsymbol{\mathcal G}^{(2)}$, the second terms gives the decay dynamics of $\boldsymbol{\mathcal G}^{(2)}$ if $\boldsymbol{\mathcal G}^{(1)}$ are set at their stationary values, finally the last term is important if the first-order moments are themselves away from stationarity.
+
+For numerical evaluation of $\boldsymbol{\mathcal G}^{(2)}(t)$ we use the expression (\ref{nonstat_covar}) in which, if $\lambda^{(2)}_j-\lambda_\mu=0$ we evaluate the fraction as a limit
+\begin{equation}
+  \lim_{\lambda^{(2)}_j-\lambda_\mu\to 0}\frac{\mathrm e^{-\lambda_\mu t}-\mathrm e^{-\lambda^{(2)}_jt}}{\lambda^{(2)}_j-\lambda_\mu} = \mathrm e^{-\lambda^{(2)}_jt},
+\end{equation}
+which corresponds to a situation where some dynamical modes of $\boldsymbol{\mathcal G}^{(1)}$ and $\boldsymbol{\mathcal G}^{(2)}$ decay together with identical rates.
+
+\appendix \label{app:Computational_optimisations}
+\section{Computational optimisations}
+It is important to note that gene activation/deactivation is completely independent from mRNA/protein dynamics, mRNA dynamics solely depends on gene dynamics, and protein dynamics only depends on mRNA dynamics. This allows separating the whole first-order system of linear equations to one equation corresponding to gene dynamics, 1+(number of dendritic segments) equations for mRNA dynamics and 1+(number of dendritic segments) + (number of synapses) equations for protein dynamics. In this setting, protein dynamics can be found by solving equation for gene dynamics and substituting the result to the r.h.s. of the mRNA equations, whose results should then be substituted to the r.h.s. of protein equations.
+
+Similar idea holds for the second-order equations (for covariances), which can be separated as \{(gene-gene), (gene-mRNA), (gene-protein), (mRNA-mRNA), (mRNA-protein), (protein-protein)\}. The computational cost is then defined mainly by the (protein-protein) part, which requires the largest matrix inversion, but, if protein-protein correlations are unfeasible to compute, one can still obtain something that is feasible (e.g. mRNA-mRNA correlations), which would not be possible if the system of equations was inseparable in the above sense.
+
+Of course, these optimisations do not change the exponent of the problems' computational complexity, but they significantly decrease the constant in computational time and memory consumption.
 
 \bibliographystyle{unsrt}
 \bibliography{bibliography.bib}
