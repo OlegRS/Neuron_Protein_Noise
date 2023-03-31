@@ -1019,6 +1019,11 @@ For numerical evaluation of $\boldsymbol{\mathcal G}^{(2)}(t)$ we use the expres
 \end{equation}
 which corresponds to a situation where some dynamical modes of $\boldsymbol{\mathcal G}^{(1)}$ and $\boldsymbol{\mathcal G}^{(2)}$ decay together with identical rates.
 
+\subsubsection{Note on initial conditions}
+\textcolor{red}{It is important to understand that the initial conditions $\boldsymbol{\mathcal G}^{(1)}(t=0)$ and $\boldsymbol{\mathcal G}^{(2)}(t=0)$ should be consistent with their physical meanings and with each other.} Indeed, if this is not the case, the expectation of the number of active genes may be set higher than the total number of gene copies, or, say, a negative value for the expected mRNA number may be set. Moreover, low $\mathcal G_{ii}^{(2)}(t=0)$ at high $\mathcal G_i^{(1)}(t=0)$ results in negative variances.
+
+The initial conditions $\boldsymbol{\mathcal G}^{(1)}(t=0)$ and $\boldsymbol{\mathcal G}^{(2)}(t=0)$ should be set in a way consistent with some underlying probability distribution from which these quantities can arise. It is necessary (and, possibly, sufficient) to check that the covariance matrix is positive semi-definite. 
+
 \appendix \label{app:Computational_optimisations}
 \section{Computational optimisations}
 It is important to note that gene activation/deactivation is completely independent from mRNA/protein dynamics, mRNA dynamics solely depends on gene dynamics, and protein dynamics only depends on mRNA dynamics. This allows separating the whole first-order system of linear equations to one equation corresponding to gene dynamics, 1+(number of dendritic segments) equations for mRNA dynamics and 1+(number of dendritic segments) + (number of synapses) equations for protein dynamics. In this setting, protein dynamics can be found by solving equation for gene dynamics and substituting the result to the r.h.s. of the mRNA equations, whose results should then be substituted to the r.h.s. of protein equations.
