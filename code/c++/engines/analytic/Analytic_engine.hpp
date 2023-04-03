@@ -143,7 +143,10 @@ public:
   Analytic_engine& mRNA_protein_stationary_covariances();
   Analytic_engine& protein_protein_stationary_covariances();
   Analytic_engine& nonstationary_covariances(const std::list<double>& times);
-  Analytic_engine& sem_nonstationary_covariances(const std::list<double>& times);
+  Analytic_engine& sem_nonstationary_covariances(const std::list<double>& times, arma::vec* initial_G1, arma::vec* initial_G2);
+
+  arma::vec* G_1() {return &expectations;}
+  arma::vec* G_2() {return p_covariances;}
   
   // std::vector<std::pair<std::string,double>> expectations();
   // std::vector<std::vector<std::pair<std::string,double>>> Analytic_engine& correlations();

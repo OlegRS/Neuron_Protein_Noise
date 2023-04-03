@@ -40,6 +40,9 @@ public:
   }
   Soma(unsigned int &number_of_gene_copies, double &gene_activation_rate, double &gene_deactivation_rate, double &transcription_rate, double &mRNA_decay_rate, double &translation_rate, double &protein_decay_rate, unsigned int active_genes_number = 0, unsigned int protein_number = 0, unsigned int mRNA_number = 0);
 
+  Soma& set_gene_activation_rate(const double& rate) {gene_activation_rate=rate; return *this;}
+  Soma& set_gene_deactivation_rate(const double& rate) {gene_deactivation_rate = rate; return *this;}
+
   Compartment::Type type() const {return SOMA;}
   
   Compartment* operator+=(Compartment&);

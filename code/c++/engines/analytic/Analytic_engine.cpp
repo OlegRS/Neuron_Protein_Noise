@@ -277,7 +277,6 @@ void Analytic_engine::set_o1_matrix(const Compartment& parent) {
     set_o1_matrix(*((*it_p_junc)->p_to));
 }
 
-/////////////// NOT IMPLEMENTED START //////////////
 const Compartment* Analytic_engine::sem_set_o1_soma() {
   
   auto& soma = *p_neuron->p_soma;
@@ -382,7 +381,6 @@ void Analytic_engine::sem_set_o1_matrix(const Compartment& parent) {
   for(auto& it_p_junc : parent.it_p_out_junctions)
     sem_set_o1_matrix(*((*it_p_junc)->p_to));
 }
-///////////////// NOT IMPLEMENTED END //////////////
 
 Analytic_engine& Analytic_engine::internalise_expectations() {
   for(size_t i=0; i<o1_dim; ++i)
@@ -724,7 +722,7 @@ Analytic_engine& Analytic_engine::nonstationary_covariances(const std::list<doub
   return internalise_expectations();
 }
 
-Analytic_engine& Analytic_engine::sem_nonstationary_covariances(const std::list<double>& times) {
+Analytic_engine& Analytic_engine::sem_nonstationary_covariances(const std::list<double>& times, arma::vec* initial_G1, arma::vec* initial_G2) {
   o1_RHS(0) = -(p_neuron->p_soma->gene_activation_rate) * (p_neuron->p_soma->number_of_gene_copies);
   std::cerr << "Setting o1_matrix...\n";
   o1_mat.zeros();
@@ -769,8 +767,8 @@ Analytic_engine& Analytic_engine::sem_nonstationary_covariances(const std::list<
   for(size_t i=0; i<o1_dim; ++i)
     std::cout << o1_var_names[i] << ": " << stationary_expectations(i) << std::endl;
 
-  // Setting integrals of motion c = G(0) - A*b, where G(0)=0 for now
-  arma::vec c_vec = 0 - stationary_expectations;
+  // Setting integrals of motion c = G(0) - A*b
+  arma::vec c_vec = *initial_G1 - stationary_expectations;
 
   // Initialising second order
   sem_initialise_o2();
@@ -834,7 +832,7 @@ Analytic_engine& Analytic_engine::sem_nonstationary_covariances(const std::list<
       for(size_t j=0; j<o2_dim; ++j) {
         double s_sum=0;
         for(size_t s=0; s<o2_dim; ++s)
-          s_sum += o2_inv_tm(j,s) * 0; // G^2_s(t=0) := 0 for now
+          s_sum += o2_inv_tm(j,s) * (*initial_G2)(s);
 
         for(size_t zeta=0; zeta<o1_dim; ++zeta) { // Precomputing k-sum for all zeta (eta)
           k_sum[zeta] = 0;

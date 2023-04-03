@@ -64,16 +64,28 @@ int main() {
 
   // ae.gene_mRNA_stationary_covariances().gene_protein_stationary_covariances().mRNA_mRNA_stationary_covariances().mRNA_protein_stationary_covariances().protein_protein_stationary_covariances();
 
+
+  ///// Setting initial conditions /////
+  soma.set_gene_activation_rate(1);
+  soma.set_gene_deactivation_rate(0);
+  ae.sem_stationary_expectations().sem_stationary_covariances();  
+  soma.set_gene_activation_rate(1);
+  soma.set_gene_deactivation_rate(.5);
+  ae.sem_stationary_expectations();
+  
+  soma.set_gene_activation_rate(1);
+  soma.set_gene_deactivation_rate(0);
+
   std::list<double> times;
   for(size_t i=0; i<10000; ++i)
     times.push_back(i);
 
   // Analytic_engine(neuron).sem_nonstationary_expectations(times);
 
-  ae.sem_stationary_expectations();
+  // ae.sem_stationary_expectations();
   // ae.stationary_covariances();
 
-  ae.sem_nonstationary_covariances(times);
+  ae.sem_nonstationary_covariances(times, ae.G_1(), ae.G_2());
   // Gillespie_engine(neuron).run_Gillespie(10000);
 
   // ae.sem_nonstationary_expectations(times);
