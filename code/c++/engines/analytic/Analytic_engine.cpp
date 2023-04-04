@@ -173,9 +173,19 @@ Analytic_engine& Analytic_engine::internalise_prot_expectations() {
   return *this;
 }
 
+Analytic_engine& Analytic_engine::initialise_o1_mat_and_RHS() {
+  clear_o1_mat_and_RHS();
+  p_o1_mat = new arma::mat(o1_dim, o1_dim);
+  p_o1_RHS = new arma::vec(o1_dim);
+  
+  return *this;
+}
+
 const Compartment* Analytic_engine::set_o1_soma() {
+  initialise_o1_mat_and_RHS();
   
   auto& soma = *p_neuron->p_soma;
+  auto& o1_mat = *p_o1_mat;
 
   o1_mat(0,0) = -soma.gene_activation_rate - soma.gene_deactivation_rate;
 
@@ -193,11 +203,14 @@ const Compartment* Analytic_engine::set_o1_soma() {
   p_o1_vars[1] = &soma.n_mRNA_expectation;
   p_o1_vars[2] = &soma.n_prot_expectation;
 
-  // return static_cast<const Compartment*&>(neur.p_soma);
+  (*p_o1_RHS)(0) = -(p_neuron->p_soma->gene_activation_rate) * (p_neuron->p_soma->number_of_gene_copies);
+  
   return p_neuron->p_soma;
 }
 
 void Analytic_engine::set_o1_matrix(const Compartment& parent) {
+
+  auto& o1_mat = *p_o1_mat;
   
   if(parent.it_p_out_junctions.empty()) {
     return;
@@ -278,8 +291,10 @@ void Analytic_engine::set_o1_matrix(const Compartment& parent) {
 }
 
 const Compartment* Analytic_engine::sem_set_o1_soma() {
+  initialise_o1_mat_and_RHS();
   
   auto& soma = *p_neuron->p_soma;
+  auto& o1_mat = *p_o1_mat;
 
   set_prot_index_from(soma);
 
@@ -299,12 +314,14 @@ const Compartment* Analytic_engine::sem_set_o1_soma() {
   p_o1_vars[1] = &soma.n_mRNA_expectation;
   p_o1_vars[soma.prot_ind] = &soma.n_prot_expectation;
 
-  // return static_cast<const Compartment*&>(neur.p_soma);
+  (*p_o1_RHS)(0) = -(p_neuron->p_soma->gene_activation_rate) * (p_neuron->p_soma->number_of_gene_copies);
+  
   return p_neuron->p_soma;
 }
 
 void Analytic_engine::sem_set_o1_matrix(const Compartment& parent) {
-
+  auto& o1_mat = *p_o1_mat;
+  
   if(parent.it_p_out_junctions.empty()) {
     return;
   }
@@ -389,14 +406,13 @@ Analytic_engine& Analytic_engine::internalise_expectations() {
 }
 
 Analytic_engine& Analytic_engine::stationary_expectations() {
-  o1_RHS(0) = -(p_neuron->p_soma->gene_activation_rate) * (p_neuron->p_soma->number_of_gene_copies);
   std::cerr << "Setting o1_matrix...\n";
   set_o1_matrix(*set_o1_soma());
   std::cerr << "Inverting o1_matrix...\n";
-  arma::mat inv_o1_matrix = o1_mat.i();
+  arma::mat inv_o1_matrix = (*p_o1_mat).i();
   std::cerr << "Done with o1_matrix inversion\n";
 
-  expectations = inv_o1_matrix * o1_RHS;
+  expectations = inv_o1_matrix * (*p_o1_RHS);
 
   size_t i=0;
   for(auto& o1_var_name : o1_var_names)
@@ -406,14 +422,14 @@ Analytic_engine& Analytic_engine::stationary_expectations() {
 }
 
 Analytic_engine& Analytic_engine::sem_stationary_expectations() {
-  o1_RHS(0) = -(p_neuron->p_soma->gene_activation_rate) * (p_neuron->p_soma->number_of_gene_copies);
   std::cerr << "Setting o1_matrix...\n";
   sem_set_o1_matrix(*sem_set_o1_soma());
+
   std::cerr << "Inverting o1_matrix...\n";
-  arma::mat inv_o1_matrix = o1_mat.i();
+  arma::mat inv_o1_matrix = (*p_o1_mat).i();
   std::cerr << "Done with o1_matrix inversion\n";
 
-  expectations = inv_o1_matrix * o1_RHS;
+  expectations = inv_o1_matrix * (*p_o1_RHS);
 
   size_t i=0;
   for(auto& o1_var_name : o1_var_names)
@@ -423,7 +439,9 @@ Analytic_engine& Analytic_engine::sem_stationary_expectations() {
 }
 
 Analytic_engine& Analytic_engine::nonstationary_expectations(const std::list<double>& times) { //const Neuron& neur) {
-  o1_RHS(0) = -(p_neuron->p_soma->gene_activation_rate) * (p_neuron->p_soma->number_of_gene_copies);
+
+  auto& o1_mat = *p_o1_mat;
+  
   std::cerr << "Setting o1_matrix...\n";
   set_o1_matrix(*set_o1_soma());
   o1_mat = -o1_mat;
@@ -486,7 +504,9 @@ Analytic_engine& Analytic_engine::nonstationary_expectations(const std::list<dou
 
 
 Analytic_engine& Analytic_engine::sem_nonstationary_expectations(const std::list<double>& times) { //const Neuron& neur) {
-  o1_RHS(0) = -(p_neuron->p_soma->gene_activation_rate) * (p_neuron->p_soma->number_of_gene_copies);
+
+  auto& o1_mat = *p_o1_mat;
+  
   std::cerr << "Setting o1_matrix...\n";
   o1_mat.zeros();
   sem_set_o1_matrix(*sem_set_o1_soma());
@@ -549,7 +569,9 @@ Analytic_engine& Analytic_engine::sem_nonstationary_expectations(const std::list
 }
 
 Analytic_engine& Analytic_engine::nonstationary_covariances(const std::list<double>& times) {
-  o1_RHS(0) = -(p_neuron->p_soma->gene_activation_rate) * (p_neuron->p_soma->number_of_gene_copies);
+
+  auto& o1_mat = *p_o1_mat;
+  
   std::cerr << "Setting o1_matrix...\n";
   o1_mat.zeros();
   set_o1_matrix(*set_o1_soma());
@@ -723,12 +745,11 @@ Analytic_engine& Analytic_engine::nonstationary_covariances(const std::list<doub
 }
 
 Analytic_engine& Analytic_engine::sem_nonstationary_covariances(const std::list<double>& times, arma::vec* initial_G1, arma::vec* initial_G2) {
-  o1_RHS(0) = -(p_neuron->p_soma->gene_activation_rate) * (p_neuron->p_soma->number_of_gene_copies);
   std::cerr << "Setting o1_matrix...\n";
-  o1_mat.zeros();
   sem_set_o1_matrix(*sem_set_o1_soma());
+  auto& o1_mat = *p_o1_mat;
   o1_mat = -o1_mat;
-  
+    
   std::cerr << "Computing eigen decomposition...\n";
   arma::cx_vec eigval_c;
   arma::vec eigval(o1_dim);
@@ -873,7 +894,7 @@ Analytic_engine& Analytic_engine::sem_nonstationary_covariances(const std::list<
     //////////// COMPUTING VARIANCES //////////
     std::vector<double> rmss(o1_dim);
     for(size_t i=0; i<o1_dim; ++i) {
-      rmss[i] = ((*p_covariances)(sem_o2_ind(i,i)) - expectations(i)*(expectations(i)-1));
+      rmss[i] = sqrt((*p_covariances)(sem_o2_ind(i,i)) - expectations(i)*(expectations(i)-1));
       if(rmss[i]>=0) {
         std::cout << o1_var_names[i] + ": " << expectations(i) << ", " << rmss[i] << std::endl;
       }
@@ -937,10 +958,13 @@ void Analytic_engine::set_prot_index_from(Compartment& compartment) {
 void Analytic_engine::sem_initialise_o2() {
   set_prot_index_from(*p_neuron->p_soma);
   
+  if(p_o2_mat) clear_o2_mat_and_RHS();
   p_o2_mat = new arma::mat(o2_dim, o2_dim);
   p_o2_RHS =  new arma::vec(o2_dim);
-  p_covariances = new arma::vec(o2_dim);
-  p_o2_var_names = new std::vector<std::string>(o2_dim);
+  if(!p_covariances)
+    p_covariances = new arma::vec(o2_dim);
+  if(!p_o2_var_names)
+    p_o2_var_names = new std::vector<std::string>(o2_dim);
 
   sem_set_expectations(*sem_set_soma());
 
@@ -995,12 +1019,6 @@ void Analytic_engine::sem_set_expectations(const Compartment& parent) {
 
   for(auto& it_p_junc : parent.it_p_out_junctions)
     sem_set_expectations(*((*it_p_junc)->p_to));
-}
-
-void Analytic_engine::clear_o2_matrix_and_RHS() {
-  p_covariances = new arma::vec(o2_dim);
-  p_o2_var_names = new std::vector<std::string>(o2_dim);
-  p_o2_mat = new arma::mat(o2_dim, o2_dim);
 }
 
 void Analytic_engine::set_o2_nonstationary_RHS_soma() {
@@ -1662,25 +1680,56 @@ Analytic_engine& Analytic_engine::sem_stationary_pearson_correlations() {
   return *this;
 }
 
-Analytic_engine& Analytic_engine::clear_all() {
-  if(p_o2_mat) delete p_o2_mat;
-  if(p_o2_RHS) delete p_o2_RHS;
-  if(p_covariances) delete p_covariances;
-  if(p_o2_var_names) delete p_o2_var_names;
-  if(o2_gene_mRNA) delete o2_gene_mRNA;
-  if(o2_gene_mRNA_RHS) delete o2_gene_mRNA_RHS;
-  if(o2_gene_mRNA_mat) delete o2_gene_mRNA_mat;
-  if(o2_gene_prot) delete o2_gene_prot;
-  if(o2_gene_prot_RHS) delete o2_gene_prot_RHS;
-  if(o2_gene_prot_mat) delete o2_gene_prot_mat;
-  if(o2_mRNA_mRNA) delete o2_mRNA_mRNA;
-  if(o2_mRNA_mRNA_RHS) delete o2_mRNA_mRNA_RHS;
-  if(o2_mRNA_mRNA_mat) delete o2_mRNA_mRNA_mat;
-  if(o2_mRNA_prot) delete o2_mRNA_prot;
-  if(o2_mRNA_prot_RHS) delete o2_mRNA_prot_RHS;
-  if(o2_mRNA_prot_mat) delete o2_mRNA_prot_mat;
-  if(o2_nonstationary_RHS_mat) delete o2_nonstationary_RHS_mat;
+Analytic_engine& Analytic_engine::clear_o1_mat_and_RHS() {
+  if(p_o1_mat) {
+    delete p_o1_mat;
+    p_o1_mat = NULL;
+  }
+  if(p_o1_RHS) {
+    delete p_o1_RHS;
+    p_o1_RHS = NULL;
+  }
+  return *this;
+}
 
+Analytic_engine& Analytic_engine::clear_o1() {
+  clear_o1_mat_and_RHS();
+  // Other stuff like o1_var_names that is now in stack
+  return *this;
+}
+
+Analytic_engine& Analytic_engine::clear_o2_mat_and_RHS() {
+  if(p_o2_mat) {delete p_o2_mat; p_o2_mat = NULL;}
+  if(p_o2_RHS) {delete p_o2_RHS; p_o2_RHS = NULL;}
+
+  return *this;
+}
+
+Analytic_engine& Analytic_engine::clear_o2() {
+  clear_o2_mat_and_RHS();
+  if(p_o2_var_names) { delete p_o2_var_names; p_o2_var_names = NULL;}
+  if(p_covariances) {delete p_covariances; p_covariances=NULL;}
+  if(o2_gene_mRNA) {delete o2_gene_mRNA; o2_gene_mRNA=NULL;}
+  if(o2_gene_mRNA_RHS) {delete o2_gene_mRNA_RHS; o2_gene_mRNA_RHS=NULL;}
+  if(o2_gene_mRNA_mat) {delete o2_gene_mRNA_mat; o2_gene_mRNA_mat=NULL;}
+  if(o2_gene_prot) {delete o2_gene_prot; o2_gene_prot=NULL;}
+  if(o2_gene_prot_RHS) {delete o2_gene_prot_RHS; o2_gene_prot_RHS=NULL;}
+  if(o2_gene_prot_mat) {delete o2_gene_prot_mat; o2_gene_prot_mat=NULL;}
+  if(o2_mRNA_mRNA) {delete o2_mRNA_mRNA; o2_mRNA_mRNA=NULL;}
+  if(o2_mRNA_mRNA_RHS) {delete o2_mRNA_mRNA_RHS; o2_mRNA_mRNA_RHS=NULL;}
+  if(o2_mRNA_mRNA_mat) {delete o2_mRNA_mRNA_mat; o2_mRNA_mRNA_mat=NULL;}
+  if(o2_mRNA_prot) {delete o2_mRNA_prot; o2_mRNA_prot=NULL;}
+  if(o2_mRNA_prot_RHS) {delete o2_mRNA_prot_RHS; o2_mRNA_prot_RHS=NULL;}
+  if(o2_mRNA_prot_mat) {delete o2_mRNA_prot_mat; o2_mRNA_prot_mat=NULL;}
+  if(o2_nonstationary_RHS_mat) {delete o2_nonstationary_RHS_mat; o2_nonstationary_RHS_mat=NULL;}
+
+  return *this;
+}
+
+Analytic_engine& Analytic_engine::clear_all() {
+  clear_o1();
+  clear_o2();
+  
   return *this;
 }
 

@@ -66,15 +66,13 @@ int main() {
 
 
   ///// Setting initial conditions /////
-  soma.set_gene_activation_rate(1);
-  soma.set_gene_deactivation_rate(0);
-  ae.sem_stationary_expectations().sem_stationary_covariances();  
-  soma.set_gene_activation_rate(1);
-  soma.set_gene_deactivation_rate(.5);
+  soma.set_gene_activation_rate(1).set_gene_deactivation_rate(0).set_transcription_rate(3.*200/10000 * .01*3600);
+  ae.sem_stationary_expectations().sem_stationary_covariances();
+  arma::vec G2_init = *ae.G2();
+  soma.set_gene_activation_rate(1).set_gene_deactivation_rate(0).set_transcription_rate(3.*200/10000 * .001*3600);
   ae.sem_stationary_expectations();
-  
-  soma.set_gene_activation_rate(1);
-  soma.set_gene_deactivation_rate(0);
+  arma::vec G1_init = *ae.G1();
+  // soma.set_gene_activation_rate(1).set_gene_deactivation_rate(0);
 
   std::list<double> times;
   for(size_t i=0; i<10000; ++i)
@@ -85,7 +83,20 @@ int main() {
   // ae.sem_stationary_expectations();
   // ae.stationary_covariances();
 
-  ae.sem_nonstationary_covariances(times, ae.G_1(), ae.G_2());
+  std::cout << "============ DEBUG BEGIN ============\n";
+  std::vector<double> rmss(ae.dim_o1());
+  for(size_t i=0; i<ae.dim_o1(); ++i) {
+    rmss[i] = sqrt((*ae.G2())(ae.sem_o2_ind(i,i)) - (*ae.G1())(i)*((*ae.G1())(i)-1));
+    if(rmss[i]>=0) {
+      std::cout << (*ae.o1_variables_names())[i] + ": " << (*ae.G1())(i) << ", " << rmss[i] << std::endl;
+    }
+    else
+      std::cout << (*ae.o1_variables_names())[i] + ": " << (*ae.G1())(i) << ", " << rmss[i] << " NEGATIVE!\n";
+  }
+  std::cout << "========== DEBUG END ==========\n";
+
+  ae.sem_nonstationary_covariances(times, &G1_init, &G2_init);
+  // ae.sem_nonstationary_covariances(times, ae.G1(), ae.G2());
   // Gillespie_engine(neuron).run_Gillespie(10000);
 
   // ae.sem_nonstationary_expectations(times);

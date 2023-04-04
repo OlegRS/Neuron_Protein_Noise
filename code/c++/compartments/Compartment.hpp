@@ -41,7 +41,7 @@ protected:
 
   std::string name;
 
-  double transcription_rate = (3.*200/*dend_length*//10000) * 0.001*3600, // /hour; mRNA transcription rate (0.001/s CaMKII Fonkeu) // THE FACTOR IN () ACCOUNTS FOR THE REDUCED LENGTH OF THE SIMPLE MODEL DENDRITE COMPARED TO THE REAL NEURONS
+  double transcription_rate = (3.*200/*dend_length*//10000) * .001*3600, // /hour; mRNA transcription rate (0.001/s CaMKII Fonkeu) // THE FACTOR IN () ACCOUNTS FOR THE REDUCED LENGTH OF THE SIMPLE MODEL DENDRITE COMPARED TO THE REAL NEURONS
     translation_rate = 0.021*3600,
     mRNA_decay_rate = 1.2e-5*3600,
     protein_decay_rate = 1.21e-6*3600,
@@ -107,6 +107,8 @@ public:
 
   Compartment& connect_to(Compartment&); // Linking another compartment
   Compartment& disconnect_from(Compartment&); // Unlinking another compartment
+
+  Compartment& set_transcription_rate(const double& rate) {transcription_rate=rate; return *this;}
 
   ~Compartment() {};
 

@@ -15,12 +15,12 @@ class Analytic_engine {
   // Parameters
   Neuron* p_neuron = NULL;
   unsigned int o1_dim, o2_dim;
-  arma::mat o1_mat, *p_o2_mat,
+  arma::mat *p_o1_mat, *p_o2_mat,
     o1_mRNA_matrix, o1_prot_matrix,
     *o2_gene_mRNA_mat, *o2_gene_prot_mat,
     *o2_mRNA_mRNA_mat, *o2_mRNA_prot_mat, *o2_prot_prot_mat,
     *o2_nonstationary_RHS_mat;
-  arma::vec o1_RHS, *p_o2_RHS,
+  arma::vec *p_o1_RHS, *p_o2_RHS,
     expectations, *p_covariances,
     o1_mRNA_RHS, o1_prot_RHS,
     mRNA_expectations, protein_expectations,
@@ -38,6 +38,7 @@ class Analytic_engine {
   // unsigned int parent_start_ind = 0;
   // unsigned int desc_start_ind = 3;
 
+  Analytic_engine& initialise_o1_mat_and_RHS();
   // Sets 1st order matrix starting from the given compartment
   const Compartment* set_o1_soma();
   void set_o1_matrix(const Compartment&);
@@ -83,18 +84,24 @@ class Analytic_engine {
    
   void set_o2_RHS();
   void sem_set_o2_RHS();
-  void clear_o2_matrix_and_RHS();
+  Analytic_engine& clear_o1_mat_and_RHS();
+  Analytic_engine& clear_o1();
+  Analytic_engine& clear_o2_mat_and_RHS();
+  Analytic_engine& clear_o2();
+    
+public:
+
   size_t o2_ind(const size_t &i, const size_t &j, const size_t &dim) const; // o2 index conversion
   size_t o2_ind(const size_t &i, const size_t &j) const {return o2_ind(i,j,o1_dim);}
   size_t o2_ind_asym(const size_t &i, const size_t &j, const size_t &dim_x) const {return dim_x*i+j;}
   inline size_t sem_o2_ind(const size_t &i, const size_t &j) const; // semantic o2 index conversion
+
   
-public:
   Analytic_engine(Neuron& neuron) :
     p_neuron(&neuron),
     o1_dim(3 + 2*neuron.p_dend_segments.size() + neuron.p_synapses.size()),
     o2_dim(o1_dim*(o1_dim+1)/2),
-    o1_mat(o1_dim, o1_dim),
+    p_o1_mat(NULL), p_o1_RHS(NULL),
     o1_mRNA_matrix(1+neuron.p_dend_segments.size(), 1+neuron.p_dend_segments.size()),
     o1_prot_matrix(1+neuron.p_dend_segments.size()+neuron.p_synapses.size(), 1+neuron.p_dend_segments.size()+neuron.p_synapses.size()),
     o1_mRNA_RHS(1+neuron.p_dend_segments.size()),
@@ -104,7 +111,6 @@ public:
     protein_expectations(1+neuron.p_dend_segments.size()+neuron.p_synapses.size()),
     o1_prot_names(1+neuron.p_dend_segments.size()+neuron.p_synapses.size()),
     p_o2_mat(NULL), p_o2_RHS(NULL), p_o2_var_names(NULL), p_covariances(NULL),
-    o1_RHS(o1_dim),
     expectations(o1_dim),
     o1_var_names(o1_dim),
     p_o1_vars(o1_dim),
@@ -145,8 +151,11 @@ public:
   Analytic_engine& nonstationary_covariances(const std::list<double>& times);
   Analytic_engine& sem_nonstationary_covariances(const std::list<double>& times, arma::vec* initial_G1, arma::vec* initial_G2);
 
-  arma::vec* G_1() {return &expectations;}
-  arma::vec* G_2() {return p_covariances;}
+  arma::vec* G1() {return &expectations;}
+  std::vector<std::string>* o1_variables_names() {return &o1_var_names;}
+  arma::vec* G2() {return p_covariances;}
+
+  size_t dim_o1() const {return o1_dim;}
   
   // std::vector<std::pair<std::string,double>> expectations();
   // std::vector<std::vector<std::pair<std::string,double>>> Analytic_engine& correlations();
