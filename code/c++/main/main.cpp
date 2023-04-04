@@ -66,17 +66,17 @@ int main() {
 
 
   ///// Setting initial conditions /////
-  soma.set_gene_activation_rate(1).set_gene_deactivation_rate(0).set_transcription_rate(3.*200/10000 * .01*3600);
+  soma.set_gene_activation_rate(0).set_gene_deactivation_rate(1);
   ae.sem_stationary_expectations().sem_stationary_covariances();
   arma::vec G2_init = *ae.G2();
-  soma.set_gene_activation_rate(1).set_gene_deactivation_rate(0).set_transcription_rate(3.*200/10000 * .001*3600);
-  ae.sem_stationary_expectations();
+  // soma.set_gene_activation_rate(1).set_gene_deactivation_rate(0).set_transcription_rate(3.*200/10000 * .001*3600);
+  // ae.sem_stationary_expectations();
   arma::vec G1_init = *ae.G1();
-  // soma.set_gene_activation_rate(1).set_gene_deactivation_rate(0);
+  soma.set_gene_activation_rate(1).set_gene_deactivation_rate(0);
 
   std::list<double> times;
-  for(size_t i=0; i<10000; ++i)
-    times.push_back(i);
+  for(size_t i=0; i<100000; ++i)
+    times.push_back(i*.01);
 
   // Analytic_engine(neuron).sem_nonstationary_expectations(times);
 
@@ -95,7 +95,7 @@ int main() {
   }
   std::cout << "========== DEBUG END ==========\n";
 
-  ae.sem_nonstationary_covariances(times, &G1_init, &G2_init);
+  ae.sem_nonstationary_covariances_using_integral(times, &G1_init, &G2_init);
   // ae.sem_nonstationary_covariances(times, ae.G1(), ae.G2());
   // Gillespie_engine(neuron).run_Gillespie(10000);
 

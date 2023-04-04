@@ -908,6 +908,157 @@ Analytic_engine& Analytic_engine::sem_nonstationary_covariances(const std::list<
   return internalise_expectations();
 }
 
+///////////////////////////////////////////////////////////////////////////////
+Analytic_engine& Analytic_engine::sem_nonstationary_covariances_using_integral(const std::list<double>& times, arma::vec* initial_G1, arma::vec* initial_G2) {
+  std::cerr << "Setting o1_matrix...\n";
+  sem_set_o1_matrix(*sem_set_o1_soma());
+  auto& o1_mat = *p_o1_mat;
+  o1_mat = -o1_mat;
+    
+  std::cerr << "Computing eigen decomposition...\n";
+  arma::cx_vec eigval_c;
+  arma::vec eigval(o1_dim);
+  arma::cx_mat eigvec_c;
+  arma::mat tm(o1_dim, o1_dim); // Transition matrix
+  arma::eig_gen(eigval_c, eigvec_c, o1_mat);
+  
+  for(size_t i=0; i<o1_dim; ++i) {
+    eigval(i) = eigval_c(i).real();
+    for(size_t j=0; j<o1_dim; ++j)
+      tm(i,j) = eigvec_c(i,j).real();
+  }
+
+  std::cerr << "Inverting transition matrix...\n";
+  arma::mat inv_tm = tm.i(); // Transition matrix
+  
+  std::cerr << "Eigenvalues:\n"
+            << eigval << std::endl;
+  std::cerr << "Eigenvectors:\n"
+            << tm << std::endl;
+
+  for(auto& o1_var_name : o1_var_names)
+    std::cout << o1_var_name << ',';
+  std::cout << std::endl;
+  
+  arma::vec stationary_expectations(o1_dim);
+  // Computing stationary part
+  for(size_t i=0; i<o1_dim; ++i) {
+    double sum = 0;
+    for(size_t k=0; k<o1_dim; ++k)
+      sum += 1/eigval[k]*tm(i,k)*inv_tm(k,0);
+    stationary_expectations(i) = p_neuron->p_soma->gene_activation_rate * p_neuron->p_soma->number_of_gene_copies * sum;
+  }
+
+  std::cout << "Stationary expectations from nonstationary covariances algorithm:\n";
+  for(size_t i=0; i<o1_dim; ++i)
+    std::cout << o1_var_names[i] << ": " << stationary_expectations(i) << std::endl;
+
+  // Setting integrals of motion c = G(0) - A*b
+  arma::vec c_vec = *initial_G1 - stationary_expectations;
+
+  // Initialising second order
+  sem_initialise_o2();
+  sem_set_o2_matrix();
+  sem_set_o2_nonstationary_RHS_mat();
+      
+  auto& covariances = *p_covariances;
+  auto& o2_mat = *p_o2_mat;
+  o2_mat = -o2_mat;
+
+  std::cerr << "Computing o2 eigen decomposition...\n";
+  arma::cx_vec o2_eigval_c;
+  arma::vec o2_eigval(o2_dim);
+  arma::cx_mat o2_eigvec_c;
+  arma::mat o2_tm(o2_dim, o2_dim); // Transition matrix
+  arma::eig_gen(o2_eigval_c, o2_eigvec_c, o2_mat);
+
+  std::cerr << "o2_eigvec_c:\n" << o2_eigvec_c << std::endl;
+ 
+  for(size_t i=0; i<o2_dim; ++i) {
+    o2_eigval(i) = o2_eigval_c(i).real();
+    for(size_t j=0; j<o2_dim; ++j)
+      o2_tm(i,j) = o2_eigvec_c(i,j).real();
+  }
+
+  std::cerr << "o2_eigenvalues:\n"
+            << o2_eigval << std::endl;
+            // << "o2_eigenvectors:\n"
+            // << o2_tm << std::endl;
+
+  std::cerr << "Inverting o2 transition matrix...\n";
+  arma::mat o2_inv_tm = o2_tm.i(); // Transition matrix
+  std::cerr << "o2 transition matrix inverted\n";
+  std::cerr << "Computing o2_tm eigen decomposition...\n";
+  arma::eig_gen(o2_eigval_c, o2_eigvec_c, o2_tm);
+  std::cerr << "o2_eigval_c:\n" << o2_eigval_c << std::endl;
+  
+  for(auto& o2_var_name : *p_o2_var_names)
+    std::cout << o2_var_name << ',';
+  std::cout << std::endl;
+
+  // main loop
+  std::cout << "Main loop...\n";
+  std::vector<double> k_sum(o1_dim); // to store precomputed k-sum
+  arma::mat integral(o2_dim, o1_dim); // to store the integral over time
+  double t_prev = times.front();
+  for(auto& t : times) {
+    std::cout << "t=" << t << '\n';
+    // o1
+    for(size_t i=0; i<o1_dim; ++i) {
+      double k_sum = 0;
+      for(size_t k=0; k<o1_dim; ++k) {
+        double l_sum=0;
+        for(size_t l=0; l<o1_dim; ++l)
+          l_sum += inv_tm(k,l)*c_vec(l);
+        k_sum += exp(-eigval(k)*t) * tm(i,k) * l_sum;
+      }
+      expectations(i) = stationary_expectations(i) + k_sum;
+    }
+    // o2
+    for(size_t i=0; i<o2_dim; ++i) {
+      (*p_covariances)[i] = 0;
+      for(size_t j=0; j<o2_dim; ++j) {
+        double s_sum=0;
+        for(size_t s=0; s<o2_dim; ++s)
+          s_sum += o2_inv_tm(j,s) * (*initial_G2)(s);
+
+        for(size_t zeta=0; zeta<o1_dim; ++zeta) { // Precomputing k-sum for all zeta (eta)
+          k_sum[zeta] = 0;
+          for(size_t k=0; k<o2_dim; ++k)
+            k_sum[zeta] += o2_inv_tm(j,k)*(*o2_nonstationary_RHS_mat)(k,zeta);
+          integral(j,zeta) += (expectations(zeta) - o2_eigval(j)*integral(j,zeta))*(t-t_prev);
+          // std::cout << "integral(j,zeta) = " << integral(j,zeta) << std::endl;
+        }
+
+        double eta_sum=0;
+        for(size_t eta=0; eta<o1_dim; ++eta)
+          eta_sum += k_sum[eta]*integral(j,eta);
+
+        (*p_covariances)[i] += o2_tm(i,j) * (exp(-o2_eigval(j)*t)*s_sum + eta_sum);
+      }
+      
+    std::cerr << "t=" << t << ", " << (*p_o2_var_names)[i] + "=" << (*p_covariances)[i] << std::endl;
+    }
+    //////////// COMPUTING VARIANCES //////////
+    std::vector<double> rmss(o1_dim);
+    for(size_t i=0; i<o1_dim; ++i) {
+      rmss[i] = sqrt((*p_covariances)(sem_o2_ind(i,i)) - expectations(i)*(expectations(i)-1));
+      if(rmss[i]>=0) {
+        std::cout << o1_var_names[i] + ": " << expectations(i) << ", " << rmss[i] << std::endl;
+      }
+      else
+        std::cout << o1_var_names[i] + ": " << expectations(i) << ", " << rmss[i] << " NEGATIVE!\n";
+    }
+    // std::cout << t << ", " << expectations(2) << ", " << rmss[2] << std::endl;
+    //////////////////////////////////////////
+    t_prev = t;
+  }
+
+  return internalise_expectations();
+}
+///////////////////////////////////////////////////////////////////////////////
+
+
 
 size_t Analytic_engine::o2_ind(const size_t &i, const size_t &j, const size_t &dim) const {
   if(i<=j)
