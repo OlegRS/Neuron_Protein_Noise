@@ -713,7 +713,7 @@ Analytic_engine& Analytic_engine::nonstationary_covariances(const std::list<doub
           if(o2_eigval(j) != eigval(mu))
             mu_sum += (exp(-eigval(mu)*t)-exp(-o2_eigval(j)*t))/(o2_eigval(j)-eigval(mu)) * zeta_sum * nu_sum;
           else
-            mu_sum += exp(-o2_eigval(j)*t) * zeta_sum * nu_sum;
+            mu_sum += exp(-o2_eigval(j)*t) * t * zeta_sum * nu_sum;
             
           // else {
           //   std::cerr << "j=" << j << ", mu=" << mu << std::endl
@@ -877,16 +877,9 @@ Analytic_engine& Analytic_engine::sem_nonstationary_covariances(const std::list<
           if(o2_eigval(j) != eigval(mu))
             mu_sum += (exp(-eigval(mu)*t)-exp(-o2_eigval(j)*t))/(o2_eigval(j)-eigval(mu)) * zeta_sum * nu_sum;
           else
-            mu_sum += exp(-o2_eigval(j)*t) * zeta_sum * nu_sum;
-            
-          // else {
-          //   std::cerr << "j=" << j << ", mu=" << mu << std::endl
-          //             << "(*p_o2_var_names)[j] = " << (*p_o2_var_names)[j] << ", o1_var_names[mu] = " << o1_var_names[mu] << std::endl;            
-          // }
+            mu_sum += exp(-o2_eigval(j)*t) * t * zeta_sum * nu_sum;
         }
         (*p_covariances)[i] += o2_tm(i,j) * (exp(-o2_eigval(j)*t)*s_sum + (1-exp(-o2_eigval(j)*t))/o2_eigval(j)*eta_sum + mu_sum);
-        // std::cerr << "t=" << t << std::endl;
-        // std::cerr << "mu_sum[" << i << ',' << j << "] = " << (1-exp(-o2_eigval(j)*t))/o2_eigval(j)*eta_sum + mu_sum << std::endl; 
       }
       std::cerr << "t=" << t << ", " << (*p_o2_var_names)[i] + "=" << (*p_covariances)[i] << std::endl;
     }
@@ -1002,7 +995,7 @@ Analytic_engine& Analytic_engine::sem_nonstationary_covariances_using_integral(c
   arma::mat integral(o2_dim, o1_dim); // to store the integral over time
   double t_prev = times.front();
   for(auto& t : times) {
-    std::cout << "t=" << t << '\n';
+    // std::cout << "t=" << t << '\n';
     // o1
     for(size_t i=0; i<o1_dim; ++i) {
       double k_sum = 0;
@@ -1022,12 +1015,11 @@ Analytic_engine& Analytic_engine::sem_nonstationary_covariances_using_integral(c
         for(size_t s=0; s<o2_dim; ++s)
           s_sum += o2_inv_tm(j,s) * (*initial_G2)(s);
 
-        for(size_t zeta=0; zeta<o1_dim; ++zeta) { // Precomputing k-sum for all zeta (eta)
+        for(size_t zeta=0; zeta<o1_dim; ++zeta) { // Precomputing k-sum and the integral for all zeta (eta)
           k_sum[zeta] = 0;
           for(size_t k=0; k<o2_dim; ++k)
             k_sum[zeta] += o2_inv_tm(j,k)*(*o2_nonstationary_RHS_mat)(k,zeta);
           integral(j,zeta) += (expectations(zeta) - o2_eigval(j)*integral(j,zeta))*(t-t_prev);
-          // std::cout << "integral(j,zeta) = " << integral(j,zeta) << std::endl;
         }
 
         double eta_sum=0;
@@ -1036,22 +1028,27 @@ Analytic_engine& Analytic_engine::sem_nonstationary_covariances_using_integral(c
 
         (*p_covariances)[i] += o2_tm(i,j) * (exp(-o2_eigval(j)*t)*s_sum + eta_sum);
       }
-      
-    std::cerr << "t=" << t << ", " << (*p_o2_var_names)[i] + "=" << (*p_covariances)[i] << std::endl;
     }
-    //////////// COMPUTING VARIANCES //////////
-    std::vector<double> rmss(o1_dim);
-    for(size_t i=0; i<o1_dim; ++i) {
-      rmss[i] = sqrt((*p_covariances)(sem_o2_ind(i,i)) - expectations(i)*(expectations(i)-1));
-      if(rmss[i]>=0) {
-        std::cout << o1_var_names[i] + ": " << expectations(i) << ", " << rmss[i] << std::endl;
-      }
-      else
-        std::cout << o1_var_names[i] + ": " << expectations(i) << ", " << rmss[i] << " NEGATIVE!\n";
-    }
-    // std::cout << t << ", " << expectations(2) << ", " << rmss[2] << std::endl;
-    //////////////////////////////////////////
+
     t_prev = t;
+    
+    //////////// COMPUTING VARIANCES //////////
+    if(!(t-(int)t)) {
+      std::vector<double> rmss(o1_dim);
+      std::cout << t;
+      for(size_t i=0; i<o1_dim; ++i) {
+        rmss[i] = sqrt((*p_covariances)(sem_o2_ind(i,i)) - expectations(i)*(expectations(i)-1));
+        // if(rmss[i]>=0) {
+        //   std::cout << o1_var_names[i] + ": " << expectations(i) << ", " << rmss[i] << std::endl;
+        // }
+        // else
+        //   std::cout << o1_var_names[i] + ": " << expectations(i) << ", " << rmss[i] << " NEGATIVE!\n";
+        std::cout  << ',' << expectations(i) << ',' << rmss[i];
+      }
+      std::cout << std::endl;
+      // std::cout << t << ", " << expectations(2) << ", " << rmss[2] << std::endl;
+    }
+    //////////////////////////////////////////
   }
 
   return internalise_expectations();

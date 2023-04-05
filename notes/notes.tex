@@ -994,10 +994,10 @@ from the expression (\ref{nonstationary_o2_solution}) can be numerically compute
   \frac{dI_{j\eta}}{dt} = \mathcal G^{(1)}_\eta(t) - \lambda_j^{(2)}I_{j\eta}(t),
 \end{equation*}
 which relates the values of the integral at the adjacent time steps as
-\begin{equation}
+\begin{equation*}
   I_{j\eta}(t+\Delta t) = I_{j\eta}(t) + \left(\mathcal G^{(1)}_\eta(t) - \lambda^{(2)}_jI_{j\eta}(t)\right)\Delta t,
-\end{equation}
-which can be computed without additional loops in the main loop over time.
+\end{equation*}
+which can be computed without additional loops in the main loop over time (no need to recompute the integral on every time step, just add the above correction to the previous integral value).
 }
 \begin{multline} \label{nonstationary_o2_solution}
   G^{(2)}_i(t) = \sum_{j=1}^{d_2}\mathrm e^{-\lambda^{(2)}_jt}T_{ij}\left\{\sum_{s=1}^{d_2}\mathbf T^{-1}_{js}\mathcal G^{(2)}_s(t=0) + \int_0^t\mathrm e^{\lambda^{(2)}_j\tau}\sum_{k=1}^{d_2}\mathbf T^{-1}_{jk}\sum_{\eta=1}^{d_1}D_{k\eta}\mathcal G^{(1)}_\eta(\tau)d\tau\right\}\\
@@ -1028,7 +1028,7 @@ The last expression is written in the form that clarifies the meanings of differ
 
 For numerical evaluation of $\boldsymbol{\mathcal G}^{(2)}(t)$ we use the expression (\ref{nonstat_covar}) in which, if $\lambda^{(2)}_j-\lambda_\mu=0$ we evaluate the fraction as a limit
 \begin{equation}
-  \lim_{\lambda^{(2)}_j-\lambda_\mu\to 0}\frac{\mathrm e^{-\lambda_\mu t}-\mathrm e^{-\lambda^{(2)}_jt}}{\lambda^{(2)}_j-\lambda_\mu} = \mathrm e^{-\lambda^{(2)}_jt},
+  \lim_{\lambda^{(2)}_j-\lambda_\mu\to 0}\frac{\mathrm e^{-\lambda_\mu t}-\mathrm e^{-\lambda^{(2)}_jt}}{\lambda^{(2)}_j-\lambda_\mu} = t\mathrm e^{-\lambda^{(2)}_jt},
 \end{equation}
 which corresponds to a situation where some dynamical modes of $\boldsymbol{\mathcal G}^{(1)}$ and $\boldsymbol{\mathcal G}^{(2)}$ decay together with identical rates.
 

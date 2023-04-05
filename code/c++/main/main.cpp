@@ -75,8 +75,8 @@ int main() {
   soma.set_gene_activation_rate(1).set_gene_deactivation_rate(0);
 
   std::list<double> times;
-  for(size_t i=0; i<100000; ++i)
-    times.push_back(i*.01);
+  for(size_t i=0; i<10000; ++i)
+    times.push_back(i);
 
   // Analytic_engine(neuron).sem_nonstationary_expectations(times);
 
@@ -95,8 +95,8 @@ int main() {
   }
   std::cout << "========== DEBUG END ==========\n";
 
-  ae.sem_nonstationary_covariances_using_integral(times, &G1_init, &G2_init);
-  // ae.sem_nonstationary_covariances(times, ae.G1(), ae.G2());
+  // ae.sem_nonstationary_covariances_using_integral(times, &G1_init, &G2_init);
+  ae.sem_nonstationary_covariances(times, ae.G1(), ae.G2());
   // Gillespie_engine(neuron).run_Gillespie(10000);
 
   // ae.sem_nonstationary_expectations(times);
