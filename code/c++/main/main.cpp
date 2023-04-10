@@ -96,7 +96,7 @@ int main() {
   std::cout << "========== DEBUG END ==========\n";
 
   // ae.sem_nonstationary_covariances_using_integral(times, &G1_init, &G2_init);
-  ae.sem_nonstationary_covariances(times, ae.G1(), ae.G2());
+  ae.sem_nonstationary_covariances(times, &G1_init, &G2_init);
   // Gillespie_engine(neuron).run_Gillespie(10000);
 
   // ae.sem_nonstationary_expectations(times);
