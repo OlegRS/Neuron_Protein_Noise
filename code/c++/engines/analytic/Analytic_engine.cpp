@@ -835,6 +835,13 @@ Analytic_engine& Analytic_engine::sem_nonstationary_covariances(const std::list<
   std::cout << std::endl;
 
   // Precomputing
+  // o1
+  arma::vec o1_l_sum(o1_dim);
+  for(size_t k=0; k<o1_dim; ++k)
+    for(size_t l=0; l<o1_dim; ++l)
+      o1_l_sum(k) += inv_tm(k,l)*c_vec(l);
+  
+  // o2
   arma::vec o2_s_sum(o2_dim), o2_eta_sum(o2_dim), o2_nu_sum(o1_dim);
   arma::mat o2_zeta_sum(o2_dim, o1_dim);
   for(size_t j=0; j<o2_dim; ++j) {    
@@ -865,12 +872,8 @@ Analytic_engine& Analytic_engine::sem_nonstationary_covariances(const std::list<
     // o1
     for(size_t i=0; i<o1_dim; ++i) {
       double k_sum = 0;
-      for(size_t k=0; k<o1_dim; ++k) {
-        double l_sum=0;
-        for(size_t l=0; l<o1_dim; ++l)
-          l_sum += inv_tm(k,l)*c_vec(l);
-        k_sum += exp(-eigval(k)*t) * tm(i,k) * l_sum;
-      }
+      for(size_t k=0; k<o1_dim; ++k)
+        k_sum += exp(-eigval(k)*t) * tm(i,k) * o1_l_sum(k);     
       expectations(i) = stationary_expectations(i) + k_sum;
     }
     // o2

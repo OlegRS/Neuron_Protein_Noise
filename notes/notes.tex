@@ -938,7 +938,7 @@ where
 Recalling the expression for $\mathbf b$ (\ref{rhs_vector}) we arrive to
 \begin{multline}\label{nonstat_expectations_result}
   \mathcal G^{(1)}_i(t) = \lambda_1^+N\sum_k\lambda_k^{-1}S_{ik}\mathbf S^{-1}_{k1} + \mathrm e^{-\lambda_it}c_i + \sum_{k,l}(\mathrm e^{-\lambda_kt}-\mathrm e^{-\lambda_it})S_{ik}\mathbf S^{-1}_{kl}c_l \\
-  = \lambda_1^+N\sum_k\lambda_k^{-1}S_{ik}\mathbf S^{-1}_{k1} + \sum_{k,l}\mathrm e^{-\lambda_kt}S_{ik}\mathbf S^{-1}_{kl}c_l,
+  = \lambda_1^+N\sum_k\lambda_k^{-1}S_{ik}\mathbf S^{-1}_{k1} + \sum_{k=1}^{d_1}\mathrm e^{-\lambda_kt}S_{ik}\sum_{l=1}^{d_1}\mathbf S^{-1}_{kl}c_l,
 \end{multline}
 from where
 \begin{equation}
@@ -952,7 +952,7 @@ The constant vector $\mathbf c$ can be found from (\ref{nonstat_expectations_res
 
 Finally, combining the expressions (\ref{nonstat_expectations_result}) and (\ref{o1_constants_definition}) we arrive to the following expression for the first-order expectations\footnote{Note that to compute the expectations numerically we use (\ref{nonstat_expectations_result}) and (\ref{o1_constants_definition}) instead of (\ref{nonstat_expectations_final_result}), as it is usually more optimal to separate time-dependent and time-independent terms.}
 \begin{equation}\label{nonstat_expectations_final_result}
-\mathcal G^{(1)}_i = \lambda_1^+N\sum_k\frac{1-\mathrm e^{-\lambda_kt}}{\lambda_k}S_{ik}\mathbf S^{-1}_{k1} + \sum_{k,l}\mathrm e^{-\lambda_kt}S_{ik}\mathbf S^{-1}_{kl}\mathcal G^{(1)}_l(t=0).
+  \mathcal G^{(1)}_i(t) = \lambda_1^+N\sum_{k=1}^{d_1}\frac{1-\mathrm e^{-\lambda_kt}}{\lambda_k}S_{ik}\mathbf S^{-1}_{k1} + \sum_{k=1}^{d_1}\mathrm e^{-\lambda_kt}S_{ik}\sum_{l=1}^{d_1}\mathbf S^{-1}_{kl}\mathcal G^{(1)}_l(t=0).
 \end{equation}
 
 The comparison of the above predictions with the results of the corresponding Gillespie simulation is shown in Fig.\ref{fig:Gillespie_simulation}.
