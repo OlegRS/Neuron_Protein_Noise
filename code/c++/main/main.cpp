@@ -83,20 +83,8 @@ int main() {
   // ae.sem_stationary_expectations();
   // ae.stationary_covariances();
 
-  std::cout << "============ DEBUG BEGIN ============\n";
-  std::vector<double> rmss(ae.dim_o1());
-  for(size_t i=0; i<ae.dim_o1(); ++i) {
-    rmss[i] = sqrt((*ae.G2())(ae.sem_o2_ind(i,i)) - (*ae.G1())(i)*((*ae.G1())(i)-1));
-    if(rmss[i]>=0) {
-      std::cout << (*ae.o1_variables_names())[i] + ": " << (*ae.G1())(i) << ", " << rmss[i] << std::endl;
-    }
-    else
-      std::cout << (*ae.o1_variables_names())[i] + ": " << (*ae.G1())(i) << ", " << rmss[i] << " NEGATIVE!\n";
-  }
-  std::cout << "========== DEBUG END ==========\n";
-
-  // ae.sem_nonstationary_covariances_using_integral(times, &G1_init, &G2_init);
   ae.sem_nonstationary_covariances(times, &G1_init, &G2_init);
+  // ae.nonstationary_covariances(times, &G1_init, &G2_init);
   // Gillespie_engine(neuron).run_Gillespie(10000);
 
   // ae.sem_nonstationary_expectations(times);

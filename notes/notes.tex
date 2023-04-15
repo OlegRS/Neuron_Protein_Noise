@@ -1001,7 +1001,7 @@ which can be computed without additional loops in the main loop over time (no ne
 }
 \begin{multline} \label{nonstationary_o2_solution}
   G^{(2)}_i(t) = \sum_{j=1}^{d_2}\mathrm e^{-\lambda^{(2)}_jt}T_{ij}\left\{\sum_{s=1}^{d_2}\mathbf T^{-1}_{js}\mathcal G^{(2)}_s(t=0) + \int_0^t\mathrm e^{\lambda^{(2)}_j\tau}\sum_{k=1}^{d_2}\mathbf T^{-1}_{jk}\sum_{\eta=1}^{d_1}D_{k\eta}\mathcal G^{(1)}_\eta(\tau)d\tau\right\}\\
-  = \sum_{j=1}^{d_2}T_{ij}\left\{\mathrm e^{-\lambda^{(2)}_jt}\sum_{s=1}^{d_2}\mathbf T^{-1}_{js}\mathcal G^{(2)}_s(t=0) + \sum_{k=1}^{d_2}\mathbf T^{-1}_{jk}\sum_{\eta=1}^{d_1}D_{k\eta}\int_0^t\mathrm e^{-\lambda^{(2)}_j(t-\tau)}\mathcal G^{(1)}_\eta(\tau)d\tau\right\}.
+  = \sum_{j=1}^{d_2}T_{ij}\left\{\mathrm e^{-\lambda^{(2)}_jt}\sum_{s=1}^{d_2}\mathbf T^{-1}_{js}\mathcal G^{(2)}_s(t=0) + \sum_{\eta=1}^{d_1}\sum_{k=1}^{d_2}\mathbf T^{-1}_{jk}D_{k\eta}\int_0^t\mathrm e^{-\lambda^{(2)}_j(t-\tau)}\mathcal G^{(1)}_\eta(\tau)d\tau\right\}.
 \end{multline}
 Using the expression (\ref{nonstat_expectations_result}), the integral above is evaluated as
 \begin{equation}

@@ -568,13 +568,10 @@ Analytic_engine& Analytic_engine::sem_nonstationary_expectations(const std::list
   return internalise_expectations();
 }
 
-Analytic_engine& Analytic_engine::nonstationary_covariances(const std::list<double>& times) {
-
-  auto& o1_mat = *p_o1_mat;
-  
+Analytic_engine& Analytic_engine::nonstationary_covariances(const std::list<double>& times, arma::vec* initial_G1, arma::vec* initial_G2) {
   std::cerr << "Setting o1_matrix...\n";
-  o1_mat.zeros();
   set_o1_matrix(*set_o1_soma());
+  auto& o1_mat = *p_o1_mat;
   o1_mat = -o1_mat;
   
   std::cerr << "Computing eigen decomposition...\n";
@@ -615,7 +612,7 @@ Analytic_engine& Analytic_engine::nonstationary_covariances(const std::list<doub
     std::cout << o1_var_names[i] << ": " << stationary_expectations(i) << std::endl;
 
   // Setting integrals of motion c = G(0) - A*b, where G(0)=0 for now
-  arma::vec c_vec = 0 - stationary_expectations;
+  arma::vec c_vec = *initial_G1 - stationary_expectations;
 
   // Initialising second order
   initialise_o2();
@@ -668,6 +665,35 @@ Analytic_engine& Analytic_engine::nonstationary_covariances(const std::list<doub
     std::cout << o2_var_name << ',';
   std::cout << std::endl;
 
+  // Precomputing o1 matrix products
+  arma::vec o1_l_sum(o1_dim);
+  for(size_t k=0; k<o1_dim; ++k)
+    for(size_t l=0; l<o1_dim; ++l)
+      o1_l_sum(k) += inv_tm(k,l)*c_vec(l); 
+  // Precomputing o2 matrix products
+  arma::vec o2_s_sum(o2_dim), o2_eta_sum(o2_dim), o2_nu_sum(o1_dim);
+  arma::mat o2_zeta_sum(o2_dim, o1_dim);
+  for(size_t j=0; j<o2_dim; ++j) {    
+    for(size_t s=0; s<o2_dim; ++s)
+      o2_s_sum(j) += o2_inv_tm(j,s) * (*initial_G2)(s);
+
+    arma::vec o2_k_sum(o1_dim);
+    for(size_t zeta=0; zeta<o1_dim; ++zeta)
+      for(size_t k=0; k<o2_dim; ++k)
+        o2_k_sum(zeta) += o2_inv_tm(j,k)*(*o2_nonstationary_RHS_mat)(k,zeta);
+    
+    for(size_t eta=0; eta<o1_dim; ++eta) // computing o2_eta_sum
+      o2_eta_sum(j) += o2_k_sum(eta)*stationary_expectations(eta);
+    o2_eta_sum(j) /= o2_eigval(j);
+
+    for(size_t mu=0; mu<o1_dim; ++mu) // computing o2_zeta_sum
+      for(size_t zeta=0; zeta<o1_dim; ++zeta)
+        o2_zeta_sum(j,mu) += o2_k_sum(zeta)*tm(zeta,mu);
+  }
+  for(size_t mu=0; mu<o1_dim; ++mu) // computing o2_nu_sum
+    for(size_t nu=0; nu<o1_dim; ++nu)
+      o2_nu_sum(mu) += inv_tm(mu,nu)*c_vec(nu);
+
   // main loop
   std::cout << "Main loop...\n";
   for(auto& t : times) {
@@ -675,61 +701,31 @@ Analytic_engine& Analytic_engine::nonstationary_covariances(const std::list<doub
     // o1
     for(size_t i=0; i<o1_dim; ++i) {
       double k_sum = 0;
-      for(size_t k=0; k<o1_dim; ++k) {
-        double l_sum=0;
-        for(size_t l=0; l<o1_dim; ++l)
-          l_sum += inv_tm(k,l)*c_vec(l);
-        k_sum += exp(-eigval(k)*t) * tm(i,k) * l_sum;
-      }
+      for(size_t k=0; k<o1_dim; ++k)
+        k_sum += exp(-eigval(k)*t) * tm(i,k) * o1_l_sum(k);     
       expectations(i) = stationary_expectations(i) + k_sum;
     }
     // o2
+    arma::vec braces(o2_dim);
+    for(size_t j=0; j<o2_dim; ++j) {
+      double o2_mu_sum = 0;
+      for(size_t mu=0; mu<o1_dim; ++mu)
+        if(o2_eigval(j) != eigval(mu))
+          o2_mu_sum += (exp(-eigval(mu)*t)-exp(-o2_eigval(j)*t))/(o2_eigval(j)-eigval(mu)) * o2_zeta_sum(j,mu) * o2_nu_sum(mu);
+        else
+          o2_mu_sum += t*exp(-o2_eigval(j)*t) * o2_zeta_sum(j,mu) * o2_nu_sum(mu);
+      braces(j) = exp(-o2_eigval(j)*t)*o2_s_sum(j) + (1-exp(-o2_eigval(j)*t))*o2_eta_sum(j) + o2_mu_sum;
+    }
     for(size_t i=0; i<o2_dim; ++i) {
       (*p_covariances)[i] = 0;
-      for(size_t j=0; j<o2_dim; ++j) {
-        double s_sum=0;
-        for(size_t s=0; s<o2_dim; ++s)
-          s_sum += o2_inv_tm(j,s) * 0; // G^2_s(t=0) := 0 for now
-        for(size_t zeta=0; zeta<o1_dim; ++zeta) { // Precomputing k-sum for all zeta (eta)
-          k_sum[zeta] = 0;
-          for(size_t k=0; k<o2_dim; ++k)
-            k_sum[zeta] += o2_inv_tm(j,k)*(*o2_nonstationary_RHS_mat)(k,zeta);
-        }
-
-        double eta_sum=0;
-        for(size_t eta=0; eta<o1_dim; ++eta)
-          eta_sum += k_sum[eta]*stationary_expectations(eta);
-
-        double mu_sum=0;
-        for(size_t mu=0; mu<o1_dim; ++mu) {
-          double zeta_sum=0;
-          for(size_t zeta=0; zeta<o1_dim; ++zeta)
-            zeta_sum += k_sum[zeta]*tm(zeta,mu);
-          double nu_sum=0;
-          for(size_t nu=0; nu<o1_dim; ++nu)
-            nu_sum += inv_tm(mu,nu)*c_vec(nu);
-          
-          if(o2_eigval(j) != eigval(mu))
-            mu_sum += (exp(-eigval(mu)*t)-exp(-o2_eigval(j)*t))/(o2_eigval(j)-eigval(mu)) * zeta_sum * nu_sum;
-          else
-            mu_sum += t*exp(-o2_eigval(j)*t) * zeta_sum * nu_sum;
-            
-          // else {
-          //   std::cerr << "j=" << j << ", mu=" << mu << std::endl
-          //             << "(*p_o2_var_names)[j] = " << (*p_o2_var_names)[j] << ", o1_var_names[mu] = " << o1_var_names[mu] << std::endl;            
-          // }
-        }
-        (*p_covariances)[i] += o2_tm(i,j) * (exp(-o2_eigval(j)*t)*s_sum + (1-exp(-o2_eigval(j)*t))/o2_eigval(j)*eta_sum + mu_sum);
-        // std::cerr << "t=" << t << std::endl;
-        // std::cerr << "mu_sum[" << i << ',' << j << "] = " << (1-exp(-o2_eigval(j)*t))/o2_eigval(j)*eta_sum + mu_sum << std::endl; 
-      }
-      std::cerr << "t=" << t << ", " << (*p_o2_var_names)[i] + "=" << (*p_covariances)[i] << std::endl;
+      for(size_t j=0; j<o2_dim; ++j)
+        (*p_covariances)[i] += o2_tm(i,j)*braces(j);
     }
-
+    
     //////////// COMPUTING VARIANCES //////////
     std::vector<double> rmss(o1_dim);
     for(size_t i=0; i<o1_dim; ++i) {
-      rmss[i] = ((*p_covariances)(o2_ind(i,i)) - expectations(i)*(expectations(i)-1));
+      rmss[i] = sqrt((*p_covariances)(o2_ind(i,i)) - expectations(i)*(expectations(i)-1));
       if(rmss[i]>=0) {
         std::cout << o1_var_names[i] + ": " << expectations(i) << ", " << rmss[i] << std::endl;
       }
@@ -744,6 +740,7 @@ Analytic_engine& Analytic_engine::nonstationary_covariances(const std::list<doub
 }
 
 Analytic_engine& Analytic_engine::sem_nonstationary_covariances(const std::list<double>& times, arma::vec* initial_G1, arma::vec* initial_G2) {
+  std::cout << "sem_nonstationary_covariances\n";
   std::cerr << "Setting o1_matrix...\n";
   sem_set_o1_matrix(*sem_set_o1_soma());
   auto& o1_mat = *p_o1_mat;
@@ -839,8 +836,7 @@ Analytic_engine& Analytic_engine::sem_nonstationary_covariances(const std::list<
   arma::vec o1_l_sum(o1_dim);
   for(size_t k=0; k<o1_dim; ++k)
     for(size_t l=0; l<o1_dim; ++l)
-      o1_l_sum(k) += inv_tm(k,l)*c_vec(l);
-  
+      o1_l_sum(k) += inv_tm(k,l)*c_vec(l); 
   // o2
   arma::vec o2_s_sum(o2_dim), o2_eta_sum(o2_dim), o2_nu_sum(o1_dim);
   arma::mat o2_zeta_sum(o2_dim, o1_dim);
@@ -877,30 +873,35 @@ Analytic_engine& Analytic_engine::sem_nonstationary_covariances(const std::list<
       expectations(i) = stationary_expectations(i) + k_sum;
     }
     // o2
+    arma::vec braces(o2_dim);
+    for(size_t j=0; j<o2_dim; ++j) {
+      double o2_mu_sum = 0;
+      for(size_t mu=0; mu<o1_dim; ++mu)
+        if(o2_eigval(j) != eigval(mu))
+          o2_mu_sum += (exp(-eigval(mu)*t)-exp(-o2_eigval(j)*t))/(o2_eigval(j)-eigval(mu)) * o2_zeta_sum(j,mu) * o2_nu_sum(mu);
+        else
+          o2_mu_sum += t*exp(-o2_eigval(j)*t) * o2_zeta_sum(j,mu) * o2_nu_sum(mu);
+      braces(j) = exp(-o2_eigval(j)*t)*o2_s_sum(j) + (1-exp(-o2_eigval(j)*t))*o2_eta_sum(j) + o2_mu_sum;
+    }
     for(size_t i=0; i<o2_dim; ++i) {
       (*p_covariances)[i] = 0;
-      for(size_t j=0; j<o2_dim; ++j) {
-        double o2_mu_sum = 0;
-        for(size_t mu=0; mu<o1_dim; ++mu)
-          if(o2_eigval(j) != eigval(mu))
-            o2_mu_sum += (exp(-eigval(mu)*t)-exp(-o2_eigval(j)*t))/(o2_eigval(j)-eigval(mu)) * o2_zeta_sum(j,mu) * o2_nu_sum(mu);
-          else
-            o2_mu_sum += t*exp(-o2_eigval(j)*t) * o2_zeta_sum(j,mu) * o2_nu_sum(mu);
-        
-        (*p_covariances)[i] += o2_tm(i,j) * (exp(-o2_eigval(j)*t)*o2_s_sum(j) + (1-exp(-o2_eigval(j)*t))*o2_eta_sum(j) + o2_mu_sum);
-      }
+      for(size_t j=0; j<o2_dim; ++j)
+        (*p_covariances)[i] += o2_tm(i,j)*braces(j);
     }
     
     //////////// COMPUTING VARIANCES //////////
     std::vector<double> rmss(o1_dim);
+    std::cout << t;
     for(size_t i=0; i<o1_dim; ++i) {
       rmss[i] = sqrt((*p_covariances)(sem_o2_ind(i,i)) - expectations(i)*(expectations(i)-1));
-      if(rmss[i]>=0) {
-        std::cout << o1_var_names[i] + ": " << expectations(i) << ", " << rmss[i] << std::endl;
-      }
-      else
-        std::cout << o1_var_names[i] + ": " << expectations(i) << ", " << rmss[i] << " NEGATIVE!\n";
+      // if(rmss[i]>=0) {
+      //   std::cout << o1_var_names[i] + ": " << expectations(i) << ", " << rmss[i] << std::endl;
+      // }
+      // else
+      //   std::cout << o1_var_names[i] + ": " << expectations(i) << ", " << rmss[i] << " NEGATIVE!\n";
+      std::cout  << ',' << expectations(i) << ',' << rmss[i];
     }
+    std::cout << std::endl;
     // std::cout << t << ", " << expectations(2) << ", " << rmss[2] << std::endl;
     //////////////////////////////////////////
   }
@@ -909,6 +910,7 @@ Analytic_engine& Analytic_engine::sem_nonstationary_covariances(const std::list<
 }
 
 Analytic_engine& Analytic_engine::sem_nonstationary_covariances_using_integral(const std::list<double>& times, arma::vec* initial_G1, arma::vec* initial_G2) {
+  std::cout << "sem_nonstationary_covariances_using_integral\n";
   std::cerr << "Setting o1_matrix...\n";
   sem_set_o1_matrix(*sem_set_o1_soma());
   auto& o1_mat = *p_o1_mat;
@@ -995,46 +997,51 @@ Analytic_engine& Analytic_engine::sem_nonstationary_covariances_using_integral(c
     std::cout << o2_var_name << ',';
   std::cout << std::endl;
 
+  // Precomputing o1 matrix products
+  arma::vec o1_l_sum(o1_dim);
+  for(size_t k=0; k<o1_dim; ++k)
+    for(size_t l=0; l<o1_dim; ++l)
+      o1_l_sum(k) += inv_tm(k,l)*c_vec(l); 
+  // Precomputing o2 matrix products
+  arma::vec o2_s_sum(o2_dim);
+  arma::mat o2_k_sum(o2_dim, o1_dim);
+  for(size_t j=0; j<o2_dim; ++j) {
+    for(size_t s=0; s<o2_dim; ++s)
+      o2_s_sum(j) += o2_inv_tm(j,s) * (*initial_G2)(s);
+
+    for(size_t eta=0; eta<o1_dim; ++eta)
+      for(size_t k=0; k<o2_dim; ++k)
+        o2_k_sum(j,eta) += o2_inv_tm(j,k)*(*o2_nonstationary_RHS_mat)(k,eta);
+  }
+
   // main loop
-  std::cout << "Main loop...\n";
-  std::vector<double> k_sum(o1_dim); // to store precomputed k-sum
   arma::mat integral(o2_dim, o1_dim); // to store the integral over time
+  std::vector<double> braces(o2_dim);
+  std::cout << "Main loop...\n";
   double t_prev = times.front();
   for(auto& t : times) {
     // std::cout << "t=" << t << '\n';
     // o1
     for(size_t i=0; i<o1_dim; ++i) {
       double k_sum = 0;
-      for(size_t k=0; k<o1_dim; ++k) {
-        double l_sum=0;
-        for(size_t l=0; l<o1_dim; ++l)
-          l_sum += inv_tm(k,l)*c_vec(l);
-        k_sum += exp(-eigval(k)*t) * tm(i,k) * l_sum;
-      }
+      for(size_t k=0; k<o1_dim; ++k)
+        k_sum += exp(-eigval(k)*t) * tm(i,k) * o1_l_sum(k);
       expectations(i) = stationary_expectations(i) + k_sum;
     }
     // o2
+    for(size_t j=0; j<o2_dim; ++j) {
+      double eta_sum=0;
+      for(size_t eta=0; eta<o1_dim; ++eta) { // Precomputing the integral for all eta
+        integral(j,eta) += (expectations(eta) - o2_eigval(j)*integral(j,eta))*(t-t_prev);
+        eta_sum += o2_k_sum(j,eta)*integral(j,eta);
+      }
+      braces[j] = exp(-o2_eigval(j)*t)*o2_s_sum(j) + eta_sum;
+    }
     for(size_t i=0; i<o2_dim; ++i) {
       (*p_covariances)[i] = 0;
-      for(size_t j=0; j<o2_dim; ++j) {
-        double s_sum=0;
-        for(size_t s=0; s<o2_dim; ++s)
-          s_sum += o2_inv_tm(j,s)*(*initial_G2)(s);
-        for(size_t zeta=0; zeta<o1_dim; ++zeta) { // Precomputing k-sum and the integral for all zeta (eta)
-          k_sum[zeta] = 0;
-          for(size_t k=0; k<o2_dim; ++k)
-            k_sum[zeta] += o2_inv_tm(j,k)*(*o2_nonstationary_RHS_mat)(k,zeta);
-          integral(j,zeta) += (expectations(zeta) - o2_eigval(j)*integral(j,zeta))*(t-t_prev);
-        }
-
-        double eta_sum=0;
-        for(size_t eta=0; eta<o1_dim; ++eta)
-          eta_sum += k_sum[eta]*integral(j,eta);
-
-        (*p_covariances)[i] += o2_tm(i,j) * (exp(-o2_eigval(j)*t)*s_sum + eta_sum);
-      }
+      for(size_t j=0; j<o2_dim; ++j)        
+        (*p_covariances)[i] += o2_tm(i,j)*braces[j];
     }
-
     t_prev = t;
     
     //////////// COMPUTING VARIANCES //////////
