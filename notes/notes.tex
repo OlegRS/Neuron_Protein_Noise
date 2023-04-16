@@ -937,12 +937,12 @@ where
 \end{equation}
 Recalling the expression for $\mathbf b$ (\ref{rhs_vector}) we arrive to
 \begin{multline}\label{nonstat_expectations_result}
-  \mathcal G^{(1)}_i(t) = \lambda_1^+N\sum_k\lambda_k^{-1}S_{ik}\mathbf S^{-1}_{k1} + \mathrm e^{-\lambda_it}c_i + \sum_{k,l}(\mathrm e^{-\lambda_kt}-\mathrm e^{-\lambda_it})S_{ik}\mathbf S^{-1}_{kl}c_l \\
-  = \lambda_1^+N\sum_k\lambda_k^{-1}S_{ik}\mathbf S^{-1}_{k1} + \sum_{k=1}^{d_1}\mathrm e^{-\lambda_kt}S_{ik}\sum_{l=1}^{d_1}\mathbf S^{-1}_{kl}c_l,
+  \mathcal G^{(1)}_i(t) = \lambda_1^+N\sum_{k=1}^{d_1}\lambda_k^{-1}S_{ik}\mathbf S^{-1}_{k1} + \mathrm e^{-\lambda_it}c_i + \sum_{k,l}(\mathrm e^{-\lambda_kt}-\mathrm e^{-\lambda_it})S_{ik}\mathbf S^{-1}_{kl}c_l \\
+  = \lambda_1^+N\sum_{k=1}^{d_1}\lambda_k^{-1}S_{ik}\mathbf S^{-1}_{k1} + \sum_{k=1}^{d_1}\mathrm e^{-\lambda_kt}S_{ik}\sum_{l=1}^{d_1}\mathbf S^{-1}_{kl}c_l,
 \end{multline}
 from where
 \begin{equation}
-\mathcal G^{(1)}_i(\infty) = \mathbf A^{-1}\mathbf b = \lambda_1^+N\sum_k\lambda_k^{-1}S_{ik}\mathbf S^{-1}_{k1},
+\mathcal G^{(1)}_i(\infty) = \mathbf A^{-1}\mathbf b = \lambda_1^+N\sum_{k=1}^{d_1}\lambda_k^{-1}S_{ik}\mathbf S^{-1}_{k1},
 \end{equation}
 which expresses the stationary expectations through the eigen decomposition of $\mathbf A$.
 The constant vector $\mathbf c$ can be found from (\ref{nonstat_expectations_result}) at $t=0$ as

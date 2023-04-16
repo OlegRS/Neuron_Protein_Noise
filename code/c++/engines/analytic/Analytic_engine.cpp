@@ -440,10 +440,9 @@ Analytic_engine& Analytic_engine::sem_stationary_expectations() {
 
 Analytic_engine& Analytic_engine::nonstationary_expectations(const std::list<double>& times) { //const Neuron& neur) {
 
-  auto& o1_mat = *p_o1_mat;
-  
   std::cerr << "Setting o1_matrix...\n";
   set_o1_matrix(*set_o1_soma());
+  auto& o1_mat = *p_o1_mat;
   o1_mat = -o1_mat;
   
   std::cerr << "Computing eigen decomposition...\n";
@@ -483,16 +482,17 @@ Analytic_engine& Analytic_engine::nonstationary_expectations(const std::list<dou
   // Setting integrals of motion c = G(0) - A*b, where G(0)=0 for now
   arma::vec c = 0 - stationary_expectations;
 
+  arma::vec l_sum(o1_dim); // Precomputed l_sum
+  for(size_t k=0; k<o1_dim; ++k)
+    for(size_t l=0; l<o1_dim; ++l)
+      l_sum(k) += inv_tm(k,l)*c(l);
+
   for(auto& t : times) {
     std::cout << t << ',';
     for(size_t i=0; i<o1_dim; ++i) {
       double k_sum = 0;
-      for(size_t k=0; k<o1_dim; ++k) {
-        double s_sum=0;
-        for(size_t s=0; s<o1_dim; ++s)
-          s_sum += inv_tm(k,s)*c(s);
-        k_sum += exp(-eigval(k)*t) * tm(i,k) * s_sum;
-      }
+      for(size_t k=0; k<o1_dim; ++k)
+        k_sum += exp(-eigval(k)*t) * tm(i,k) * l_sum(k);
       expectations(i) = stationary_expectations(i) + k_sum;
       std::cout << expectations(i) << ',';
     }
@@ -504,12 +504,10 @@ Analytic_engine& Analytic_engine::nonstationary_expectations(const std::list<dou
 
 
 Analytic_engine& Analytic_engine::sem_nonstationary_expectations(const std::list<double>& times) { //const Neuron& neur) {
-
-  auto& o1_mat = *p_o1_mat;
   
   std::cerr << "Setting o1_matrix...\n";
-  o1_mat.zeros();
   sem_set_o1_matrix(*sem_set_o1_soma());
+  auto& o1_mat = *p_o1_mat;
   o1_mat = -o1_mat;
 
   std::cerr << "Computing eigen decomposition...\n";
@@ -549,16 +547,17 @@ Analytic_engine& Analytic_engine::sem_nonstationary_expectations(const std::list
   // Setting integrals of motion c = G(0) - A*b, where G(0)=0 for now
   arma::vec c = 0 - stationary_expectations;
 
+  arma::vec l_sum(o1_dim); // Precomputed l_sum
+  for(size_t k=0; k<o1_dim; ++k)
+    for(size_t l=0; l<o1_dim; ++l)
+      l_sum(k) += inv_tm(k,l)*c(l);
+
   for(auto& t : times) {
     std::cout << t << ',';
     for(size_t i=0; i<o1_dim; ++i) {
       double k_sum = 0;
-      for(size_t k=0; k<o1_dim; ++k) {
-        double s_sum=0;
-        for(size_t s=0; s<o1_dim; ++s)
-          s_sum += inv_tm(k,s)*c(s);
-        k_sum += exp(-eigval(k)*t) * tm(i,k) * s_sum;
-      }
+      for(size_t k=0; k<o1_dim; ++k)
+        k_sum += exp(-eigval(k)*t) * tm(i,k) * l_sum(k);
       expectations(i) = stationary_expectations(i) + k_sum;
       std::cout << expectations(i) << ',';
     }
@@ -1038,9 +1037,9 @@ Analytic_engine& Analytic_engine::sem_nonstationary_covariances_using_integral(c
       braces[j] = exp(-o2_eigval(j)*t)*o2_s_sum(j) + eta_sum;
     }
     for(size_t i=0; i<o2_dim; ++i) {
-      (*p_covariances)[i] = 0;
+      (*p_covariances)(i) = 0;
       for(size_t j=0; j<o2_dim; ++j)        
-        (*p_covariances)[i] += o2_tm(i,j)*braces[j];
+        (*p_covariances)(i) += o2_tm(i,j)*braces[j];
     }
     t_prev = t;
     
