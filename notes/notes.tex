@@ -101,6 +101,7 @@ The generating function allows recasting the master equation (\ref{gene_switchin
   \end{split}
 \end{equation*}
 Then, using the definition of the generating function (\ref{gen_func_def}) and the following identities
+\todo[inline]{I think the second line is wrong}
 \begin{align*}
   & \sum_{n_1=0}^{\infty}P_{n_1-1}(t)z_1^{n_1} = z_1\sum_{n_1=0}^{\infty}P_{n_1-1}(t)z_1^{n_1-1} = z_1G(z_1;t);\\
   & \sum_{n_1=0}^{\infty}P_{n_1+1}(t)z_1^{n_1} = \frac{1}{z_1}\sum_{n_1=0}^{\infty}P_{n_1+1}(t)z_1^{n_1+1} = \frac{1}{z_1}G(z_1;t);\\
@@ -513,6 +514,7 @@ In what follows we will denote the probability of state $\mathbf s$ at time $t$ 
   \label{fig:simplest_neuron}
 \end{figure}
 In this section we attempt to find the means and the variances of the protein counts in the simplest possible model of neuron of our kind.
+\todo[inline]{Please add the definition of the jumos, it will be easier to understand. Update Figure 1 accordingly}
 
 \subsubsection{Master equation}
 The model should capture the following:
