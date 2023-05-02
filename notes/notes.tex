@@ -85,29 +85,28 @@ where $n_1$ is the number of active genes.
 
 The generating function of the distribution $P_{n_1}(t)$ is defined as
 \begin{equation} \label{gen_func_def} 
-  G(z_1; t) = \sum_{n_1=0}^{\infty}P_{n_1}(t)z_1^{n_1}.
+  G(z_1; t) = \sum_{n_1=-\infty}^{\infty}P_{n_1}(t)z_1^{n_1}.
 \end{equation}
 Note that the moments of the probability distribution $P_{n_1}$ can be found from the derivatives of the generating function with respect to the corresponding variables, i.e.
 \begin{align}
-  \frac{\partial G(z_1; t)}{\partial z_1}\bigg\rvert_{z_1=1} &= \sum_{n_1=0}^{\infty} n_1P_{n_1}(t) = \langle n_1\rangle(t); \label{1st_der_of_GF}\\
-  \frac{\partial^2 G(z_1; t)}{\partial z_1^2}\bigg\rvert_{z_1=1} &= \sum_{n_1=0}^{\infty} n_1(n_1-1)P_{n_1}(t) = \langle n_1\rangle^2(t) - \langle n_1\rangle(t)\label{2nd_der_of_GF}.
+  \frac{\partial G(z_1; t)}{\partial z_1}\bigg\rvert_{z_1=1} &= \sum_{n_1=-\infty}^{\infty} n_1P_{n_1}(t) = \langle n_1\rangle(t); \label{1st_der_of_GF}\\
+  \frac{\partial^2 G(z_1; t)}{\partial z_1^2}\bigg\rvert_{z_1=1} &= \sum_{n_1=-\infty}^{\infty} n_1(n_1-1)P_{n_1}(t) = \langle n_1\rangle^2(t) - \langle n_1\rangle(t)\label{2nd_der_of_GF}.
 \end{align}
 
 The generating function allows recasting the master equation (\ref{gene_switching_ME}) in a PDE form as follows. First, we multiply both sides of the ME (\ref{gene_switching_ME}) by $z_1^{n_1}$ and sum over $n_1$, which gives
 \begin{equation*}
   \begin{split}
-    \sum_{n_1=0}^{\infty}\frac{dP_{n_1}(t)}{dt}z_1^{n_1} = &\lambda_1^+\sum_{n_1=0}^{\infty}\left[(N_1-n_1+1)P_{n_1-1}(t) - (N_1-n_1)P_{n_1}(t)\right]z_1^{n_1}\\
-    + & \lambda_1^-\sum_{n_1=0}^{\infty}\left[(n_1+1)P_{n_1+1}(t) - n_1P_{n_1}(t)\right]z_1^{n_1}.
+    \sum_{n_1=-\infty}^{\infty}\frac{dP_{n_1}(t)}{dt}z_1^{n_1} = &\lambda_1^+\sum_{n_1=-\infty}^{\infty}\left[(N_1-n_1+1)P_{n_1-1}(t) - (N_1-n_1)P_{n_1}(t)\right]z_1^{n_1}\\
+    + & \lambda_1^-\sum_{n_1=-\infty}^{\infty}\left[(n_1+1)P_{n_1+1}(t) - n_1P_{n_1}(t)\right]z_1^{n_1}.
   \end{split}
 \end{equation*}
 Then, using the definition of the generating function (\ref{gen_func_def}) and the following identities
-\todo[inline]{I think the second line is wrong}
 \begin{align*}
-  & \sum_{n_1=0}^{\infty}P_{n_1-1}(t)z_1^{n_1} = z_1\sum_{n_1=0}^{\infty}P_{n_1-1}(t)z_1^{n_1-1} = z_1G(z_1;t);\\
-  & \sum_{n_1=0}^{\infty}P_{n_1+1}(t)z_1^{n_1} = \frac{1}{z_1}\sum_{n_1=0}^{\infty}P_{n_1+1}(t)z_1^{n_1+1} = \frac{1}{z_1}G(z_1;t);\\
-  & \sum_{n_1=0}^{\infty}n_1P_{n_1}(t)z_1^{n_1} = z_1\frac{\partial}{\partial z_1}\sum_{n_1=0}^{\infty}P_{n_1}(t)z_1^{n_1} = z_1\frac{\partial G(z_1; t)}{\partial z_1};\\
-  & \sum_{n_1=0}^{\infty}n_1P_{n_1-1}(t)z_1^{n_1} = z_1\frac{\partial}{\partial z_1}\sum_{n_1=0}^{\infty}P_{n_1-1}(t)z_1^{n_1} = z_1\frac{\partial}{\partial z_1} \left(z_1G(z_1; t)\right);\\
-  & \sum_{n_1=0}^{\infty}n_1P_{n_1+1}(t)z_1^{n_1} = z_1\frac{\partial}{\partial z_1}\sum_{n_1=0}^{\infty}P_{n_1+1}(t)z_1^{n_1} = z_1\frac{\partial}{\partial z_1} \left(\frac{1}{z_1}G(z_1; t)\right),
+  & \sum_{n_1=-\infty}^{\infty}P_{n_1-1}(t)z_1^{n_1} = z_1\sum_{n_1=-\infty}^{\infty}P_{n_1-1}(t)z_1^{n_1-1} = z_1G(z_1;t);\\
+  & \sum_{n_1=-\infty}^{\infty}P_{n_1+1}(t)z_1^{n_1} = \frac{1}{z_1}\sum_{n_1=-\infty}^{\infty}P_{n_1+1}(t)z_1^{n_1+1} = \frac{1}{z_1}G(z_1;t);\\
+  & \sum_{n_1=-\infty}^{\infty}n_1P_{n_1}(t)z_1^{n_1} = z_1\frac{\partial}{\partial z_1}\sum_{n_1=-\infty}^{\infty}P_{n_1}(t)z_1^{n_1} = z_1\frac{\partial G(z_1; t)}{\partial z_1};\\
+  & \sum_{n_1=-\infty}^{\infty}n_1P_{n_1-1}(t)z_1^{n_1} = z_1\frac{\partial}{\partial z_1}\sum_{n_1=-\infty}^{\infty}P_{n_1-1}(t)z_1^{n_1} = z_1\frac{\partial}{\partial z_1} \left(z_1G(z_1; t)\right);\\
+  & \sum_{n_1=-\infty}^{\infty}n_1P_{n_1+1}(t)z_1^{n_1} = z_1\frac{\partial}{\partial z_1}\sum_{n_1=-\infty}^{\infty}P_{n_1+1}(t)z_1^{n_1} = z_1\frac{\partial}{\partial z_1} \left(\frac{1}{z_1}G(z_1; t)\right),
 \end{align*}
 we recast the equation (\ref{gene_switching_ME}) in the form of the following first-order partial differential equation (PDE)
 \begin{equation*} \label{gene_switching_PDE}
@@ -493,9 +492,9 @@ In this section we will adopt the following notation.
         $\tau_3$          &Protein lifetime (same for all compartments)\\ \hline
         $\nu_{ij}$         &Rate of mRNA hopping from compartment $i$ to compartment $j$ \\ \hline
         $\theta_{ij}$      &Rate of protein hopping from compartment $i$ to compartment $j$ \\ \hline
-        $\eta_{ij}$        &Rate of protein binding to $j$-th synapse on $i$-th dendrite \\ \hline
-        $\gamma_{ij}$        &Rate of protein unbinding from $j$-th synapse on $i$-th dendrite \\ \hline
-        $D$                 &Total number of dendrites \\ \hline
+        $\eta_{ij}$        &Rate of protein binding to $j$-th synapse on $i$-th compartment \\ \hline
+        $\gamma_{ij}$        &Rate of protein unbinding from $j$-th synapse on $i$-th compartment \\ \hline
+        $D$                 &Total number of dendritic compartments \\ \hline
   \end{tabular}
 \end{center}
 
@@ -510,21 +509,35 @@ In what follows we will denote the probability of state $\mathbf s$ at time $t$ 
   \begin{center}
     \includegraphics[width=7cm]{img/simplest_neuron.png}
   \end{center}  
-  \caption{The simplest (of its kind) model of a neuron with two spatial compartments soma (``$0$'') and unbranched dendrite (``$1$'') with a single synapse (``$2$''). Transcription happens in the soma, while mRNAs and proteins travel between the soma and dendrite degrading over time. Proteins can bind to or unbind from the synapse. Proteins bound to the synapse do not decay.}
+  \caption{The simplest (of its kind) model of a neuron with two spatial compartments soma (``$0$'') and unbranched dendrite (``$1$'') with a single synapse (``$2$''). Transcription happens in the soma, while mRNAs and proteins travel between the soma and dendrite degrading over time. Proteins can bind to or unbind from the synapse. Proteins bound to the synapse do not decay. \textcolor{purple}{I will update this figure later to be much bigger and include all the processes as arrows with the corresponding rates.}}
   \label{fig:simplest_neuron}
 \end{figure}
 In this section we attempt to find the means and the variances of the protein counts in the simplest possible model of neuron of our kind.
-\todo[inline]{Please add the definition of the jumos, it will be easier to understand. Update Figure 1 accordingly}
 
+\begin{align*}
+  &\textcolor{red}{\text{Gene activation:}} \quad &&\textcolor{red}{n_1 \xrightarrow[]{\lambda_1^+(N-n_1)} n_1+1}\\
+  &\textcolor{red}{\text{Gene inactivation:}}  &&\textcolor{red}{n_1 \xrightarrow[]{\lambda_1^-n_1} n_1-1}\\
+  &\textcolor{green}{\text{Transcription (only in soma):}} &&\textcolor{green}{m_0 \xrightarrow[]{\lambda_2n_1} m_0+1}\\
+  &\textcolor{green}{\text{mRNA degradation in $i$-th dendritic compartment:}} &&\textcolor{green}{m_i \xrightarrow[]{m_i/\tau_2} m_i-1}\\
+  &\textcolor{blue}{\text{mRNA hopping from dendritic compartment $i$ to $j$:}} &&\textcolor{blue}{(m_i, m_j) \xrightarrow[]{\nu_{ij}m_i} (m_i-1, m_j+1)}\\
+  &\textcolor{brown}{\text{Translation (in all nonsynaptic compartments):}} &&\textcolor{brown}{l_i \xrightarrow[]{m_i\kappa_i} l_i+1}\\
+  &\textcolor{brown}{\text{Proteolysis in dendritic compartment $i$:}} &&\textcolor{brown}{l_i \xrightarrow[]{l_i/\tau_3} l_i-1}\\
+  &\textcolor{cyan}{\text{Protein hopping from dendritic compartment $i$ to $j$:}} &&\textcolor{cyan}{(l_i, l_j) \xrightarrow[]{\theta_{ij}l_i} (l_i-1, l_j+1)}\\
+  &\textcolor{violet}{\text{Protein binding to $j$-th synapse on $i$-th compartment:}} &&\textcolor{violet}{(q_{ij}, l_i) \xrightarrow[]{\eta_{ij}l_i} (q_{ij}+1, l_i-1)}\\
+  &\textcolor{violet}{\text{Protein unbinding from $j$-th synapse on $i$-th compartment:}} &&\textcolor{violet}{(q_{ij}, l_i) \xrightarrow[]{\gamma_{ij}q_{ij}} (q_{ij}-1, l_i+1)}
+\end{align*}
+
+\textcolor{purple}{Note that in this initial formulation we assume that proteins do not decay in synapses (which is easy to change), and, although in these notes the mRNA and protein decay rates are assumed constant throughout the entire neuron, they can be set separately in our software.}% Also, there is no reason other than indexing synapses by pairs of indices (e.g. $j$-th synapse on $i$-th compartment) for considering binding/unbinding of proteins to/from synapses as something other than protein hopping between compartments, so we may change the notation later and get rid of $\eta_{ij}$, $\gamma_{ij}$ and $q_{ij}$.}
+  
 \subsubsection{Master equation}
 The model should capture the following:
 \begin{enumerate}
 \item \textcolor{red}{Gene activation/deactivation};
 \item \textcolor{green}{mRNA production (only in the soma) and degradation (in both compartments)};
 \item \textcolor{blue}{mRNA hopping};
-\item \textcolor{brown}{Free protein production (in both compartments) and degradation (in both compartments, but not in the synapse)};
-\item \textcolor{cyan}{Free protein hopping};
-\item \textcolor{pink}{Protein binding/unbinding from the synapse}.
+\item \textcolor{brown}{Protein production (in both compartments) and degradation (in both compartments, but not in the synapse)};
+\item \textcolor{cyan}{Protein hopping};
+\item \textcolor{violet}{Protein binding/unbinding from the synapse}.
 \end{enumerate}
 The master equation that captures these processes reads as
 \begin{equation*}
@@ -533,8 +546,8 @@ The master equation that captures these processes reads as
     & \textcolor{green}{+ \lambda_2n\left[P^{\mathbf s}_{m_0-1}(t) - P_{\mathbf s}(t)\right] + \frac{1}{\tau_2}\left[(m_0+1)P^{\mathbf s}_{m_0+1}(t) - m_0P_{\mathbf s}(t)\right]}\\ &\textcolor{green}{+ \frac{1}{\tau_2}\left[(m_1+1)P^{\mathbf s}_{m_1+1}(t) - m_1P_{\mathbf s}(t)\right]} \textcolor{blue}{+ \nu_{01}\left[(m_0+1)P^{\mathbf s}_{m_0+1,m_1-1}(t) - m_0P_{\mathbf s}(t)\right]}\\
     &\textcolor{blue}{+ \nu_{10}\left[(m_1+1)P^{\mathbf s}_{m_0-1,m_1+1}(t) - m_1P_{\mathbf s}(t)\right]} \textcolor{brown}{+ \kappa_0m_0\left[P^{\mathbf s}_{l_0-1}(t) - P_{\mathbf s}(t)\right]}\\
     &\textcolor{brown}{+ \kappa_1m_1\left[P^{\mathbf s}_{l_1-1}(t) - P_{\mathbf s}(t)\right] + \frac{1}{\tau_3}\left[(l_0+1)P^{\mathbf s}_{l_0+1}(t) - l_0P_{\mathbf s}(t)\right]}\\&\textcolor{brown}{+ \frac{1}{\tau_3}\left[(l_1+1)P^{\mathbf s}_{l_1+1}(t)-l_1P_{\mathbf s}(t)\right]} \textcolor{cyan}{+ \theta_{01}\left[(l_0+1)P^{\mathbf s}_{l_0+1,l_1-1}(t) - l_0P_{\mathbf s}(t)\right]}\\
-    &\textcolor{cyan}{+ \theta_{10}\left[(l_1+1)P^{\mathbf s}_{l_0-1,l_1+1}(t) - l_1P_{\mathbf s}(t)\right]} \textcolor{pink}{+\eta_{11}\left[(l_1+1)P^{\mathbf s}_{l_1+1, q_{11}-1}(t) - l_1P_{\mathbf s}(t)\right]} \\
-    &\textcolor{pink}{+ \gamma_{11}\left[(q_{11}+1)P^{\mathbf s}_{l_1-1,q_{11}+1}(t) - q_{11}P_{\mathbf s}(t)\right]}.
+    &\textcolor{cyan}{+ \theta_{10}\left[(l_1+1)P^{\mathbf s}_{l_0-1,l_1+1}(t) - l_1P_{\mathbf s}(t)\right]} \textcolor{violet}{+\eta_{11}\left[(l_1+1)P^{\mathbf s}_{l_1+1, q_{11}-1}(t) - l_1P_{\mathbf s}(t)\right]} \\
+    &\textcolor{violet}{+ \gamma_{11}\left[(q_{11}+1)P^{\mathbf s}_{l_1-1,q_{11}+1}(t) - q_{11}P_{\mathbf s}(t)\right]}.
   \end{split}
 \end{equation*}
 
@@ -570,9 +583,7 @@ First order:
   \end{split}
 \end{align*}
 
-Second order:
-
-\textcolor{red}{To be continued...}
+Second-order expressions are not shown here due to their size, but they are obtained using symbolic computing software.
 
 \subsection{Simple neuron model}
 \subsubsection{PDE for the generating function}
@@ -803,7 +814,7 @@ This section provides the general rules for constructing a {\it master equation}
               {\it ME terms:}
               \begin{equation}
                 \begin{split}
-                  \textcolor{pink}{\eta_{ij}\left[(l_i+1)P_{l_i+1, q_{ij}-1}^{\mathbf s}(t) - l_iP_{\mathbf s}(t)\right] + \gamma_{ij}\left[(q_{ij}+1)P_{l_i-1, q_{ij}+1}^{\mathbf s}(t) - q_{ij}P_{\mathbf s}(t)\right]}
+                  \textcolor{violet}{\eta_{ij}\left[(l_i+1)P_{l_i+1, q_{ij}-1}^{\mathbf s}(t) - l_iP_{\mathbf s}(t)\right] + \gamma_{ij}\left[(q_{ij}+1)P_{l_i-1, q_{ij}+1}^{\mathbf s}(t) - q_{ij}P_{\mathbf s}(t)\right]}
                 \end{split}
               \end{equation}
               
