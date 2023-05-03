@@ -74,7 +74,7 @@ In this introductory section we will show how to find the means, variances and c
 \rem[inline]{I dont see very well what is the jump process in this case. A very natural way to describe a jump process is to give its infinitesimal generator $\mathbf A$ which is somehow the adjoint of the Fokker Planck equation. Formally, $\mathbf Af(x) = \lim\limits_{\delta\to 0}(E_x(f(X_\delta))-x)/\delta$
 	
 In your case, I'd say that \[(\mathbf Ah)(n) = \lambda_1^+1_{n<N_1}\left(f(n+1)-f(n)\right) + \lambda_1^-1_{n>0}\left(f(n-1)-f(n)\right) \]}
-We will now demonstrate the approach by solving the problem of independent switching of $N_1$ gene replicas, for which the master equation is given by\footnote{Compare with the first two lines of (\ref{full_Paulsson_ME}).}
+We will now demonstrate the approach by solving the problem of independent switching of $N_1$ gene replicas, for which the master equation is given by\footnote{Compare with the first two lines of (\ref{full_Paulsson_ME}).} $\forall n_1\in [0, N_1]$
 \begin{equation} \label{gene_switching_ME}
   \begin{split} 
     \frac{dP_{n_1}(t)}{dt} = &\lambda_1^+\left[(N_1-n_1+1)P_{n_1-1}(t) - (N_1-n_1)P_{n_1}(t)\right]\\
@@ -82,8 +82,9 @@ We will now demonstrate the approach by solving the problem of independent switc
   \end{split}
 \end{equation}
 where $n_1$ is the number of active genes.
+\rem[inline]{In theory, the first term should be $(N_1-n_1+1)1_{n_1>0}P_{n_1-1}(t)$ but the solution satisfies $P_{-1}=0$. Idem, the last term should be $(n_1+1)1_{n_1<N}P_{n_1+1}$ }
 
-The generating function of the distribution $P_{n_1}(t)$ is defined as
+\rem[]{You need to define $P_{-1}$, etc.}The generating function of the distribution $P_{n_1}(t)$ is defined as
 \begin{equation} \label{gen_func_def} 
   G(z_1; t) = \sum_{n_1=-\infty}^{\infty}P_{n_1}(t)z_1^{n_1}.
 \end{equation}
@@ -189,7 +190,7 @@ or equivalently
 \begin{equation*}
   (P_{\text{on}}x_1 + 1)x_1\frac{d\mathcal G(x_1)}{dx_1} = P_{\text{on}}N_1x_1\mathcal G(x_1).
 \end{equation*}
-This substitution leads to
+This substitution leads to \rem[]{what is $G^{(1)}$?}
 \begin{equation*}
   \left(P_{\text{on}}-\frac{1}{2}P_{\text{on}}N_1\right)\mathcal G^{(2)}x_1^3 + \left(\mathcal G^{(2)} + \mathcal G^{(1)}P_{\text{on}} - P_{\text{on}}N_1G^{(1)}\right)x_1^2 + \left(G^{(1)}-P_{\text{on}}N_1\right)x_1 = 0,
 \end{equation*}
@@ -979,7 +980,8 @@ The comparison of the above predictions with the results of the corresponding Gi
 \end{figure}
 
 \subsection{Second order}
-When in the PDE for the generating function the coefficients corresponding to certain pairs $x_ix_j$ are collected and equated, one gets an inhomogeneous linear system of first-order ODEs for $\boldsymbol{\mathcal G^{(2)}}$ of the form
+When in the PDE for the generating function the coefficients corresponding to certain pairs $x_ix_j$ are collected and equated, one gets an in-homogeneous linear system of first-order ODEs for $\boldsymbol{\mathcal G^{(2)}}$ of the form
+\rem[inline]{Note that $G^{(2)}$ is symmetric}
 \begin{equation}\label{o2_nonstat_ODE}
   \frac{d\boldsymbol{\mathcal G}^{(2)}(t)}{dt} = \mathbf D\boldsymbol{\mathcal G}^{(1)}(t) - \mathbf C\boldsymbol{\mathcal G}^{(2)}(t),
 \end{equation}
