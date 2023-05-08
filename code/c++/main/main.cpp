@@ -83,10 +83,12 @@ int main() {
   // ae.sem_stationary_expectations();
   // ae.stationary_covariances();
 
-  ae.nonstationary_expectations(times);
+  // ae.nonstationary_expectations(times);
   // ae.sem_nonstationary_covariances(times, &G1_init, &G2_init);
   // ae.nonstationary_covariances(times, &G1_init, &G2_init);
   // Gillespie_engine(neuron).run_Gillespie(10000);
+
+  ae.sem_nonstationary_covariances_direct_ODE_solver(times, &G1_init, &G2_init);
 
   // ae.sem_nonstationary_expectations(times);
   
