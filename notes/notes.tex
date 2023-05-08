@@ -501,7 +501,7 @@ In this section we will adopt the following notation.
 
 In this model mRNAs and free (not bound to the synapses) proteins hop between the compartments and disintegrate over time.
 
-In what follows we will denote the probability of state $\mathbf s$ at time $t$ as $P_{\mathbf s}(t)$. The notation $P^{\mathbf s}_{m+1}(t)$ should be understood as the probability of state $\mathbf s$ with increased by one number of mRNAs\footnote{This notation makes expressions a lot shorter, but care is needed to keep the letters as they are given in the table, i.e. $m$ for mRNAs, $p$ for proteins etc.}. Similarly, $P^{\mathbf s}_{q_{ij}-1, p_i+1}(t)$ is the probability of a state $\mathbf s$ at time $t$ with decreased by one number of proteins bound to the $j$-th synapse of $i$-th dendrite and increased by one number of free proteins in $i$-th dendrite.
+In what follows we will denote the probability of state $\mathbf s$ at time $t$ as $P_{\mathbf s}(t)$. The notation $P^{\mathbf s}_{m+1}(t)$ should be understood as the probability of state $\mathbf s$ with increased by one number of mRNAs\footnote{This notation makes expressions a lot shorter, but care is needed to keep the letters as they are given in the table, i.e. $m$ for mRNAs, $p$ for proteins etc.}. Similarly, $P^{\mathbf s}_{q_{ij}-1, l_i+1}(t)$ is the probability of a state $\mathbf s$ at time $t$ with decreased by one number of proteins bound to the $j$-th synapse of $i$-th dendrite and increased by one number of free proteins in $i$-th dendrite.
 
 %% It turns out to be convenient to parametrise the numbers of mRNAs in the compartments as $\{M,m_1,m_2,...\}$, and the number of mRNAs in the soma $m_0$ can be easily obtained from this parametrisation as $m_0=M-m_1-m_2-...-m_D$. Same for the free proteins.
 
@@ -980,8 +980,7 @@ The comparison of the above predictions with the results of the corresponding Gi
 \end{figure}
 
 \subsection{Second order}
-When in the PDE for the generating function the coefficients corresponding to certain pairs $x_ix_j$ are collected and equated, one gets an in-homogeneous linear system of first-order ODEs for $\boldsymbol{\mathcal G^{(2)}}$ of the form
-\rem[inline]{Note that $G^{(2)}$ is symmetric}
+When in the PDE for the generating function the coefficients corresponding to certain pairs $x_ix_j$ are collected and equated, one gets an inhomogeneous linear system of first-order ODEs for $\boldsymbol{\mathcal G^{(2)}}$ of the form
 \begin{equation}\label{o2_nonstat_ODE}
   \frac{d\boldsymbol{\mathcal G}^{(2)}(t)}{dt} = \mathbf D\boldsymbol{\mathcal G}^{(1)}(t) - \mathbf C\boldsymbol{\mathcal G}^{(2)}(t),
 \end{equation}
