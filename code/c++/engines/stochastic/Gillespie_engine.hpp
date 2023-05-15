@@ -13,7 +13,8 @@ class Gillespie_engine {
 
   Compartment* initialise_soma();
   void initialise_from(Compartment&);
-  double update_Gillespie();
+  inline double draw_delta_t();
+  void update_Gillespie();
 
   std::vector<Event*> p_events;
   size_t ev_ind = 0; // Event index (needed for recursions)
@@ -29,6 +30,7 @@ public:
   {}
   
   void run_Gillespie(const double& time);
+  void run_Gillespie(const std::list<double>& write_times);
   
 };
 

@@ -448,10 +448,10 @@ which leads to the nondegenerate system of six linear equations for six independ
         {\mathcal G}_{23}& = \frac{\tau_2}{\tau_2+\tau_3}\tau_3\lambda_3\tau_2\lambda_2P_{\text{on}}N_1\Bigg[1 + \frac{\tau_1\tau_2\lambda_2}{\tau_1+\tau_2}\left(P_{\text{on}}(N_1-1)+\lambda_1^+N_1\tau_2+1\right)\\& + \lambda_2\frac{\tau_1\tau_3}{\tau_1+\tau_3}\left(\lambda_1^+N_1\tau_3 + \frac{\tau_1}{\tau_1+\tau_2}\left(N_1(\lambda_1^+\tau_2+P_{\text{on}})+1-P_{\text{on}}\right)\right)\Bigg]
       \end{split}\\
       \begin{split}
-        {\mathcal G}_{33}& = \frac{\tau_2}{\tau_2+\tau_3}(\tau_3\lambda_3)^2\tau_2\lambda_2P_{\text{on}}N_1\Bigg[1 + \frac{\tau_1\tau_2\lambda_2}{\tau_1+\tau_2}\left(P_{\text{on}}(N_1-1)+\lambda_1^+N_1\tau_2+1\right)\\& + \lambda_2\frac{\tau_1\tau_3}{\tau_1+\tau_3}\left(\lambda_1^+N_1\tau_3 + \frac{\tau_1}{\tau_1+\tau_2}\left(N_1(\lambda_1^+\tau_2+P_{\text{on}})+1-P_{\text{on}}\right)\right)\Bigg] \label{G_33_Paulsson}
+        {\mathcal G}_{33}& = \frac{\tau_2}{\tau_2+\tau_3}(\tau_3\lambda_3)^2\tau_2\lambda_2P_{\text{on}}N_1\Bigg[1 + \frac{\tau_1\tau_2\lambda_2}{\tau_1+\tau_2}\left(P_{\text{on}}(N_1-1)+\lambda_1^+N_1\tau_2+1\right)\\& + \lambda_2\frac{\tau_1\tau_3}{\tau_1+\tau_3}\left(\lambda_1^+N_1\tau_3 + \frac{\tau_1}{\tau_1+\tau_2}\left(N_1(\lambda_1^+\tau_2+P_{\text{on}})+1-P_{\text{on}}\right)\right)\Bigg]. \label{G_33_Paulsson}
       \end{split}
 \end{align}
-Note from the following expression for the variance
+From the following expression for the variance
 \begin{equation}\label{sigma2_from_G}
   \sigma_i^2 = {\mathcal G}_{ii} + {\mathcal G}_i - {\mathcal G}_i^2
 \end{equation}
@@ -824,7 +824,7 @@ This section provides the general rules for constructing a {\it master equation}
                 -\eta_{ij}(x_{l_i}-x_{q_{ij}})\frac{\partial\mathcal G(\mathbf x, t)}{\partial x_{l_i}} - \gamma_{ji}(x_{q_{ij}}-x_{l_i})\frac{\partial\mathcal G(\mathbf x, t)}{\partial x_{q_{ij}}}
               \end{equation}
               
-              \subsubsection{Second-order expansions}
+              \subsubsection{Second-order expansions} \label{subsubsec:2nd_order_expansions}
               When substituted to the above PDE terms corresponding to the compartments of certain types, the expansion (\ref{eqn:basic_expansion}) gives the following terms in the second order.
               
               {\bf Soma}
@@ -980,7 +980,7 @@ The comparison of the above predictions with the results of the corresponding Gi
 \end{figure}
 
 \subsection{Second order}
-When in the PDE for the generating function the coefficients corresponding to certain pairs $x_ix_j$ are collected and equated, one gets an inhomogeneous linear system of first-order ODEs for $\boldsymbol{\mathcal G^{(2)}}$ of the form
+When in the PDE for the generating function the coefficients corresponding to certain pairs $x_ix_j$ are collected and equated, one gets an inhomogeneous linear system of first-order ODEs for $\boldsymbol{\mathcal G^{(2)}}$ of the form\footnote{Note that when the matrices are constructed using the results of Section \ref{subsubsec:2nd_order_expansions}, the combinatorial factor of 2 from the definition of $\boldsymbol{\mathcal G}^{(2)}$ by asymptotic expansion (\ref{eqn:basic_expansion}) needs to be taken into account.}
 \begin{equation}\label{o2_nonstat_ODE}
   \frac{d\boldsymbol{\mathcal G}^{(2)}(t)}{dt} = \mathbf D\boldsymbol{\mathcal G}^{(1)}(t) - \mathbf C\boldsymbol{\mathcal G}^{(2)}(t),
 \end{equation}

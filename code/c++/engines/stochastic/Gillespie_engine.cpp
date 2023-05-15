@@ -70,33 +70,36 @@ void Gillespie_engine::initialise_from(Compartment& comp) {
   }
 }
 
-double Gillespie_engine::update_Gillespie() {
+inline double Gillespie_engine::draw_delta_t() {
   double s = 0;
   for(auto& p_ev : p_events)
     s += p_ev->rate;
 
-  // Sampling event time
-  // double delta_t = -1/p_neuron->total_rate*log(1-rnd());
-  double delta_t = -1/s*log(1-rnd());
-  
-  // Sampling the event
-  // double r = rnd()*p_neuron->total_rate;
-  double r = rnd()*s;
   // if(abs(p_neuron->total_rate-s)>.1) std::cerr << "abs(p_neuron->total_rate-s)>1\n";
   // std::cerr << "total_rate = " << p_neuron->total_rate << ", s = " << s << ", r = " << r << std::endl;
+
+  p_neuron->total_rate = s; //Total rate should be computed without the above sum! Numerical stability is a problem
+  
+  // Sampling event time
+  double delta_t = -1/p_neuron->total_rate*log(1-rnd());
+
+  return delta_t; 
+}
+
+void Gillespie_engine::update_Gillespie() {
+  // Sampling the event
+  double r = rnd()*p_neuron->total_rate;
+
   size_t i=0;
   for(double sum=p_events[0]->rate; sum<r; sum += p_events[i]->rate)
     ++i;
   
   (*p_events[i])(); // Triggering the event
-  
-  return delta_t;
 }
 
 void Gillespie_engine::run_Gillespie(const double& time) {
   initialise_soma();
   initialise_from(*p_neuron->p_soma);
-  //for(double t = 0; t<time; t+=update_Gillespie());
 
   // FOR PRELIMINARY TESTING ONLY!!!
   std::cout << "t," << "Soma_AG," << "Soma_mRNA,"<< "Soma_Prot,";
@@ -107,7 +110,7 @@ void Gillespie_engine::run_Gillespie(const double& time) {
   std::cout << std::endl;
 
   double t_prev=-1.1, delta_t_write = 1;
-  for(double t = 0; t<time; t+=update_Gillespie()) {
+  for(double t = 0; t<time; t+=draw_delta_t()) {
     if(t-t_prev > delta_t_write) {
       std::cout << t << ',' << p_neuron->p_soma->n_active_genes << ',' << p_neuron->p_soma->n_mRNAs << ',' << p_neuron->p_soma->n_proteins << ',';
       for(auto& p_ds : p_neuron->p_dend_segments)
@@ -117,5 +120,85 @@ void Gillespie_engine::run_Gillespie(const double& time) {
       std::cout << std::endl;
       t_prev = t;
     }
+    update_Gillespie();
   }
+}
+
+void Gillespie_engine::run_Gillespie(const std::list<double>& times) {
+  initialise_soma();
+  initialise_from(*p_neuron->p_soma);
+  //for(double t = 0; t<time; t+=update_Gillespie());
+
+  // FOR PRELIMINARY TESTING ONLY!!!
+  std::cout << "t," << "time," << "Soma_AG," << "Soma_mRNA,"<< "Soma_Prot";
+  for(auto& p_ds : p_neuron->p_dend_segments)
+    std::cout << ',' + p_ds->name + "_mRNA," + p_ds->name + "_Prot";
+  for(auto& p_ds : p_neuron->p_synapses)
+    std::cout << ',' + p_ds->name + "_Prot";
+  std::cout << std::endl;
+
+  double t = 0;
+
+  auto it_times=times.begin();
+  while(t<=*it_times && it_times!=times.end()) { std::cerr << "A\n";
+    std::cout << t << ',' << *it_times << ',' << p_neuron->p_soma->n_active_genes << ',' << p_neuron->p_soma->n_mRNAs << ',' << p_neuron->p_soma->n_proteins;
+    for(auto& p_ds : p_neuron->p_dend_segments)
+      std::cout << ',' << p_ds->n_mRNAs << ',' << p_ds->n_proteins;
+    for(auto& p_ds : p_neuron->p_synapses)
+      std::cout << ',' << p_ds->n_proteins;
+    std::cout << std::endl;
+    
+    t+=draw_delta_t();
+    while(t>*it_times && it_times!=times.end()) { std::cerr << "B\n";
+      std::cout << t << ',' << *it_times << ',' << p_neuron->p_soma->n_active_genes << ',' << p_neuron->p_soma->n_mRNAs << ',' << p_neuron->p_soma->n_proteins;
+      for(auto& p_ds : p_neuron->p_dend_segments)
+        std::cout << ',' << p_ds->n_mRNAs << ',' << p_ds->n_proteins;
+      for(auto& p_ds : p_neuron->p_synapses)
+        std::cout << ',' << p_ds->n_proteins;
+      std::cout << std::endl;
+      ++it_times;
+    }
+    update_Gillespie();
+    ++it_times;
+  }
+
+
+
+  // for(auto it_times=times.begin(); it_times!=times.end(); ++it_times) {
+  //   std::cerr << "A\n";
+  //   std::cout << t << ',' << *it_times << ',' << p_neuron->p_soma->n_active_genes << ',' << p_neuron->p_soma->n_mRNAs << ',' << p_neuron->p_soma->n_proteins;
+  //   for(auto& p_ds : p_neuron->p_dend_segments)
+  //     std::cout << ',' << p_ds->n_mRNAs << ',' << p_ds->n_proteins;
+  //   for(auto& p_ds : p_neuron->p_synapses)
+  //     std::cout << ',' << p_ds->n_proteins;
+  //   std::cout << std::endl;
+
+  //   while(t<=*it_times) {
+  //     t+=draw_delta_t();
+  //     while(t>*it_times && it_times!=times.end()) { std::cerr << "B\n";
+  //       std::cout << t << ',' << *it_times << ',' << p_neuron->p_soma->n_active_genes << ',' << p_neuron->p_soma->n_mRNAs << ',' << p_neuron->p_soma->n_proteins;
+  //       for(auto& p_ds : p_neuron->p_dend_segments)
+  //         std::cout << ',' << p_ds->n_mRNAs << ',' << p_ds->n_proteins;
+  //       for(auto& p_ds : p_neuron->p_synapses)
+  //         std::cout << ',' << p_ds->n_proteins;
+  //       std::cout << std::endl;
+  //       ++it_times;
+  //     }
+  //     update_Gillespie();
+  //   }
+  // }
+  
+  // for(auto& time : times) {
+  //   std::cout << t << ',' << time << ',' << p_neuron->p_soma->n_active_genes << ',' << p_neuron->p_soma->n_mRNAs << ',' << p_neuron->p_soma->n_proteins;
+  //   for(auto& p_ds : p_neuron->p_dend_segments)
+  //     std::cout << ',' << p_ds->n_mRNAs << ',' << p_ds->n_proteins;
+  //   for(auto& p_ds : p_neuron->p_synapses)
+  //     std::cout << ',' << p_ds->n_proteins;
+  //   std::cout << std::endl;
+    
+  //   while(t<=time) {
+  //     t+=draw_delta_t();
+  //     update_Gillespie();
+  //   }
+  // }
 }
