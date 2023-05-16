@@ -66,13 +66,13 @@ int main() {
 
 
   ///// Setting initial conditions /////
-  soma.set_gene_activation_rate(1e-10).set_gene_deactivation_rate(1).set_number_of_gene_copies(1);
-  ae.sem_stationary_expectations().sem_stationary_covariances();
-  arma::vec G2_init = *ae.G2();
-  // soma.set_gene_activation_rate(1).set_gene_deactivation_rate(0).set_transcription_rate(3.*200/10000 * .001*3600);
-  // ae.sem_stationary_expectations();
-  arma::vec G1_init = *ae.G1();
-  soma.set_gene_activation_rate(1).set_gene_deactivation_rate(0);
+  // soma.set_gene_activation_rate(1e-10).set_gene_deactivation_rate(1).set_number_of_gene_copies(1);
+  // ae.sem_stationary_expectations().sem_stationary_covariances();
+  // arma::vec G2_init = *ae.G2();
+  // // soma.set_gene_activation_rate(1).set_gene_deactivation_rate(0).set_transcription_rate(3.*200/10000 * .001*3600);
+  // // ae.sem_stationary_expectations();
+  // arma::vec G1_init = *ae.G1();
+  // soma.set_gene_activation_rate(1).set_gene_deactivation_rate(0);
 
   std::list<double> times;
   for(size_t i=0; i<1000; ++i)
