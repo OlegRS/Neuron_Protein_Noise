@@ -16,6 +16,6 @@ void Compartment::MRNA_decay::operator()() {
   }
   for(auto& p_junc : location.it_p_out_junctions) {
     (*p_junc)->mRNA_hop_forward.rate -= (*p_junc)->fwd_mRNA_hop_rate;
-    location.p_neuron->total_rate -= (*p_junc)->bkwd_mRNA_hop_rate;
+    location.p_neuron->total_rate -= (*p_junc)->fwd_mRNA_hop_rate;
   }
 }

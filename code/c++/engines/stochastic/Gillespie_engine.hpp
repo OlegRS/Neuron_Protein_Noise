@@ -1,6 +1,8 @@
 #ifndef __GILLESPIE_ENGINE_HPP__
 #define __GILLESPIE_ENGINE_HPP__
 
+#include <fstream>
+
 #include "events/Event.hpp"
 #include "../../Neuron.hpp"
 #include "../../compartments/Soma.hpp"
@@ -18,19 +20,27 @@ class Gillespie_engine {
 
   std::vector<Event*> p_events;
   size_t ev_ind = 0; // Event index (needed for recursions)
-  PRNG rnd;
+  PRNG& rnd;
   
   
 public:
-  Gillespie_engine(Neuron& neuron) :
+  // Gillespie_engine(Neuron& neuron) :
+  //   p_neuron(&neuron),
+  //   dim(3 + 2*neuron.p_dend_segments.size() + neuron.p_synapses.size()),
+  //   p_events(6 + 4*neuron.p_dend_segments.size() + 3*(neuron.n_SDJ + neuron.n_DDJ) + 2*neuron.n_DSJ),
+  //   rnd(1)
+  // {}
+
+  Gillespie_engine(Neuron& neuron, PRNG& prng) :
     p_neuron(&neuron),
     dim(3 + 2*neuron.p_dend_segments.size() + neuron.p_synapses.size()),
     p_events(6 + 4*neuron.p_dend_segments.size() + 3*(neuron.n_SDJ + neuron.n_DDJ) + 2*neuron.n_DSJ),
-    rnd(1)
+    rnd(prng)
   {}
+
   
   void run_Gillespie(const double& time);
-  void run_Gillespie(const std::list<double>& write_times);
+  void run_Gillespie(const std::list<double>& write_times, std::ofstream&);
   
 };
 

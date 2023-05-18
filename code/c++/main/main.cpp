@@ -66,17 +66,17 @@ int main() {
 
 
   ///// Setting initial conditions /////
-  // soma.set_gene_activation_rate(1e-10).set_gene_deactivation_rate(1).set_number_of_gene_copies(1);
-  // ae.sem_stationary_expectations().sem_stationary_covariances();
-  // arma::vec G2_init = *ae.G2();
-  // // soma.set_gene_activation_rate(1).set_gene_deactivation_rate(0).set_transcription_rate(3.*200/10000 * .001*3600);
-  // // ae.sem_stationary_expectations();
-  // arma::vec G1_init = *ae.G1();
-  // soma.set_gene_activation_rate(1).set_gene_deactivation_rate(0);
+  soma.set_gene_activation_rate(1e-10).set_gene_deactivation_rate(1).set_number_of_gene_copies(1);
+  ae.sem_stationary_expectations().sem_stationary_covariances();
+  arma::vec G2_init = *ae.G2();
+  // soma.set_gene_activation_rate(1).set_gene_deactivation_rate(0).set_transcription_rate(3.*200/10000 * .001*3600);
+  // ae.sem_stationary_expectations();
+  arma::vec G1_init = *ae.G1();
+  soma.set_gene_activation_rate(1).set_gene_deactivation_rate(0);
 
   std::list<double> times;
-  for(size_t i=0; i<1000; ++i)
-    times.push_back(i);
+  for(size_t i=0; i<100000; ++i)
+    times.push_back(i*.01);
 
   // Analytic_engine(neuron).sem_nonstationary_expectations(times);
 
@@ -85,10 +85,15 @@ int main() {
 
   // ae.nonstationary_expectations(times);
   // ae.nonstationary_covariances(times, &G1_init, &G2_init);
-  Gillespie_engine(neuron).run_Gillespie(times);
+  // std::string file_name = "../../data/gillespie/new/2/g_";
+  // for(size_t i=0; i<10; ++i) {
+  //   std::ofstream ofs(file_name + std::to_string(i));
+  //   Gillespie_engine(neuron).run_Gillespie(times, ofs);
+  //   ofs.close();
+  // }
 
   // ae.nonstationary_covariances(times, &G1_init, &G2_init);
-  // ae.sem_nonstationary_covariances(times, &G1_init, &G2_init);
+  ae.sem_nonstationary_covariances(times, &G1_init, &G2_init);
   // ae.sem_nonstationary_covariances_using_integral(times, &G1_init, &G2_init);
   // ae.sem_nonstationary_covariances_direct_ODE_solver(times, &G1_init, &G2_init);
   // ae.sem_nonstationary_covariances_direct_ODE_solver_no_D_matrix(times, &G1_init, &G2_init);

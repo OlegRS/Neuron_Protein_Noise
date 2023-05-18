@@ -17,7 +17,7 @@ Compartment* Gillespie_engine::initialise_soma() {
   p_neuron->total_rate += soma.protein_creation.rate*soma.n_mRNAs;
   p_events[5] = &soma.protein_decay.set_rate(soma.protein_decay_rate*soma.n_proteins);
   p_neuron->total_rate += soma.protein_decay.rate;
-
+  
   ev_ind = 6;
 
   return &soma;
@@ -36,6 +36,7 @@ void Gillespie_engine::initialise_from(Compartment& comp) {
       p_events[ev_ind++] = &p_junc->prot_hop_backward.set_rate(p_junc->bkwd_prot_hop_rate*desc.n_proteins);
       p_neuron->total_rate += p_junc->prot_hop_backward.rate;
 
+      // No mRNAs and protein creation/decay in synapses (descendant is a synapse)
       desc.mRNA_creation.rate = 0;
       desc.mRNA_decay.rate = 0;
       desc.protein_creation.rate = 0;
@@ -70,17 +71,8 @@ void Gillespie_engine::initialise_from(Compartment& comp) {
   }
 }
 
-inline double Gillespie_engine::draw_delta_t() {
-  double s = 0;
-  for(auto& p_ev : p_events)
-    s += p_ev->rate;
-
-  // if(abs(p_neuron->total_rate-s)>.1) std::cerr << "abs(p_neuron->total_rate-s)>1\n";
-  // std::cerr << "total_rate = " << p_neuron->total_rate << ", s = " << s << ", r = " << r << std::endl;
-
-  p_neuron->total_rate = s; //Total rate should be computed without the above sum! Numerical stability is a problem
-  
-  // Sampling event time
+inline double Gillespie_engine::draw_delta_t() {  
+  // Sampling the time of an event
   double delta_t = -1/p_neuron->total_rate*log(1-rnd());
 
   return delta_t; 
@@ -124,50 +116,41 @@ void Gillespie_engine::run_Gillespie(const double& time) {
   }
 }
 
-void Gillespie_engine::run_Gillespie(const std::list<double>& times) {
+void Gillespie_engine::run_Gillespie(const std::list<double>& times, std::ofstream& ofs) {
   initialise_soma();
   initialise_from(*p_neuron->p_soma);
-  //for(double t = 0; t<time; t+=update_Gillespie());
 
-  // FOR PRELIMINARY TESTING ONLY!!!
-  std::cout << "t," << "time," << "Soma_AG," << "Soma_mRNA,"<< "Soma_Prot";
+  ofs << "t," << "time," << "Soma_AG," << "Soma_mRNA,"<< "Soma_Prot";
   for(auto& p_ds : p_neuron->p_dend_segments)
-    std::cout << ',' + p_ds->name + "_mRNA," + p_ds->name + "_Prot";
+    ofs << ',' + p_ds->name + "_mRNA," + p_ds->name + "_Prot";
   for(auto& p_ds : p_neuron->p_synapses)
-    std::cout << ',' + p_ds->name + "_Prot";
-  std::cout << std::endl;
+    ofs << ',' + p_ds->name + "_Prot";
+  ofs << std::endl;
 
   double t = 0;
   double time_written;
   for(auto it_times=times.begin(); it_times!=times.end(); ) {
-    
-    // std::cerr << t << ',' << *it_times << ',' << p_neuron->p_soma->n_active_genes << ',' << p_neuron->p_soma->n_mRNAs << ',' << p_neuron->p_soma->n_proteins;
-    // for(auto& p_ds : p_neuron->p_dend_segments)
-    //   std::cerr << ',' << p_ds->n_mRNAs << ',' << p_ds->n_proteins;
-    // for(auto& p_ds : p_neuron->p_synapses)
-    //   std::cerr << ',' << p_ds->n_proteins;
-    // std::cerr << std::endl;
-    
     if(*it_times > t) {
       t += draw_delta_t();
-      if(*it_times <= t) {
-        std::cout << t << ',' << (time_written=*it_times) << ',' << p_neuron->p_soma->n_active_genes << ',' << p_neuron->p_soma->n_mRNAs << ',' << p_neuron->p_soma->n_proteins;
+      while(*it_times <= t && it_times!=times.end()) {
+        ofs << t << ',' << (time_written=*it_times) << ',' << p_neuron->p_soma->n_active_genes << ',' << p_neuron->p_soma->n_mRNAs << ',' << p_neuron->p_soma->n_proteins;
         for(auto& p_ds : p_neuron->p_dend_segments)
-          std::cout << ',' << p_ds->n_mRNAs << ',' << p_ds->n_proteins;
+          ofs << ',' << p_ds->n_mRNAs << ',' << p_ds->n_proteins;
         for(auto& p_ds : p_neuron->p_synapses)
-          std::cout << ',' << p_ds->n_proteins;
-        std::cout << std::endl;
+          ofs << ',' << p_ds->n_proteins;
+        ofs << std::endl;
+        ++it_times;
       }
       update_Gillespie();
     }
     else {
       if(time_written != *it_times) {
-        std::cout << t << ',' << *it_times << ',' << p_neuron->p_soma->n_active_genes << ',' << p_neuron->p_soma->n_mRNAs << ',' << p_neuron->p_soma->n_proteins;
+        ofs << t << ',' << *it_times << ',' << p_neuron->p_soma->n_active_genes << ',' << p_neuron->p_soma->n_mRNAs << ',' << p_neuron->p_soma->n_proteins;
         for(auto& p_ds : p_neuron->p_dend_segments)
-          std::cout << ',' << p_ds->n_mRNAs << ',' << p_ds->n_proteins;
+          ofs << ',' << p_ds->n_mRNAs << ',' << p_ds->n_proteins;
         for(auto& p_ds : p_neuron->p_synapses)
-          std::cout << ',' << p_ds->n_proteins;
-        std::cout << std::endl;
+          ofs << ',' << p_ds->n_proteins;
+        ofs << std::endl;
       }
       ++it_times;
     }
