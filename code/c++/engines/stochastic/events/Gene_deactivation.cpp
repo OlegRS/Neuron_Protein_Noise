@@ -11,4 +11,5 @@ void Soma::Gene_deactivation::operator()() {
   location.p_neuron->total_rate -= location.gene_deactivation_rate;
 
   location.mRNA_creation.rate -= location.transcription_rate;
+  location.p_neuron->total_rate -= location.transcription_rate;
 }

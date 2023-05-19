@@ -78,14 +78,23 @@ inline double Gillespie_engine::draw_delta_t() {
   return delta_t; 
 }
 
-void Gillespie_engine::update_Gillespie() {
+// std::default_random_engine generator;
+
+void Gillespie_engine::update_Gillespie() {  
   // Sampling the event
-  double r = rnd()*p_neuron->total_rate;
+  
+  // std::vector<double> probabilities(p_events.size());
+  // for(size_t i=0; i<p_events.size(); ++i)
+  //   probabilities[i] = p_events[i]->rate;
+
+  // std::discrete_distribution<int> distribution(probabilities.begin(), probabilities.end());          
+  // int i = distribution(generator);
 
   size_t i=0;
+  double r = rnd()*p_neuron->total_rate;
   for(double sum=p_events[0]->rate; sum<r; sum += p_events[i]->rate)
     ++i;
-  
+
   (*p_events[i])(); // Triggering the event
 }
 

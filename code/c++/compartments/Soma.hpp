@@ -43,7 +43,8 @@ public:
   Soma& set_gene_activation_rate(const double& rate) {gene_activation_rate=rate; return *this;}
   Soma& set_gene_deactivation_rate(const double& rate) {gene_deactivation_rate = rate; return *this;}
   Soma& set_number_of_gene_copies(const unsigned int& N) {number_of_gene_copies = N; return *this;}
-
+  Soma& set_transcription_rate(const double& rate) {transcription_rate=rate; return *this;};
+  
   Compartment::Type type() const {return SOMA;}
   
   Compartment* operator+=(Compartment&);

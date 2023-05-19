@@ -3,7 +3,7 @@
 
 #include<random>
 
-typedef std::mt19937 PRN_gen; // Mersenne twister PRNG
+typedef std::mt19937_64 PRN_gen; // Mersenne twister PRNG
 
 class PRNG {
   PRN_gen gen;
