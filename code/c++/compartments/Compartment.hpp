@@ -98,6 +98,14 @@ public:
                                                      mRNA_creation(this),
                                                      mRNA_decay(this) {}
   
+  Compartment(const double& length, const std::string& name = "no_name") : name(name),
+                                                                           length(length),
+                                                                           protein_creation(this),
+                                                                           protein_decay(this),
+                                                                           mRNA_creation(this),
+                                                                           mRNA_decay(this) {}
+
+
   // Compartment(Compartment *parent, const std::string& name = "no_name") = 0; //This only needs to be implemented in actual compartments
   Compartment(const Compartment&);
 

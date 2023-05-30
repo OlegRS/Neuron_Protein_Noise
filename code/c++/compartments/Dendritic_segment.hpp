@@ -14,7 +14,7 @@ class Dendritic_segment : public Compartment {
   
 public:
   Dendritic_segment(const double &mRNA_diffusion_rate, const double &mRNA_forward_trafficking_rate, const double &protein_diffusion_rate, const double &protein_trafficking_rate, const double &translation_rate, const unsigned int &mRNA_numer = 0, const unsigned int &protein_number = 0);
-  Dendritic_segment(Compartment &parent, const std::string& name = "no_name");
+  Dendritic_segment(Compartment &parent, const std::string& name = "no_name", const double& length=200);
 
   Dendritic_segment& copy() const;
 

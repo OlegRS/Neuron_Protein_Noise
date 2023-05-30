@@ -61,7 +61,7 @@ void Neuron::associate(Compartment& compartment) {
                 << "---------------------------------------------------\n";
       exit(1);
     }
-    
+
     associate(*p_d_comp);
   }
 }
@@ -110,7 +110,7 @@ Neuron::Neuron(const std::string& file_name, const std::string& name) : name(nam
     total_N -= 2;
     ifs.seekg(0);
 
-    auto p_comp = new Compartment*[total_N];
+    auto p_comps = new Compartment*[total_N];
     
     size_t id, type;
     double  x, y, z, r;
@@ -121,16 +121,16 @@ Neuron::Neuron(const std::string& file_name, const std::string& name) : name(nam
 
     while(ifs >> id >> type >> x >> y >> z >> r >> parent_id) {
       if(type == SOMA)
-        p_comp[id-offset-1] = p_soma = new Soma("soma_" + std::to_string(id-offset));
+        p_comps[id-offset-1] = p_soma = new Soma("soma_" + std::to_string(id-offset), 3*r);
       else if(type == BASAL_DENDRITE || type == APICAL_DENDRITE) {
         if(parent_id != SOMA)
-          p_comp[id-offset-1] = new Dendritic_segment(*p_comp[parent_id-offset-1], "ds_" + std::to_string(id));
+          p_comps[id-offset-1] = new Dendritic_segment(*p_comps[parent_id-offset-1], "ds_" + std::to_string(id), 2*r);
         else
-          p_comp[id-offset-1] = new Dendritic_segment(*p_comp[0], "ds_" + std::to_string(id));
-        p_dend_segments.push_back(p_comp[id-offset-1]);
+          p_comps[id-offset-1] = new Dendritic_segment(*p_comps[0], "ds_" + std::to_string(id), 2*r);
       }
     }
     associate(*p_soma);
+    delete[] p_comps;
     std::cerr << *this;
   }
   else {

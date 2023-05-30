@@ -13,6 +13,5 @@ Junction& Neuron::Som_den_junction::set_hopping_rate_constants() {
   std::cerr << "SOM_DEN:\n"
             << "fwd_mRNA_hop_rate=" << fwd_mRNA_hop_rate << ", bkwd_mRNA_hop_rate=" << bkwd_mRNA_hop_rate << ", fwd_prot_hop_rate=" << fwd_prot_hop_rate << ", bkwd_prot_hop_rate=" << bkwd_prot_hop_rate << std::endl;
 
-
   return *this;
 }

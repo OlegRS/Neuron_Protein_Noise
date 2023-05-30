@@ -1,6 +1,6 @@
 #include "../compartments/Dendritic_segment.hpp"
 
-Dendritic_segment::Dendritic_segment(Compartment &parent, const std::string& name) : Compartment(name) {
+Dendritic_segment::Dendritic_segment(Compartment &parent, const std::string& name, const double& length) : Compartment(length, name) {
   
   parent.p_descendants.push_back(this);
 
