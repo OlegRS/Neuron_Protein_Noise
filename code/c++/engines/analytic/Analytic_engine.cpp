@@ -1157,21 +1157,15 @@ Analytic_engine& Analytic_engine::sem_nonstationary_covariances_direct_ODE_solve
     t_prev = t;
     
     //////////// COMPUTING VARIANCES //////////
-    //    if(!(t-(int)t)) {
+    if(!(t-(int)t)) {
       std::vector<double> rmss(o1_dim);
       std::cout << t;
-      for(size_t i=0; i<o1_dim; ++i) {
-        rmss[i] = sqrt((*p_covariances)(sem_o2_ind(i,i)) - expectations(i)*(expectations(i)-1));
-        // if(rmss[i]>=0) {
-        //   std::cout << o1_var_names[i] + ": " << expectations(i) << ", " << rmss[i] << std::endl;
-        // }
-        // else
-        //   std::cout << o1_var_names[i] + ": " << expectations(i) << ", " << rmss[i] << " NEGATIVE!\n";
-        std::cout  << ',' << expectations(i) << ',' << rmss[i];
+      for(size_t i=0; i<o1_dim; ++i) {;
+        std::cout  << ',' << expectations(i) << ',' << sqrt((*p_covariances)(sem_o2_ind(i,i)) - expectations(i)*(expectations(i)-1));
       }
       std::cout << std::endl;
       // std::cout << t << ", " << expectations(2) << ", " << rmss[2] << std::endl;
-      //    }
+         }
     //////////////////////////////////////////
   }
 

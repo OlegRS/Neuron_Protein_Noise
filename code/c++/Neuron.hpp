@@ -2,6 +2,7 @@
 #define __NEURON_HPP__
 
 #include <iostream>
+#include <fstream>
 #include <list>
 
 #include "compartments/Compartment.hpp"
@@ -52,10 +53,10 @@ public:
   Neuron() {};
   Neuron(Soma &soma, const std::string& name="no_name");
   Neuron(const Neuron&);
-  Neuron(const std::string& file_name);
+  Neuron(const std::string& file_name, const std::string& name);
 
-  void save(const std::string& file_name) const;
-  Neuron& load(const std::string& file_name);
+  // void save(const std::string& file_name) const;
+  // Neuron& load(const std::string& file_name);
 
   Compartment& add_compartment(Compartment&);
 

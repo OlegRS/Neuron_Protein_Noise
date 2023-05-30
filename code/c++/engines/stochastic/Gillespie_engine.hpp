@@ -1,8 +1,6 @@
 #ifndef __GILLESPIE_ENGINE_HPP__
 #define __GILLESPIE_ENGINE_HPP__
 
-#include <fstream>
-
 #include "events/Event.hpp"
 #include "../../Neuron.hpp"
 #include "../../compartments/Soma.hpp"

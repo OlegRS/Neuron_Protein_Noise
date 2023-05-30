@@ -130,6 +130,9 @@ public:
 
   Analytic_engine& initialize();
 
+  size_t o2_dimension() {return o2_dim;};
+  size_t o1_dimension() {return o1_dim;};
+  
   Analytic_engine& stationary_expectations();//const Neuron& neur = *p_neuron);
   Analytic_engine& sem_stationary_expectations();//const Neuron& neur = *p_neuron);
   Analytic_engine& mRNA_stationary_expectations();

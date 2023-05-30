@@ -22,5 +22,8 @@ Junction& Neuron::Den_den_junction::set_hopping_rate_constants() {
   fwd_prot_hop_rate = (prot_fwd_diff_rate + prot_fwd_traff_rate)/static_cast<Dendritic_segment*>(p_from)->n_descending_DS;
   bkwd_prot_hop_rate = prot_bkwd_diff_rate + prot_bkwd_traff_rate;
 
+  std::cerr << "DEN_DEN:\n"
+            << "fwd_mRNA_hop_rate=" << fwd_mRNA_hop_rate << ", bkwd_mRNA_hop_rate=" << bkwd_mRNA_hop_rate << ", fwd_prot_hop_rate=" << fwd_prot_hop_rate << ", bkwd_prot_hop_rate=" << bkwd_prot_hop_rate << std::endl;
+
   return *this;
 }

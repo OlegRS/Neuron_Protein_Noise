@@ -90,12 +90,29 @@ void Gillespie_engine::update_Gillespie() {
   // std::discrete_distribution<int> distribution(probabilities.begin(), probabilities.end());          
   // int i = distribution(generator);
 
+  double s=0;
+  for(auto& p_event : p_events)
+    s+=p_event->rate;
+  if(abs(p_neuron->total_rate - s) > 1e-5) {
+    std::cerr << "total_rate - s = " << p_neuron->total_rate - s << std::endl;
+  }
+
   size_t i=0;
   double r = rnd()*p_neuron->total_rate;
   for(double sum=p_events[0]->rate; sum<r; sum += p_events[i]->rate)
     ++i;
 
-  (*p_events[i])(); // Triggering the event
+  if(i<p_events.size())
+    (*p_events[i])(); // Triggering the event
+  else {
+    std::cerr <<"\n------------------------------\n"
+              <<" WARNING: GILLESPIE ENGINE ANOMALY DETECTED\n"
+              <<"\n------------------------------\n";
+    double s=0;
+    for(auto& p_event : p_events)
+      s+=p_event->rate;
+    std::cerr << "total_rate - s = " << p_neuron->total_rate - s << std::endl;
+  }      
 }
 
 void Gillespie_engine::run_Gillespie(const double& time) {

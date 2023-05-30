@@ -85,8 +85,65 @@ Neuron::Neuron(Soma &soma, const std::string &name) : name(name) {
   associate(static_cast<Compartment&>(soma));
 }
 
-void Neuron::save(const std::string& file_name) const {
+Neuron::Neuron(const std::string& file_name, const std::string& name) : name(name) {
+  size_t offset = 2; // For some reason .swc writes soma twice and assigns id=1 to it
+  std::ifstream ifs(file_name);
+
+  // Finding the total number of compartments in the file (including the axons)
+
+  if(ifs.is_open()) {
+    ifs.seekg(-2, std::ios_base::end);
+    bool keepLooping = true;
+    while(keepLooping) {
+      char ch;
+      ifs.get(ch);
+
+      if(ch == '\n')
+        keepLooping = false;
+      else
+        ifs.seekg(-2, std::ios_base::cur);
+    }
+
+    size_t total_N;
+
+    ifs >> total_N;
+    total_N -= 2;
+    ifs.seekg(0);
+
+    auto p_comp = new Compartment*[total_N];
+    
+    size_t id, type;
+    double  x, y, z, r;
+    int parent_id;
+
+    for(size_t i=0; i<offset; ++i) // Offsetting
+      ifs >> id >> type >> x >> y >> z >> r >> parent_id;
+
+    while(ifs >> id >> type >> x >> y >> z >> r >> parent_id) {
+      if(type == SOMA)
+        p_comp[id-offset-1] = p_soma = new Soma("soma_" + std::to_string(id-offset));
+      else if(type == BASAL_DENDRITE || type == APICAL_DENDRITE) {
+        if(parent_id != SOMA)
+          p_comp[id-offset-1] = new Dendritic_segment(*p_comp[parent_id-offset-1], "ds_" + std::to_string(id));
+        else
+          p_comp[id-offset-1] = new Dendritic_segment(*p_comp[0], "ds_" + std::to_string(id));
+        p_dend_segments.push_back(p_comp[id-offset-1]);
+      }
+    }
+    associate(*p_soma);
+    std::cerr << *this;
+  }
+  else {
+    std::cerr << "----------------------\n"
+              << "ERROR: File not found\n"
+              << "----------------------\n";
+    exit(1);
+  }
+  ifs.close();
 }
+
+// void Neuron::save(const std::string& file_name) const {
+// }
 
 std::ostream& operator<<(std::ostream &os , const Neuron &neur) {
 

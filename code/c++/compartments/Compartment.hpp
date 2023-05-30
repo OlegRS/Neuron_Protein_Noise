@@ -22,7 +22,7 @@ class Compartment {// Abstract class
 protected:
   
   struct Type {
-#define SOMA 0 // Better replace these macros with enum
+#define SOMA 1 // Better replace these macros with enum
 #define BASAL_DENDRITE 3
 #define APICAL_DENDRITE 4
 #define SYNAPSE 7
@@ -97,6 +97,7 @@ public:
                                                      protein_decay(this),
                                                      mRNA_creation(this),
                                                      mRNA_decay(this) {}
+  
   // Compartment(Compartment *parent, const std::string& name = "no_name") = 0; //This only needs to be implemented in actual compartments
   Compartment(const Compartment&);
 

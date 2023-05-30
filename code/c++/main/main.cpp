@@ -40,11 +40,11 @@ int main() {
 
 
   ///// Branching neuron
-  Dendritic_segment* p_ds = new Dendritic_segment(soma, "d_1");
-  new Synapse(*p_ds, "s_1_1");
-  new Synapse(*p_ds, "s_1_2");
+  // Dendritic_segment* p_ds = new Dendritic_segment(soma, "d_1");
+  // new Synapse(*p_ds, "s_1_1");
+  // new Synapse(*p_ds, "s_1_2");
 
-  fork_dendrite(p_ds);
+  // fork_dendrite(p_ds);
 
 
   Neuron neuron(soma, "Test_neuron");
@@ -66,15 +66,15 @@ int main() {
 
 
   ///// Setting initial conditions /////
-  soma.set_gene_activation_rate(0).set_gene_deactivation_rate(1).set_number_of_gene_copies(3);
-  ae.sem_stationary_expectations().sem_stationary_covariances();
-  arma::vec G2_init = *ae.G2();
-  arma::vec G1_init = *ae.G1();
-  soma.set_gene_activation_rate(1).set_gene_deactivation_rate(.1);
+  // soma.set_gene_activation_rate(0).set_gene_deactivation_rate(1).set_number_of_gene_copies(1);
+  // ae.sem_stationary_expectations().sem_stationary_covariances();
+  arma::vec G2_init(ae.o2_dimension()); //= *ae.G2();
+  arma::vec G1_init(ae.o1_dimension());// = *ae.G1();
+  soma.set_gene_activation_rate(1).set_gene_deactivation_rate(0);//.set_transcription_rate(10);
 
   std::list<double> times;
-  for(size_t i=0; i<100000; ++i)
-    times.push_back(i*.01);
+  for(size_t i=0; i<100000000; ++i)
+    times.push_back(i*.0001);
 
   // Analytic_engine(neuron).sem_nonstationary_expectations(times);
 
