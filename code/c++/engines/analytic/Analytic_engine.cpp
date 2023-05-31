@@ -1807,6 +1807,21 @@ Analytic_engine& Analytic_engine::mRNA_mRNA_stationary_covariances() {
   delete o2_mRNA_mRNA_mat; o2_mRNA_mRNA_mat=NULL;
   delete o2_mRNA_mRNA_RHS; o2_mRNA_mRNA_RHS=NULL;
 
+  //////////// COMPUTING VARIANCES //////////
+  size_t sz = 1 + p_neuron->p_dend_segments.size();
+  std::cout << "mRNA-mRNA means and standard deviations:\n";
+  std::vector<double> rmss(o1_dim);
+  for(size_t i=0; i<sz; ++i) {
+    rmss[i] = sqrt((*o2_mRNA_mRNA)[o2_ind(i, i, sz)] - mRNA_expectations[i]*(mRNA_expectations[i]-1));
+    if(rmss[i]>=0) {
+      std::cout << o1_prot_names[i] + ": " << mRNA_expectations(i) << ", " << rmss[i] << std::endl;
+    }
+    else
+      std::cout << o1_mRNA_names[i] + ": " << mRNA_expectations(i) << ", " << rmss[i] << " NEGATIVE!\n";
+  }
+  //////////////////////////////////////////
+
+
   return *this;
 }
 
@@ -1968,7 +1983,21 @@ Analytic_engine& Analytic_engine::protein_protein_stationary_covariances() {
 
   delete o2_prot_prot_mat; o2_prot_prot_mat=NULL;
   delete o2_prot_prot_RHS; o2_prot_prot_RHS=NULL;
-  
+
+  //////////// COMPUTING VARIANCES //////////
+  std::cout << "Protein-Protein means and standard deviations:\n";
+  size_t sz = 1 + p_neuron->p_dend_segments.size() + p_neuron->p_synapses.size();
+  std::vector<double> rmss(o1_dim);
+  for(size_t i=0; i<sz; ++i) {
+    rmss[i] = sqrt((*o2_prot_prot)[o2_ind(i, i, sz)] - protein_expectations[i]*(protein_expectations[i]-1));
+    if(rmss[i]>=0) {
+      std::cout << o1_prot_names[i] + ": " << protein_expectations(i) << ", " << rmss[i] << std::endl;
+    }
+    else
+      std::cout << o1_prot_names[i] + ": " << protein_expectations(i) << ", " << rmss[i] << " NEGATIVE!\n";
+  }
+  //////////////////////////////////////////
+
   return *this;
 }
 
