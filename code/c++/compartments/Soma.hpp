@@ -9,7 +9,7 @@ class Soma : public Compartment {
   friend class Gillespie_engine;
   
   // Parameters
-  unsigned int number_of_gene_copies = 1; //For CaMKIIa it is 2 (Fonkeu)
+  unsigned int number_of_gene_copies = 3; //For CaMKIIa it is 2 (Fonkeu)
   double gene_activation_rate = 1;
   double gene_deactivation_rate = 0;
 
@@ -31,9 +31,9 @@ class Soma : public Compartment {
   
 public:
   Soma(const std::string& name="no_name", const double& length=200) : Compartment(length, name), gene_activation(this), gene_deactivation(this) {
-    transcription_rate = 0.001*3600; // /hour; mRNA transcription rate (0.001/s CaMKII Fonkeu) // THE FACTOR IN () ACCOUNTS FOR THE REDUCED LENGTH OF THE SIMPLE MODEL DENDRITE COMPARED TO THE REAL NEURONS    
-    translation_rate = 0.021*3600;
+    transcription_rate = (3.*200/*dend_length*//10000)*0.001*3600; // /hour; mRNA transcription rate (0.001/s CaMKII Fonkeu) // THE FACTOR IN () ACCOUNTS FOR THE REDUCED LENGTH OF THE SIMPLE MODEL DENDRITE COMPARED TO THE REAL NEURONS
     mRNA_decay_rate = 1.2e-5*3600;
+    translation_rate = 0.021*3600;
     protein_decay_rate = 1.21e-6*3600;
   }
 

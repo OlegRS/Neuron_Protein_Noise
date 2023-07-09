@@ -27,11 +27,11 @@ int main() {
 
   PRNG rnd(1);
 
-  std::string file_name = "../../data/soma_only/slow_proteins_1e-2/sim/g_";
+  std::string file_name = "../../data/soma_only/tests2/fast_gene_activation__fast_protein_decay_";//"../../data/soma_only/slow_proteins_1e-2/sim/g_";
 
   std::list<double> times;
   for(size_t i=0; i<10000; ++i)
-    times.push_back(i);
+    times.push_back(i*.1);
 
   std::cerr << file_name + ":\n";
   for(size_t i=0; i<1000; ++i) {
@@ -39,7 +39,7 @@ int main() {
 
     Soma *p_soma = new Soma("soma" /*,Parameters of the soma*/);
 
-    p_soma->set_number_of_gene_copies(1).set_gene_activation_rate(1).set_gene_deactivation_rate(0);//.set_transcription_rate(10);
+    //    p_soma->set_number_of_gene_copies(1).set_gene_activation_rate(1).set_gene_deactivation_rate(0);//.set_transcription_rate(10);
 
     ///// Branching neuron
     // auto *p_ds = new Dendritic_segment(*p_soma, "d_1");

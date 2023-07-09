@@ -227,7 +227,7 @@ axs_avrg[2].plot(num[:,0], averages[:,3] - variances[:,3], linestyle='--', color
 # axs_avrg[2].plot(num[:,0], averages[:,15] + variances[:,15], linestyle='--', color='pink')
 # axs_avrg[2].plot(num[:,0], averages[:,15] - variances[:,15], linestyle='--', color='pink')
 
-for ax in axs:
+for ax in axs_avrg:
     ax.set_xlim([0,x_lim])
     ax.set_ylim(0)
     ax.legend(loc=4)

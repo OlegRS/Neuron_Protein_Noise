@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 n_trajectories = 1000
 n_time_points = 1000*100
-max_time = 10000
+max_time = 1000
 
 def create_soma(parameter_values=None):
     # First call the gillespy2.Model initializer.
@@ -14,9 +14,10 @@ def create_soma(parameter_values=None):
     # n_gene_copies = gillespy2.Parameter(name='n_gene_copies', expression=1)
     gene_activation_rate_const = gillespy2.Parameter(name='gene_activation_rate_constant', expression=1)
     gene_deactivation_rate_const = gillespy2.Parameter(name='gene_deactivation_rate_constant', expression=0)
-    transcription_rate_const = gillespy2.Parameter(name='transcription_rate_const', expression=(3*200/10000) * .001*3600)
-    mRNA_decay_rate_const = gillespy2.Parameter(name='mRNA_decay_rate_const', expression=1.2e-5*3600)
-    translation_rate_const = gillespy2.Parameter(name='translation_rate_const', expression=0.021*3600)
+    transcription_rate_const = gillespy2.Parameter(name='transcription_rate_const', expression=(3*200/10000)*.001*3600 *1e3)
+    mRNA_decay_rate_const = gillespy2.Parameter(name='mRNA_decay_rate_const', expression=1.2e-5*3600 * 1e1)
+
+    translation_rate_const = gillespy2.Parameter(name='translation_rate_const', expression=0.021*3600 *0)
     protein_decay_rate_const = gillespy2.Parameter(name='protein_decay_rate_const', expression=1.21e-6*3600)
 
     model.add_parameter([gene_activation_rate_const, gene_deactivation_rate_const, transcription_rate_const, mRNA_decay_rate_const, translation_rate_const, protein_decay_rate_const])
@@ -52,7 +53,7 @@ def create_soma(parameter_values=None):
 model = create_soma()
 results = model.run(number_of_trajectories=n_trajectories)
 
-print('Done Gillespie simulations')
+print('Done with Gillespie simulations')
 
 gene_average = np.zeros(n_time_points)
 mRNA_average = np.zeros(n_time_points)

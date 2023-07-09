@@ -91,7 +91,7 @@ class Analytic_engine {
     
 public:
 
-  size_t o2_ind(const size_t &i, const size_t &j, const size_t &dim) const; // o2 index conversion
+  size_t o2_ind(const size_t &i, const size_t &j, const size_t &o1_dim) const; // o2 index conversion
   size_t o2_ind(const size_t &i, const size_t &j) const {return o2_ind(i,j,o1_dim);}
   size_t o2_ind_asym(const size_t &i, const size_t &j, const size_t &dim_x) const {return dim_x*i+j;}
   inline size_t sem_o2_ind(const size_t &i, const size_t &j) const; // semantic o2 index conversion

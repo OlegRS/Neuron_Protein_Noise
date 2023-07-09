@@ -636,8 +636,15 @@ Analytic_engine& Analytic_engine::nonstationary_covariances(const std::list<doub
   
   auto& covariances = *p_covariances;
   auto& o2_mat = *p_o2_mat;
-  o2_mat *= -2;
-  (*o2_nonstationary_RHS_mat) *= 2;
+  o2_mat *= -1;
+
+  for(size_t i=0; i<o1_dim; ++i)
+    for(size_t j=0; j<o1_dim; ++j)
+      (*o2_nonstationary_RHS_mat)(o2_ind(i,i),j) *= 2;
+
+  for(size_t i=0; i<o1_dim; ++i)
+    for(size_t j=0; j<o2_dim; ++j)
+      o2_mat(o2_ind(i,i),j) *= 2;
   
   std::cerr << "Computing o2 eigen decomposition...\n";
   arma::cx_vec o2_eigval_c;
@@ -697,7 +704,6 @@ Analytic_engine& Analytic_engine::nonstationary_covariances(const std::list<doub
   // main loop
   std::cout << "Main loop...\n";
   for(auto& t : times) {
-    std::cout << "t=" << t << '\n';
     // o1
     for(size_t i=0; i<o1_dim; ++i) {
       double k_sum = 0;
@@ -721,18 +727,15 @@ Analytic_engine& Analytic_engine::nonstationary_covariances(const std::list<doub
       for(size_t j=0; j<o2_dim; ++j)
         (*p_covariances)[i] += o2_tm(i,j)*braces(j);
     }
-    
+
     //////////// COMPUTING VARIANCES //////////
     std::vector<double> rmss(o1_dim);
+    std::cout << t;
     for(size_t i=0; i<o1_dim; ++i) {
       rmss[i] = sqrt((*p_covariances)(o2_ind(i,i)) - expectations(i)*(expectations(i)-1));
-      if(rmss[i]>=0) {
-        std::cout << o1_var_names[i] + ": " << expectations(i) << ", " << rmss[i] << std::endl;
-      }
-      else
-        std::cout << o1_var_names[i] + ": " << expectations(i) << ", " << rmss[i] << " NEGATIVE!\n";
+      std::cout  << ',' << expectations(i) << ',' << rmss[i];
     }
-    // std::cout << t << ", " << expectations(2) << ", " << rmss[2] << std::endl;
+    std::cout << std::endl;
     //////////////////////////////////////////
   }
 
@@ -798,9 +801,16 @@ Analytic_engine& Analytic_engine::sem_nonstationary_covariances(const std::list<
       
   auto& covariances = *p_covariances;
   auto& o2_mat = *p_o2_mat;
-  o2_mat *= -2;
+  o2_mat *= -1;
 
-  (*o2_nonstationary_RHS_mat) *= 2;
+  for(size_t i=0; i<o1_dim; ++i)
+    for(size_t j=0; j<o1_dim; ++j)
+      (*o2_nonstationary_RHS_mat)(sem_o2_ind(i,i),j) *= 2;
+
+  for(size_t i=0; i<o1_dim; ++i)
+    for(size_t j=0; j<o2_dim; ++j)
+      o2_mat(sem_o2_ind(i,i),j) *= 2;
+
 
   std::cerr << "Computing o2 eigen decomposition...\n";
   arma::cx_vec o2_eigval_c;
@@ -966,8 +976,15 @@ Analytic_engine& Analytic_engine::sem_nonstationary_covariances_using_integral(c
       
   auto& covariances = *p_covariances;
   auto& o2_mat = *p_o2_mat;
-  o2_mat *= -2;
-  *o2_nonstationary_RHS_mat *= 2;
+  o2_mat *= -1;
+
+  for(size_t i=0; i<o1_dim; ++i)
+    for(size_t j=0; j<o1_dim; ++j)
+      (*o2_nonstationary_RHS_mat)(sem_o2_ind(i,i),j) *= 2;
+
+  for(size_t i=0; i<o1_dim; ++i)
+    for(size_t j=0; j<o2_dim; ++j)
+      o2_mat(sem_o2_ind(i,i),j) *= 2;
 
   std::cerr << "Computing o2 eigen decomposition...\n";
   arma::cx_vec o2_eigval_c;
@@ -1046,24 +1063,21 @@ Analytic_engine& Analytic_engine::sem_nonstationary_covariances_using_integral(c
         (*p_covariances)(i) += o2_tm(i,j)*braces[j];
     }
     t_prev = t;
-    
+
     //////////// COMPUTING VARIANCES //////////
-    if(!(t-(int)t)) {
-      std::vector<double> rmss(o1_dim);
-      std::cout << t;
-      for(size_t i=0; i<o1_dim; ++i) {
-        rmss[i] = sqrt((*p_covariances)(sem_o2_ind(i,i)) - expectations(i)*(expectations(i)-1));
-        // if(rmss[i]>=0) {
-        //   std::cout << o1_var_names[i] + ": " << expectations(i) << ", " << rmss[i] << std::endl;
-        // }
-        // else
-        //   std::cout << o1_var_names[i] + ": " << expectations(i) << ", " << rmss[i] << " NEGATIVE!\n";
-        std::cout  << ',' << expectations(i) << ',' << rmss[i];
-      }
-      std::cout << std::endl;
-      // std::cout << t << ", " << expectations(2) << ", " << rmss[2] << std::endl;
+    std::vector<double> rmss(o1_dim);
+    std::cout << t;
+    for(size_t i=0; i<o1_dim; ++i) {
+      rmss[i] = sqrt((*p_covariances)(sem_o2_ind(i,i)) - expectations(i)*(expectations(i)-1));
+      // if(rmss[i]>=0) {
+      //   std::cout << o1_var_names[i] + ": " << expectations(i) << ", " << rmss[i] << std::endl;
+      // }
+      // else
+      //   std::cout << o1_var_names[i] + ": " << expectations(i) << ", " << rmss[i] << " NEGATIVE!\n";
+      std::cout  << ',' << expectations(i) << ',' << rmss[i];
     }
-    //////////////////////////////////////////
+    std::cout << std::endl;
+    //////////////////////////////////////////    
   }
 
   return internalise_expectations();
@@ -1125,8 +1139,16 @@ Analytic_engine& Analytic_engine::sem_nonstationary_covariances_direct_ODE_solve
       
   auto& covariances = *p_covariances;
   auto& o2_mat = *p_o2_mat;
-  o2_mat *= -2;
-  *o2_nonstationary_RHS_mat *= 2;
+  o2_mat *= -1;
+
+  for(size_t i=0; i<o1_dim; ++i)
+    for(size_t j=0; j<o1_dim; ++j)
+      (*o2_nonstationary_RHS_mat)(sem_o2_ind(i,i),j) *= 2;
+
+  for(size_t i=0; i<o1_dim; ++i)
+    for(size_t j=0; j<o2_dim; ++j)
+      o2_mat(sem_o2_ind(i,i),j) *= 2;
+
   
   for(auto& o2_var_name : *p_o2_var_names)
     std::cout << o2_var_name << ',';
@@ -1155,17 +1177,15 @@ Analytic_engine& Analytic_engine::sem_nonstationary_covariances_direct_ODE_solve
     (*p_covariances) += ((*o2_nonstationary_RHS_mat) * expectations - (*p_o2_mat)*(*p_covariances))*(t-t_prev);
     
     t_prev = t;
-    
+
     //////////// COMPUTING VARIANCES //////////
-    if(!(t-(int)t)) {
-      std::vector<double> rmss(o1_dim);
-      std::cout << t;
-      for(size_t i=0; i<o1_dim; ++i) {;
-        std::cout  << ',' << expectations(i) << ',' << sqrt((*p_covariances)(sem_o2_ind(i,i)) - expectations(i)*(expectations(i)-1));
-      }
-      std::cout << std::endl;
-      // std::cout << t << ", " << expectations(2) << ", " << rmss[2] << std::endl;
-         }
+    std::vector<double> rmss(o1_dim);
+    std::cout << t;
+    for(size_t i=0; i<o1_dim; ++i) {
+      rmss[i] = sqrt((*p_covariances)(sem_o2_ind(i,i)) - expectations(i)*(expectations(i)-1));
+      std::cout  << ',' << expectations(i) << ',' << rmss[i];
+    }
+    std::cout << std::endl;
     //////////////////////////////////////////
   }
 
@@ -1226,7 +1246,11 @@ Analytic_engine& Analytic_engine::sem_nonstationary_covariances_direct_ODE_solve
       
   auto& covariances = *p_covariances;
   auto& o2_mat = *p_o2_mat;
-  o2_mat *= -2;
+  o2_mat *= -1;
+
+  for(size_t i=0; i<o1_dim; ++i)
+    for(size_t j=0; j<o2_dim; ++j)
+      o2_mat(sem_o2_ind(i,i),j) *= 2;  
   
   for(auto& o2_var_name : *p_o2_var_names)
     std::cout << o2_var_name << ',';
@@ -1254,26 +1278,20 @@ Analytic_engine& Analytic_engine::sem_nonstationary_covariances_direct_ODE_solve
     for(size_t i=0; i<o2_dim; ++i)
       (*p_o2_RHS)[i] = 0;
     sem_set_o2_RHS();
-    (*p_covariances) += (-2*(*p_o2_RHS) - o2_mat*(*p_covariances))*(t-t_prev);
+    for(size_t i=0; i<o1_dim; ++i)
+      (*p_o2_RHS)(sem_o2_ind(i,i)) *= 2;
+    (*p_covariances) += (-(*p_o2_RHS) - o2_mat*(*p_covariances))*(t-t_prev);
     
     t_prev = t;
-    
+
     //////////// COMPUTING VARIANCES //////////
-    if(!(t-(int)t)) {
-      std::vector<double> rmss(o1_dim);
-      std::cout << t;
-      for(size_t i=0; i<o1_dim; ++i) {
-        rmss[i] = sqrt((*p_covariances)(sem_o2_ind(i,i)) - expectations(i)*(expectations(i)-1));
-        // if(rmss[i]>=0) {
-        //   std::cout << o1_var_names[i] + ": " << expectations(i) << ", " << rmss[i] << std::endl;
-        // }
-        // else
-        //   std::cout << o1_var_names[i] + ": " << expectations(i) << ", " << rmss[i] << " NEGATIVE!\n";
-        std::cout  << ',' << expectations(i) << ',' << rmss[i];
-      }
-      std::cout << std::endl;
-      // std::cout << t << ", " << expectations(2) << ", " << rmss[2] << std::endl;
+    std::vector<double> rmss(o1_dim);
+    std::cout << t;
+    for(size_t i=0; i<o1_dim; ++i) {
+      rmss[i] = sqrt((*p_covariances)(o2_ind(i,i)) - expectations(i)*(expectations(i)-1));
+      std::cout  << ',' << expectations(i) << ',' << rmss[i];
     }
+    std::cout << std::endl;
     //////////////////////////////////////////
   }
 

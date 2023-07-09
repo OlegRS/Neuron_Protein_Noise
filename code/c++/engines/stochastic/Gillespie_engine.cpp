@@ -73,7 +73,7 @@ void Gillespie_engine::initialise_from(Compartment& comp) {
 
 inline double Gillespie_engine::draw_delta_t() {  
   // Sampling the time of an event
-  double delta_t = -1/p_neuron->total_rate*log(1-rnd());
+  double delta_t = -log(1-rnd())/p_neuron->total_rate;
 
   return delta_t; 
 }
@@ -90,12 +90,12 @@ void Gillespie_engine::update_Gillespie() {
   // std::discrete_distribution<int> distribution(probabilities.begin(), probabilities.end());          
   // int i = distribution(generator);
 
-  double s=0;
-  for(auto& p_event : p_events)
-    s+=p_event->rate;
-  if(abs(p_neuron->total_rate - s) > 1e-5) {
-    std::cerr << "total_rate - s = " << p_neuron->total_rate - s << std::endl;
-  }
+  // double s=0;
+  // for(auto& p_event : p_events)
+  //   s+=p_event->rate;
+  // if(abs(p_neuron->total_rate - s) > 1e-5) {
+  //   std::cerr << "total_rate - s = " << p_neuron->total_rate - s << std::endl;
+  // }
 
   size_t i=0;
   double r = rnd()*p_neuron->total_rate;

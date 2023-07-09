@@ -396,7 +396,7 @@ and we need to find its first integrals $\{C_i(\mathbf x; t; \mathcal G)|i=1,2,3
 
 After using the first characteristic equation and setting $t = \xi$ (where $\xi$ is the parameter of the characteristics) the system of ODEs (\ref{full_characteristics}) can be approached by solving the 4-th ODE for $x_3$, which gives
 \begin{equation*}
-  x_3 = C_1\mathrm e^{t/\tau_3} \left(\implies C_1(\mathbf x; t; \mathcal G) = x_3e^{-t/\tau_3}\right),
+  x_3 = C_1\mathrm e^{t/\tau_3} \left(\implies C_1(\mathbf x; t; \mathcal G) = x_3\mathrm e^{-t/\tau_3}\right),
 \end{equation*}
 then substituting the result into the ODE for $x_2$, which gives
 \begin{equation*}
@@ -1038,7 +1038,7 @@ or, substituting $c_\nu$ from (\ref{o1_constants_definition})
   \sum_{j=1}^{d_2}\mathrm e^{-\lambda^{(2)}_jt}T_{ij}\sum_{\mu=1}^{d_1}\frac{\mathrm e^{(\lambda^{(2)}_j-\lambda_\mu)t}-1}{\lambda^{(2)}_j-\lambda_\mu}\sum_{k=1}^{d_2}\mathbf T^{-1}_{jk}\sum_{\zeta=1}^{d_1}D_{k\zeta}S_{\zeta\mu}\sum_{\nu=1}^{d_1}(\mathbf S^{-1})_{\mu\nu}\left(\mathcal G_\nu^{(1)}(t=0) - \mathcal G_\nu^{(1)}(t=\infty)\right).
 \end{multline}
 
-The last expression is written in the form that clarifies the meanings of different terms. Indeed, the first term in the above expression gives stationary values of $\boldsymbol{\mathcal G}^{(2)}$, the second terms gives the decay dynamics of $\boldsymbol{\mathcal G}^{(2)}$ if $\boldsymbol{\mathcal G}^{(1)}$ are set at their stationary values, finally the last term is important if the first-order moments are themselves away from stationarity.
+The last expression is written in the form that clarifies the meanings of different terms. Indeed, the first term in the above expression gives stationary values of $\boldsymbol{\mathcal G}^{(2)}$, the second term gives the decay dynamics of $\boldsymbol{\mathcal G}^{(2)}$ if $\boldsymbol{\mathcal G}^{(1)}$ are set at their stationary values, and the last term is important if the first moments are themselves away from stationarity.
 
 For numerical evaluation of $\boldsymbol{\mathcal G}^{(2)}(t)$ we use the expression (\ref{nonstat_covar}) in which, if $\lambda^{(2)}_j-\lambda_\mu=0$ we evaluate the fraction as a limit
 \begin{equation}
