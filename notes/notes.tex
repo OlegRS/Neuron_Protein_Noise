@@ -1059,6 +1059,44 @@ Similar idea holds for the second-order equations (for covariances), which can b
 
 Of course, these optimisations do not change the exponent of the problems' computational complexity, but they significantly decrease the constant in computational time and memory consumption.
 
+\appendix \label{app:DDM_correspondence}
+\section{Equations for averages in continuous limit}
+In this section we establish a correspondence of the parameters of our model with those of the continuous drift-diffusion model from \cite{PMID:31350097}. This allows us using the parameters from \cite{PMID:31350097} to set the hopping rates in our model.
+
+First let us derive a PDE governing mRNA concentration in the bulk of a spineless linear dendrite and show that it corresponds to that from \cite{PMID:31350097}. Consider a linear stretch of dendrite which may be assumed to be infinite in both directions since we are interested in deriving the equations away from its boundaries.
+
+The relevant part of the PDE on the generating function reads as
+\begin{equation*}
+  \frac{\partial\mathcal G(\mathbf x; t)}{\partial t} + \sum_\mu\left[\nu_{\mu, \mu+1}(x_\mu - x_{\mu+1})\frac{\partial\mathcal G}{\partial x_\mu} + \nu_{\mu+1,\mu}(x_{\mu+1} - x_\mu)\frac{\partial\mathcal G}{\partial x_{\mu+1}}\right] = 0,
+\end{equation*}
+which using ... can be written as
+\begin{equation*}
+  \sum_\mu\left[\frac{\partial\langle m_\mu \rangle}{\partial t}x_\mu + \nu_{\mu, \mu+1}(x_\mu - x_{\mu+1})\langle m_\mu\rangle + \nu_{\mu+1,\mu}(x_{\mu+1} - x_\mu)\langle m_{\mu+1}\rangle\right] = 0,
+\end{equation*}
+which after rearranging reads as
+\begin{equation}
+  \sum_\mu\left[\frac{\partial\langle m_\mu \rangle}{\partial t} + \nu_{\mu,\mu+1}\langle m_\mu\rangle - \nu_{\mu-1,\mu}\langle m_{\mu-1}\rangle - \nu_{\mu+1,\mu} \langle m_{\mu+1}\rangle + \nu_{\mu,\mu-1}\langle m_\mu\rangle \right]x_\mu = 0,
+\end{equation}
+which implies
+\begin{equation}
+  \frac{\partial\langle m_\mu \rangle}{\partial t} = \nu_{\mu-1,\mu}\langle m_{\mu-1}\rangle + \nu_{\mu+1,\mu} \langle m_{\mu+1}\rangle - \nu_{\mu,\mu+1}\langle m_\mu\rangle - \nu_{\mu,\mu-1}\langle m_\mu\rangle.
+\end{equation}
+
+Writing the hopping rates as
+\begin{equation*}
+  \nu_{\alpha,\beta} \equiv D_{\alpha,\beta} + v_{\alpha,\beta},
+\end{equation*}
+where
+\begin{equation*}
+  D_{\alpha,\beta} = \frac{\nu_{\alpha,\beta} + \nu_{\beta,\alpha}}{2}, \qquad v_{\alpha,\beta} = \frac{\nu_{\alpha,\beta} - \nu_{\beta,\alpha}}{2}
+\end{equation*}
+are related to diffusion coefficient and active trafficking velocity respectively, gives
+\begin{equation}
+  ...,
+\end{equation}
+which in the limit ...
+
+
 \bibliographystyle{unsrt}
 \bibliography{bibliography.bib}
 
