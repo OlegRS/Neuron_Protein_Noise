@@ -263,21 +263,21 @@ In this section we will provide a simple example of finding the first two moment
   \mathcal G(\mathbf x; t)\underl{x\to 0}{=} 1 + \boldsymbol{\mathcal G}^{(1)}(t)\mathbf x + \frac{1}{2}\mathbf x^T\boldsymbol{\mathcal G}^{(2)}(t)\mathbf x + \mathcal O(|\mathbf x|^3),
 \end{equation}
 where
-\begin{equation*}
+\begin{equation}\label{eqn:G1_through_expectations}
   \boldsymbol{\mathcal G}^{(1)}(t) =
   \begin{pmatrix}
     \langle m_0\rangle\ 
     \langle m_1 \rangle
   \end{pmatrix}
-\end{equation*}
+\end{equation}
 is the gradient, while
-\begin{equation*}
+\begin{equation}\label{eqn:G2_through_correlations}
   \boldsymbol{\mathcal G}^{(2)}(t) =
   \left( \begin{array}{cc}
     \langle m_0^2 \rangle - \langle m_0\rangle & \langle m_0m_1\rangle\\
     \langle m_0m_1\rangle & \langle m_1^2 \rangle - \langle m_1\rangle \\
   \end{array} \right)
-\end{equation*}
+\end{equation}
 is the Hessian of $\mathcal G(\mathbf x; t)$ at $\mathbf x = \mathbf 0$.
 
 Substitution to the PDE (\ref{hopping_PDE}) gives the following equation in the first order
@@ -681,7 +681,7 @@ In Table \ref{table:expectations_errors} are the expectations, fluctuations and 
 %% \end{center}
 
 
-\subsection{General rules}
+\subsection{General rules}\label{subsec:rules}
 This section provides the general rules for constructing a {\it master equation} and the corresponding PDE for the generating function from the neuron's compartments diagram analogous to the one in Figure \ref{fig:simplest_neuron}. For this reason we represent a neuron as a graph which nodes represent different compartments of the neuron and the edges represent the junctions between the compartments.
 
 \subsubsection{The rules}
@@ -1060,8 +1060,65 @@ Similar idea holds for the second-order equations (for covariances), which can b
 Of course, these optimisations do not change the exponent of the problems' computational complexity, but they significantly decrease the constant in computational time and memory consumption.
 
 \appendix \label{app:DDM_correspondence}
-\section{Equations for averages in continuous limit}
-In this section we establish a correspondence of the parameters of our model with those of the continuous drift-diffusion model from \cite{PMID:31350097}. This allows us using the parameters from \cite{PMID:31350097} to set the hopping rates in our model.
+\section{Continuous limit}
+In this section we consider a continuous limit of our discrete model in a neuron consisting of a point-like soma with a single long dendritic branch without branching or synapses. For this, we define a continuous variable $\xi$ measuring the distance from the soma along the dendrite, and assume that the expected numbers of mRNAs and proteins in an infinitesimal dendritic segment of length $d\xi$ can be expressed as
+\begin{align*}
+  d\langle m\rangle (\xi,t) = R(\xi,t)d\xi;\\
+  d\langle l\rangle (\xi,t) = P(\xi,t)d\xi,
+\end{align*}
+where $R$ and $P$ are sufficiently smooth\footnote{At least $C^{(2)}$ in $\xi$ and $C^{(1)}$ in $t$.} functions of $\xi$ and $t$ representing expected concentrations of mRNAs and proteins respectively. Below we derive the PDEs for $R$ and $P$, which, under certain conditions, turn out to be identical to these of the drift-diffusion model considered in \cite{PMID:31350097}. This allows mapping the parameters reported in \cite{PMID:31350097} onto the corresponding parameters of our model, which facilitates setting the parameters at their realistic values.
+
+
+%% , which, for mRNAs and proteins, are related to their expected concentrations. Such continuous limit turns out to be equivalent to the continuous deterministic drift-diffusion model introduced in \cite{PMID:31350097}, which allows mapping the parameters reported in \cite{PMID:31350097} onto the corresponding parameters of our model.
+
+For simplicity of the limit expression, assume the neuron is a system of compartments of the same size $\delta\xi$ numbered from $0$ to $L-1$ in order of how far they are from the soma. The 0-th compartment is the soma and the remaining $L-2$ are dendritic compartments. Using the rules defined in Section \ref{subsec:rules}, the PDE for the generating function of such model can be written as
+
+\begin{equation}
+  \begin{split}
+    \textcolor{red}{\lambda_1^+x_nN\mathcal G(\mathbf x, t)
+    - \left[\lambda_1^+x_n^2 - \lambda_2x_{m_0}x_n + (\lambda_1^++\lambda_1^-)x_n-\lambda_2x_{m_0}\right]\frac{\partial\mathcal G(\mathbf x, t)}{\partial x_n}}\\
+    \textcolor{red}{- \left[-\kappa_0x_{m_0}x_{l_0} - \kappa_0x_{l_0} + \frac{1}{\tau_2}x_{m_0}\right]\frac{\partial\mathcal G(\mathbf x, t)}{\partial x_{m_0}}
+      -\frac{1}{\tau_3}x_{l_0}\frac{\partial\mathcal G(\mathbf x, t)}{\partial x_{l_0}}}\\
+    \textcolor{orange}{-\sum_{\mu=1}^{L-1}\left[\left(-\kappa_{\mu}x_{m_{\mu}}x_{l_{\mu}} - \kappa_{\mu}x_{l_{\mu}} + \frac{1}{\tau_2}x_{m_{\mu}}\right)\frac{\partial \mathcal G(\mathbf x, t)}{\partial x_{m_{\mu}}} + \frac{1}{\tau_3}x_{l_{\mu}}\frac{\partial\mathcal G(\mathbf x, t)}{\partial x_{l_{\mu}}}\right]}\\
+    \textcolor{blue}{-\sum_{\mu=0}^{L-2}\Bigg[\nu_{\mu,\mu+1}(x_{m_\mu}-x_{m_{\mu+1}})\frac{\partial\mathcal G(\mathbf x, t)}{\partial x_{m_\mu}} + \nu_{\mu+1,\mu}(x_{m_{\mu+1}}-x_{m_\mu})\frac{\partial\mathcal G(\mathbf x, t)}{\partial x_{m_{\mu+1}}} } \\
+      \textcolor{blue}{+\theta_{\mu,\mu+1}(x_{l_\mu}-x_{l_{\mu+1}})\frac{\partial\mathcal G(\mathbf x, t)}{\partial x_{l_\mu}} + \theta_{\mu+1,\mu}(x_{l_{\mu+1}}-x_{l_\mu})\frac{\partial\mathcal G(\mathbf x, t)}{\partial x_{l_{\mu+1}}}\Bigg]},
+  \end{split}
+\end{equation}
+where the red and orange colors correspond to the soma and dendritic compartments respectively, while the blue color corresponds to the junctions between the compartments.
+
+%% As long as we are only interested in expectations\footnote{\textcolor{red}{Interesting to see if we can derive PDEs for the correlations and how would they look!}}, in the PDE for the generating function, we only need to consider the first-order in $\mathbf x$, which for this model can be written as
+%% \begin{multline}
+%%   \frac{\partial\mathcal G(\mathbf x;t)}{\partial t} + x_n\frac{1}{\tau_1}\frac{\partial\mathcal G(\mathbf x;t)}{\partial x_n} + \\
+%%   \sum_\mu\left[\nu_{\mu, \mu+1}(x_\mu - x_{\mu+1})\frac{\partial\mathcal G}{\partial x_\mu} + \nu_{\mu+1,\mu}(x_{\mu+1} - x_\mu)\frac{\partial\mathcal G}{\partial x_{\mu+1}}\right] = x_n\lambda_1^+N\mathcal G(\mathbf x;t)
+%% \end{multline}
+
+\subsection{Gene dynamics}
+Although gene dynamics in this model happens at a single point, we will start by deriving the equation for the average number of active gene copies, since it is important for setting the left boundary condition for the mRNA equation.
+
+In this model gene dynamics does not depend on mRNA and protein dynamics, and the relevant part of the PDE for the generating function reads as
+\begin{equation*}
+  \frac{\partial\mathcal G(\mathbf x;t)}{\partial t} + x_n\frac{1}{\tau_1}\frac{\partial\mathcal G(\mathbf x;t)}{\partial x_n} = x_n\lambda_1^+N\mathcal G(\mathbf x;t)
+\end{equation*}
+which, using (\ref{eqn:basic_expansion}) and (\ref{eqn:G1_through_expectations}), in first order in $\mathbf x$ reads as
+\begin{equation*}
+  x_n\frac{\partial\langle n\rangle}{\partial t} + x_n\frac{1}{\tau_1}\langle n\rangle = x_n\lambda_1^+N\langle n\rangle,\qquad \text{for all }x_n,
+\end{equation*}
+which implies
+\begin{equation*}
+  \frac{d\langle n\rangle}{dt} + \frac{1}{\tau_1}\langle n\rangle = \lambda_1^+N\langle n\rangle.
+\end{equation*}
+The solution of the above ODE with the initial condition $\langle n\rangle(t=0) = \langle n\rangle_0$ is given by
+\begin{equation*}
+  \langle n\rangle(t) = \langle n\rangle_0\mathrm e^{-t/\tau_1} + \tau_1\lambda_1^+N\left(1-\mathrm e^{-t/\tau_1}\right),
+\end{equation*}
+meaning that at stationarity the expected number of active gene copies is given by
+\begin{equation}
+  \langle n\rangle(t) = \tau_1\lambda_1^+N,
+\end{equation} 
+which is consistent with the results of Section \ref{switching_asymptotic_expansion}.
+
+\subsection{mRNA dynamics}
+
 
 First let us derive a PDE governing mRNA concentration in the bulk of a spineless linear dendrite and show that it corresponds to that from \cite{PMID:31350097}. Consider a linear stretch of dendrite which may be assumed to be infinite in both directions since we are interested in deriving the equations away from its boundaries.
 
@@ -1069,22 +1126,23 @@ The relevant part of the PDE on the generating function reads as
 \begin{equation*}
   \frac{\partial\mathcal G(\mathbf x; t)}{\partial t} + \sum_\mu\left[\nu_{\mu, \mu+1}(x_\mu - x_{\mu+1})\frac{\partial\mathcal G}{\partial x_\mu} + \nu_{\mu+1,\mu}(x_{\mu+1} - x_\mu)\frac{\partial\mathcal G}{\partial x_{\mu+1}}\right] = 0,
 \end{equation*}
-which using ... can be written as
+which, using (\ref{eqn:basic_expansion}) and (\ref{eqn:G1_through_expectations}), in first order in $\mathbf x$ can be written as
 \begin{equation*}
   \sum_\mu\left[\frac{\partial\langle m_\mu \rangle}{\partial t}x_\mu + \nu_{\mu, \mu+1}(x_\mu - x_{\mu+1})\langle m_\mu\rangle + \nu_{\mu+1,\mu}(x_{\mu+1} - x_\mu)\langle m_{\mu+1}\rangle\right] = 0,
 \end{equation*}
-which after rearranging reads as
+which, after eliminating $x_{\mu+1}$ by reindexing the corresponding sums, reads as
 \begin{equation}
   \sum_\mu\left[\frac{\partial\langle m_\mu \rangle}{\partial t} + \nu_{\mu,\mu+1}\langle m_\mu\rangle - \nu_{\mu-1,\mu}\langle m_{\mu-1}\rangle - \nu_{\mu+1,\mu} \langle m_{\mu+1}\rangle + \nu_{\mu,\mu-1}\langle m_\mu\rangle \right]x_\mu = 0,
 \end{equation}
-which implies
+and implies
 \begin{equation}
-  \frac{\partial\langle m_\mu \rangle}{\partial t} = \nu_{\mu-1,\mu}\langle m_{\mu-1}\rangle + \nu_{\mu+1,\mu} \langle m_{\mu+1}\rangle - \nu_{\mu,\mu+1}\langle m_\mu\rangle - \nu_{\mu,\mu-1}\langle m_\mu\rangle.
+  \frac{\partial\langle m_\mu \rangle}{\partial t} = \nu_{\mu-1,\mu}\langle m_{\mu-1}\rangle + \nu_{\mu+1,\mu} \langle m_{\mu+1}\rangle - \nu_{\mu,\mu+1}\langle m_\mu\rangle - \nu_{\mu,\mu-1}\langle m_\mu\rangle
 \end{equation}
+for all $\mu$.
 
 Writing the hopping rates as
 \begin{equation*}
-  \nu_{\alpha,\beta} \equiv D_{\alpha,\beta} + v_{\alpha,\beta},
+  \nu_{\alpha,\beta} \equiv \mathcal D_{\alpha,\beta} + v_{\alpha,\beta},
 \end{equation*}
 where
 \begin{equation*}
@@ -1096,6 +1154,8 @@ are related to diffusion coefficient and active trafficking velocity respectivel
 \end{equation}
 which in the limit ...
 
+
+\mathcal x
 
 \bibliographystyle{unsrt}
 \bibliography{bibliography.bib}
