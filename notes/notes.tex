@@ -717,6 +717,16 @@ This section provides the general rules for constructing a {\it master equation}
                 \end{split}
               \end{equation}
 
+              {\it First-order in $\mathbf x$ terms}
+              \begin{equation}
+                \lambda_1^+x_nN-\left[(\lambda_1^++\lambda_1^-)x_n - \lambda_2x_{m_0}\right]\mathcal G^{(1)}_n - \left[\frac{1}{\tau_2}x_{m_0}-\kappa_0x_{l_0}\right]\mathcal G^{(1)}_{m_0} - \frac{1}{\tau_3}x_{l_0}\mathcal G^{(1)}_{l_0}
+              \end{equation}
+              
+              {\it Second-order in $\mathbf x$ terms}
+              \begin{multline*}
+                \lambda_1^+Nx_n\boldsymbol{\mathcal G}^{(1)}\mathbf x + \kappa_0x_{m_0}x_{l_0}\mathcal G^{(1)}_{m_0} - \left(\lambda_1^+x_n^2-\lambda_2x_{m_0}x_n\right)\mathcal G_n^{(1)}\\
+                -\left[\left(\lambda_1^++\lambda_1^-\right)x_n-\lambda_2x_{m_0}\right]\boldsymbol{\mathcal G}_n^{(2)}\mathbf x + \left(\kappa_0x_{l_0}-\frac{1}{\tau_2}x_{m_0}\right)\boldsymbol{\mathcal G}_{m_0}^{(2)}\mathbf x - \frac{1}{\tau_3}x_{l_0}\boldsymbol{\mathcal G}^{(2)}_{l_0}\mathbf x
+              \end{multline*}
 
               {\bf Dendritic compartment}
               
@@ -746,6 +756,15 @@ This section provides the general rules for constructing a {\it master equation}
                 \end{split}
               \end{equation}
 
+              {\it First-order in $\mathbf x$ terms}
+              \begin{equation*}
+                \left(\kappa_ix_{l_i}-\frac{1}{\tau_2}x_{m_i}\right)\mathcal G^{(1)}_{m_i} - \frac{1}{\tau_3}x_{l_i}\mathcal G^{(1)}_{l_i}
+              \end{equation*}
+              
+              {\it Second-order in $\mathbf x$ terms}
+              \begin{equation*}
+                \kappa_ix_{m_i}x_{l_i}\mathcal G^{(1)}_{m_i} + \left(\kappa_ix_{l_i} - \frac{1}{\tau_2}x_{m_i}\right)\boldsymbol{\mathcal G}^{(2)}_{m_i}\mathbf x - \frac{1}{\tau_3}x_{l_i}\boldsymbol{\mathcal G}^{(2)}_{l_i}\mathbf x
+              \end{equation*}
 
               {\bf Synapse $j$ on dendrite $i$}
 
@@ -800,6 +819,22 @@ This section provides the general rules for constructing a {\it master equation}
                 \end{split}
               \end{equation}
 
+              {\it First-order in $\mathbf x$ terms}
+              \begin{equation}
+                \begin{split}
+                  -\nu_{ij}(x_{m_i}-x_{m_j})\mathcal G^{(1)}_{m_i} - \nu_{ji}(x_{m_j}-x_{m_i})\mathcal G^{(1)}_{m_j}\\
+                  -\theta_{ij}(x_{l_i}-x_{l_j})\mathcal G^{(1)}_{l_i} - \theta_{ji}(x_{l_j}-x_{l_i})\mathcal G^{(1)}_{l_j}
+                \end{split}
+              \end{equation}
+              
+
+              {\it Second-order in $\mathbf x$ terms}
+              \begin{align*}
+                -\nu_{ij}\left(x_{m_i} - x_{m_j}\right)\boldsymbol{\mathcal G}_{m_i}^{(2)}\mathbf x& - \nu_{ji}\left(x_{m_j} - x_{m_i}\right)\boldsymbol{\mathcal G}_{m_j}^{(2)}\mathbf x\\
+                - \theta_{ij}\left(x_{l_i}-x_{l_j}\right)\boldsymbol{\mathcal G}_{l_i}^{(2)}\mathbf x& - \theta_{ji}\left(x_{l_j} - x_{l_i}\right)\boldsymbol{\mathcal G}^{(2)}_{l_j}\mathbf x
+              \end{align*}
+
+
               {\bf Junction between the dendrite i and the synapse j on it}
               
               {\it Parameters:}
@@ -823,8 +858,21 @@ This section provides the general rules for constructing a {\it master equation}
               \begin{equation}
                 -\eta_{ij}(x_{l_i}-x_{q_{ij}})\frac{\partial\mathcal G(\mathbf x, t)}{\partial x_{l_i}} - \gamma_{ji}(x_{q_{ij}}-x_{l_i})\frac{\partial\mathcal G(\mathbf x, t)}{\partial x_{q_{ij}}}
               \end{equation}
+
+              {\it First-order in $\mathbf x$ terms}
+              \begin{equation}
+                -\eta_{ij}(x_{l_i}-x_{q_{ij}})\mathcal G^{(1)}_{l_i} - \gamma_{ji}(x_{q_{ij}}-x_{l_i})\mathcal G^{(1)}_{q_{ij}}
+              \end{equation}
+
+              
+              {\it Second-order in $\mathbf x$ terms}
+              \begin{equation*}
+                -\eta_{ij}\left(x_{l_i}-x_{q_{ij}}\right)\boldsymbol{\mathcal G}^{(2)}_{l_i}\mathbf x - \gamma_{ji}\left(x_{q_{ij}}-x_{l_i}\right)\boldsymbol{\mathcal G}^{(2)}_{q_{ij}}\mathbf x
+              \end{equation*}
+
               
               \subsubsection{Second-order expansions} \label{subsubsec:2nd_order_expansions}
+              \textcolor{red}{This section is redundant since I written the corresponding expansions in the rules section.}
               When substituted to the above PDE terms corresponding to the compartments of certain types, the expansion (\ref{eqn:basic_expansion}) gives the following terms in the second order.
               
               {\bf Soma}
@@ -850,8 +898,6 @@ This section provides the general rules for constructing a {\it master equation}
               \end{equation*}
 
               Note that the terms shown in \textcolor{blue}{blue} are obtained from solving the first-order problem and play the role of a ``source'' in the second-order problem for covariances.
-
-              
 
 
 \section{Preliminary numerical results}
@@ -1081,7 +1127,7 @@ For simplicity of the limit expression, assume the neuron is a system of compart
       -\frac{1}{\tau_3}x_{l_0}\frac{\partial\mathcal G(\mathbf x, t)}{\partial x_{l_0}}}\\
     \textcolor{orange}{-\sum_{\mu=1}^{L-1}\left[\left(-\kappa_{\mu}x_{m_{\mu}}x_{l_{\mu}} - \kappa_{\mu}x_{l_{\mu}} + \frac{1}{\tau_2}x_{m_{\mu}}\right)\frac{\partial \mathcal G(\mathbf x, t)}{\partial x_{m_{\mu}}} + \frac{1}{\tau_3}x_{l_{\mu}}\frac{\partial\mathcal G(\mathbf x, t)}{\partial x_{l_{\mu}}}\right]}\\
     \textcolor{blue}{-\sum_{\mu=0}^{L-2}\Bigg[\nu_{\mu,\mu+1}(x_{m_\mu}-x_{m_{\mu+1}})\frac{\partial\mathcal G(\mathbf x, t)}{\partial x_{m_\mu}} + \nu_{\mu+1,\mu}(x_{m_{\mu+1}}-x_{m_\mu})\frac{\partial\mathcal G(\mathbf x, t)}{\partial x_{m_{\mu+1}}} } \\
-      \textcolor{blue}{+\theta_{\mu,\mu+1}(x_{l_\mu}-x_{l_{\mu+1}})\frac{\partial\mathcal G(\mathbf x, t)}{\partial x_{l_\mu}} + \theta_{\mu+1,\mu}(x_{l_{\mu+1}}-x_{l_\mu})\frac{\partial\mathcal G(\mathbf x, t)}{\partial x_{l_{\mu+1}}}\Bigg]},
+      \textcolor{blue}{+\theta_{\mu,\mu+1}(x_{l_\mu}-x_{l_{\mu+1}})\frac{\partial\mathcal G(\mathbf x, t)}{\partial x_{l_\mu}} + \theta_{\mu+1,\mu}(x_{l_{\mu+1}}-x_{l_\mu})\frac{\partial\mathcal G(\mathbf x, t)}{\partial x_{l_{\mu+1}}}\Bigg]}=\frac{\partial\mathcal G(\mathbf x, t)}{\partial t},
   \end{split}
 \end{equation}
 where the red and orange colors correspond to the soma and dendritic compartments respectively, while the blue color corresponds to the junctions between the compartments.
@@ -1154,8 +1200,21 @@ are related to diffusion coefficient and active trafficking velocity respectivel
 \end{equation}
 which in the limit ...
 
+\section{Stationary temporal correlations}
+This section is concerned with correlations of the observables $\boldsymbol\Omega$ shifted in time by $\tau$ at stationarity, i.e. $\lim_{t\to\infty}\langle\boldsymbol{\Omega}(t)\otimes\boldsymbol{\Omega}(t+\tau)\rangle$.
 
-\mathcal x
+It can be shown that
+\begin{equation}
+  \lim_{t\to\infty}\langle\boldsymbol{\Omega}(t)\otimes\boldsymbol{\Omega}(t+\tau)\rangle = (1-\mathrm e^{-\mathbf A\tau})\langle\boldsymbol\Omega\rangle(\infty)\otimes\langle\boldsymbol\Omega\rangle(\infty) + \mathrm e^{-\mathbf A\tau}\langle\boldsymbol\Omega\otimes\boldsymbol\Omega\rangle(\infty),
+\end{equation}
+where $\mathbf A$ is the matrix of first-order dynamics from Section \ref{subsec:o1_nonstat_problem}, and, as discussed earlier, $\langle\boldsymbol\Omega\rangle = \boldsymbol{\mathcal G}^{(1)}$, while $\langle\boldsymbol\Omega\otimes\boldsymbol\Omega\rangle$ can be found as $\langle\Omega_i\Omega_j\rangle = {\mathcal G}^{(2)}_{ij} + \mathcal G^{(1)}_i\delta_{ij}$.
+%% \begin{equation}
+%%   \begin{dcases}
+%%     \langle\Omega_i\Omega_j\rangle = {\mathcal G}^{(2)}_{i,j}, & i\neq j\\
+%%     \langle\Omega_i\Omega_j\rangle = {\mathcal G}^{(2)}_{i,j} + {\mathcal G}^{(1)}_i, & i=j\\
+%%   \end{dcases}
+%% \end{equation}
+
 
 \bibliographystyle{unsrt}
 \bibliography{bibliography.bib}
