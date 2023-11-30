@@ -129,7 +129,7 @@ in terms of which the PDE (\ref{gene_switching_PDE}) becomes
   \frac{\partial \mathcal G(x_1;t)}{\partial t} + (\lambda_1^+x_1 + \frac{1}{\tau_1})x_1\frac{\partial \mathcal G(x_1;t)}{\partial x_1} = \lambda_1^+N_1x_1\mathcal G(x_1;t),
 \end{equation}
 where $\tau_1 := (\lambda_1^+ + \lambda_1^-)^{-1}$.
-The characteristic equations for the nonhomogeneous quasilinear PDE (\ref{gene_switching_PDE}) are given by
+The characteristic equations for the nonhomogeneous linear PDE (\ref{gene_switching_PDE}) are given by
 \begin{equation*}
   \begin{dcases}
     \dot t = \tau;\\
@@ -1201,17 +1201,17 @@ are related to diffusion coefficient and active trafficking velocity respectivel
 which in the limit ...
 
 \section{Stationary temporal correlations}
-This section is concerned with correlations of the observables $\boldsymbol\Omega$ shifted in time by $\tau$ at stationarity, i.e. $\lim_{t\to\infty}\langle\boldsymbol{\Omega}(t)\otimes\boldsymbol{\Omega}(t+\tau)\rangle$.
+This section is concerned with correlations of the observables $\mathbf s $ shifted in time by $\tau$ at stationarity, i.e. $\lim_{t\to\infty}\langle\mathbf{ s }(t)\otimes\mathbf{ s }(t-\tau)\rangle$.
 
 It can be shown that
 \begin{equation}
-  \lim_{t\to\infty}\langle\boldsymbol{\Omega}(t)\otimes\boldsymbol{\Omega}(t+\tau)\rangle = (1-\mathrm e^{-\mathbf A\tau})\langle\boldsymbol\Omega\rangle(\infty)\otimes\langle\boldsymbol\Omega\rangle(\infty) + \mathrm e^{-\mathbf A\tau}\langle\boldsymbol\Omega\otimes\boldsymbol\Omega\rangle(\infty),
+  \lim_{t\to\infty}\langle\mathbf{ s }(t)\otimes\mathbf{ s }(t-\tau)\rangle = (\mathbf 1-\mathrm e^{-\mathbf A|\tau|})\langle\mathbf s \rangle_\infty\otimes\langle\mathbf s \rangle_\infty + \mathrm e^{-\mathbf A|\tau|}\langle\mathbf s \otimes\mathbf s \rangle_\infty,
 \end{equation}
-where $\mathbf A$ is the matrix of first-order dynamics from Section \ref{subsec:o1_nonstat_problem}, and, as discussed earlier, $\langle\boldsymbol\Omega\rangle = \boldsymbol{\mathcal G}^{(1)}$, while $\langle\boldsymbol\Omega\otimes\boldsymbol\Omega\rangle$ can be found as $\langle\Omega_i\Omega_j\rangle = {\mathcal G}^{(2)}_{ij} + \mathcal G^{(1)}_i\delta_{ij}$.
+where $\mathbf A$ is the matrix of first-order dynamics from Section \ref{subsec:o1_nonstat_problem}, and, as discussed earlier, $\langle\mathbf s \rangle = \mathbf{\mathcal G}^{(1)}$, while $\langle\mathbf s \otimes\mathbf s \rangle$ can be found as $\langle s _i s _j\rangle = {\mathcal G}^{(2)}_{ij} + \mathcal G^{(1)}_i\delta_{ij}$.
 %% \begin{equation}
 %%   \begin{dcases}
-%%     \langle\Omega_i\Omega_j\rangle = {\mathcal G}^{(2)}_{i,j}, & i\neq j\\
-%%     \langle\Omega_i\Omega_j\rangle = {\mathcal G}^{(2)}_{i,j} + {\mathcal G}^{(1)}_i, & i=j\\
+%%     \langle s _i s _j\rangle = {\mathcal G}^{(2)}_{i,j}, & i\neq j\\
+%%     \langle s _i s _j\rangle = {\mathcal G}^{(2)}_{i,j} + {\mathcal G}^{(1)}_i, & i=j\\
 %%   \end{dcases}
 %% \end{equation}
 
