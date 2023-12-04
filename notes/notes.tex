@@ -110,9 +110,9 @@ Then, using the definition of the generating function (\ref{gen_func_def}) and t
   & \sum_{n_1=-\infty}^{\infty}n_1P_{n_1+1}(t)z_1^{n_1} = z_1\frac{\partial}{\partial z_1}\sum_{n_1=-\infty}^{\infty}P_{n_1+1}(t)z_1^{n_1} = z_1\frac{\partial}{\partial z_1} \left(\frac{1}{z_1}G(z_1; t)\right),
 \end{align*}
 we recast the equation (\ref{gene_switching_ME}) in the form of the following first-order partial differential equation (PDE)
-\begin{equation*} \label{gene_switching_PDE}
+\begin{equation} \label{gene_switching_PDE}
   \frac{\partial G(z_1;t)}{\partial t} + (\lambda_1^+z_1 + \lambda_1^-)(z_1-1)\frac{\partial G(z_1;t)}{\partial z_1} = \lambda_1^+N_1(z_1-1)G(z_1;t),
-\end{equation*}
+\end{equation}
 which can be solved using the method of characteristics.
 
 \subsubsection{Finding the generating function exactly}
@@ -122,14 +122,14 @@ For convenience we introduce new variable as
 \end{equation*}
 and denote
 \begin{equation*}
-  \mathcal G(x_1; t) = G(z_1(x_1); t).
+  \mathcal G(x_1; t) = G(z_1(x_1); t),
 \end{equation*}
 in terms of which the PDE (\ref{gene_switching_PDE}) becomes
 \begin{equation} \label{gene_switching_PDE_x}
   \frac{\partial \mathcal G(x_1;t)}{\partial t} + (\lambda_1^+x_1 + \frac{1}{\tau_1})x_1\frac{\partial \mathcal G(x_1;t)}{\partial x_1} = \lambda_1^+N_1x_1\mathcal G(x_1;t),
 \end{equation}
 where $\tau_1 := (\lambda_1^+ + \lambda_1^-)^{-1}$.
-The characteristic equations for the nonhomogeneous linear PDE (\ref{gene_switching_PDE}) are given by
+The characteristic equations for the linear PDE (\ref{gene_switching_PDE_x}) are given by
 \begin{equation*}
   \begin{dcases}
     \dot t = \tau;\\
