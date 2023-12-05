@@ -835,7 +835,7 @@ This section provides the general rules for constructing a {\it master equation}
               \end{align*}
 
 
-              {\bf Junction between the dendrite i and the synapse j on it}
+              {\bf Junction between the dendrite $i$ and the synapse $j$ on it}
               
               {\it Parameters:}
               \begin{equation*}
@@ -953,13 +953,13 @@ Some preliminary results for stationary problem are shown in Figs.\ref{fig:3_bra
 
 \section{Nonstationary problem}
 \subsection{First order}\label{subsec:o1_nonstat_problem}
-In this section we no longer assume stationarity and consider the dynamics of the expectations. When in the PDE for the generating function the coefficients corresponding to certain $x$ are collected and equated, in first order one gets the following inhomogeneous linear system of first-order ODEs
+In this section we no longer assume stationarity and consider the dynamics of the expectations. When in the PDE for the generating function the coefficients corresponding to certain $x$ are collected and equated, in first order one gets the following nonhomogeneous linear system of first-order ODEs
 \begin{equation}
 \frac{d\boldsymbol{\mathcal G}^{(1)}(t)}{dt} = -\mathbf A \boldsymbol{\mathcal G}^{(1)}(t) + \mathbf b,
 \end{equation}
 whose general solution is given by
 \begin{equation}\label{general_solution}
-\boldsymbol{\mathcal G}^{(1)}(t) = \mathbf A^{-1}\mathbf b + \mathrm e^{-\mathbf A t}\mathbf c,
+  \boldsymbol{\mathcal G}^{(1)}(t) = \mathbf A^{-1}\mathbf b + \mathrm e^{-\mathbf A t}\mathbf c,
 \end{equation}
 where the vector $\mathbf v$ is given by
 \begin{equation}\label{rhs_vector}
@@ -1026,7 +1026,7 @@ The comparison of the above predictions with the results of the corresponding Gi
 \end{figure}
 
 \subsection{Second order}
-When in the PDE for the generating function the coefficients corresponding to certain pairs $x_ix_j$ are collected and equated, one gets an inhomogeneous linear system of first-order ODEs for $\boldsymbol{\mathcal G^{(2)}}$ of the form\footnote{Note that when the matrices are constructed using the results of Section \ref{subsubsec:2nd_order_expansions}, the combinatorial factor of 2 from the definition of $\boldsymbol{\mathcal G}^{(2)}$ by asymptotic expansion (\ref{eqn:basic_expansion}) needs to be taken into account.}
+When in the PDE for the generating function the coefficients corresponding to certain pairs $x_ix_j$ are collected and equated, one gets an nonhomogeneous linear system of first-order ODEs for $\boldsymbol{\mathcal G^{(2)}}$ of the form\footnote{Note that when the matrices are constructed using the results of Section \ref{subsubsec:2nd_order_expansions}, the combinatorial factor of 2 from the definition of $\boldsymbol{\mathcal G}^{(2)}$ by asymptotic expansion (\ref{eqn:basic_expansion}) needs to be taken into account.}
 \begin{equation}\label{o2_nonstat_ODE}
   \frac{d\boldsymbol{\mathcal G}^{(2)}(t)}{dt} = \mathbf D\boldsymbol{\mathcal G}^{(1)}(t) - \mathbf C\boldsymbol{\mathcal G}^{(2)}(t),
 \end{equation}
