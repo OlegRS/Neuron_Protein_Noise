@@ -516,14 +516,14 @@ In what follows we will denote the probability of state $\mathbf s$ at time $t$ 
 In this section we attempt to find the means and the variances of the protein counts in the simplest possible model of neuron of our kind.
 
 \begin{align*}
-  &\textcolor{red}{\text{Gene activation:}} \quad &&\textcolor{red}{n_1 \xrightarrow[]{\lambda_1^+(N-n_1)} n_1+1}\\
-  &\textcolor{red}{\text{Gene inactivation:}}  &&\textcolor{red}{n_1 \xrightarrow[]{\lambda_1^-n_1} n_1-1}\\
-  &\textcolor{green}{\text{Transcription (only in soma):}} &&\textcolor{green}{m_0 \xrightarrow[]{\lambda_2n_1} m_0+1}\\
+  &\textcolor{red}{\text{Gene activation:}} \quad &&\textcolor{red}{n \xrightarrow[]{\lambda_1^+(N-n)} n+1}\\
+  &\textcolor{red}{\text{Gene inactivation:}}  &&\textcolor{red}{n \xrightarrow[]{\lambda_1^-n} n-1}\\
+  &\textcolor{green}{\text{Transcription (only in soma):}} &&\textcolor{green}{m_0 \xrightarrow[]{\lambda_2n} m_0+1}\\
   &\textcolor{green}{\text{mRNA degradation in $i$-th dendritic compartment:}} &&\textcolor{green}{m_i \xrightarrow[]{m_i/\tau_2} m_i-1}\\
-  &\textcolor{blue}{\text{mRNA hopping from dendritic compartment $i$ to $j$:}} &&\textcolor{blue}{(m_i, m_j) \xrightarrow[]{\nu_{ij}m_i} (m_i-1, m_j+1)}\\
+  &\textcolor{blue}{\text{mRNA hopping from compartment $i$ to $j$:}} &&\textcolor{blue}{(m_i, m_j) \xrightarrow[]{\nu_{ij}m_i} (m_i-1, m_j+1)}\\
   &\textcolor{brown}{\text{Translation (in all nonsynaptic compartments):}} &&\textcolor{brown}{l_i \xrightarrow[]{m_i\kappa_i} l_i+1}\\
-  &\textcolor{brown}{\text{Proteolysis in dendritic compartment $i$:}} &&\textcolor{brown}{l_i \xrightarrow[]{l_i/\tau_3} l_i-1}\\
-  &\textcolor{cyan}{\text{Protein hopping from dendritic compartment $i$ to $j$:}} &&\textcolor{cyan}{(l_i, l_j) \xrightarrow[]{\theta_{ij}l_i} (l_i-1, l_j+1)}\\
+  &\textcolor{brown}{\text{Proteolysis in compartment $i$:}} &&\textcolor{brown}{l_i \xrightarrow[]{l_i/\tau_3} l_i-1}\\
+  &\textcolor{cyan}{\text{Protein hopping from compartment $i$ to $j$:}} &&\textcolor{cyan}{(l_i, l_j) \xrightarrow[]{\theta_{ij}l_i} (l_i-1, l_j+1)}\\
   &\textcolor{violet}{\text{Protein binding to $j$-th synapse on $i$-th compartment:}} &&\textcolor{violet}{(q_{ij}, l_i) \xrightarrow[]{\eta_{ij}l_i} (q_{ij}+1, l_i-1)}\\
   &\textcolor{violet}{\text{Protein unbinding from $j$-th synapse on $i$-th compartment:}} &&\textcolor{violet}{(q_{ij}, l_i) \xrightarrow[]{\gamma_{ij}q_{ij}} (q_{ij}-1, l_i+1)}
 \end{align*}
@@ -1095,9 +1095,108 @@ which corresponds to a situation where some dynamical modes of $\boldsymbol{\mat
 \subsubsection{Note on initial conditions}
 \textcolor{red}{It is important to understand that the initial conditions $\boldsymbol{\mathcal G}^{(1)}(t=0)$ and $\boldsymbol{\mathcal G}^{(2)}(t=0)$ should be consistent with their physical meanings and with each other.} Indeed, if this is not the case, the expectation of the number of active genes may be set higher than the total number of gene copies, or, say, a negative value for the expected mRNA number may be set. Moreover, low $\mathcal G_{ii}^{(2)}(t=0)$ at high $\mathcal G_i^{(1)}(t=0)$ results in negative variances.
 
-The initial conditions $\boldsymbol{\mathcal G}^{(1)}(t=0)$ and $\boldsymbol{\mathcal G}^{(2)}(t=0)$ should be set in a way consistent with some underlying probability distribution from which these quantities can arise. It is necessary (and, possibly, sufficient) to check that the covariance matrix is positive semi-definite. 
+The initial conditions $\boldsymbol{\mathcal G}^{(1)}(t=0)$ and $\boldsymbol{\mathcal G}^{(2)}(t=0)$ should be set in a way consistent with some underlying probability distribution from which these quantities can arise. It is necessary (and, possibly, sufficient) to check that the covariance matrix is positive semi-definite.
+
+\section{Alternative derivation}
+Suppose
+\begin{equation}\label{eqn:s_next}
+  \mathbf s(t+dt) = \mathbf s(t) + \boldsymbol\epsilon(t),
+\end{equation}
+where $\boldsymbol\epsilon(t)$ is the noise given by
+\begin{equation*}
+  \epsilon_i(t) = 
+  \begin{dcases}
+    1 \text{ with probability } P_{\epsilon_i=1 | \mathbf s}(t, dt) = \left(-\sum_{j}A_{ij}(t)s_j+b_i(t)\right)dt;\\
+    0 \text{ otherwise}.
+  \end{dcases}
+\end{equation*}
+In equation (\ref{eqn:s_next}), taking $s(t)$ to the left and averaging over trajectories gives
+\begin{equation}\label{eqn:expectations_over_trajectories}
+  \langle\mathbf s(t+dt)\rangle - \langle\mathbf s(t)\rangle = \langle\boldsymbol\epsilon(t)\rangle.
+\end{equation}
+Here and below we assume that at time $t$, the probability of state $\mathbf s$ is given by $P_{\mathbf s}(t)$, and
+\begin{equation}
+  \langle \mathbf s\rangle(t) = \sum_{\mathbf s}P_{\mathbf s}(t)\mathbf s
+\end{equation}
+is the expectation computed with this probability, while $\langle \mathbf s(t)\rangle$ is the expectation computed over the trajectories.
+
+\begin{equation}
+  \langle\epsilon_i(t)\rangle =   \langle\epsilon_i\rangle(t) = \sum_{\mathbf s}\sum_{\epsilon=0}^1P_{\mathbf s}(t)P_{\epsilon_i=\epsilon|\mathbf s}\epsilon = \sum_{\mathbf s}P_{\mathbf s}(t)\left(-\sum_{j}A_{ij}(t)s_j+b_i(t)\right)dt,
+\end{equation}
+from where
+\begin{equation}
+  \langle\boldsymbol \epsilon(t)\rangle = \left(-\mathbf A(t)\langle \mathbf s\rangle(t) + \mathbf b(t)\right)dt,
+\end{equation}
+and thus
+\begin{equation}\label{eqn:o1_ODE_}
+  \dot{\langle\mathbf s\rangle}(t) = -\mathbf A(t)\langle \mathbf s\rangle(t) + \mathbf b(t),
+\end{equation}
+whose general solution is given by
+\begin{equation}\label{eqn:general_solution_for_expectations}
+  \langle\mathbf s\rangle(t) = \mathrm e^{-\int_0^t\mathbf A(\theta)d\theta}\left(\int_0^t\mathrm e^{\int_0^\xi\mathbf A(\zeta)d\zeta}\mathbf b(\xi)d\xi + \langle\mathbf s\rangle(t=0)\right).
+\end{equation}
+
+The second moments can be obtained as follows.
+\begin{equation*}
+  \mathbf s(t+dt)\otimes\mathbf s(t+dt) = (\mathbf s(t)+\epsilon(t))\otimes(\mathbf s(t)+\epsilon(t)) = \mathbf s(t)\otimes\mathbf s(t) + \mathbf s(t)\otimes\epsilon(t) + \epsilon(t)\otimes\mathbf s(t) + \epsilon(t)\otimes\epsilon(t),
+\end{equation*}
+from where
+\begin{equation}
+  \langle\mathbf s(t+dt)\otimes\mathbf s(t+dt)\rangle - \langle \mathbf s(t)\otimes\mathbf s(t)\rangle = \langle\mathbf s(t)\otimes\epsilon(t)\rangle + \langle\epsilon(t)\otimes\mathbf s(t)\rangle + \mathcal O(dt^2),
+\end{equation}
+where we used the fact that the second-order in $\epsilon(t)$ expectation is $\mathcal O(dt^2)$.
+
+Noticing that
+\begin{equation*}
+  \langle \mathbf s(t)\otimes\mathbf s(t)\rangle = \langle \mathbf s\otimes\mathbf s\rangle(t) \text{ and } \langle \mathbf s(t+dt)\otimes\mathbf s(t+dt)\rangle = \langle \mathbf s\otimes\mathbf s\rangle(t)
+\end{equation*}
+and evaluating the r.h.s. terms as 
+\begin{align*}
+  & \langle\mathbf s(t)\otimes\epsilon(t)\rangle_{ij} = \langle s_i(t)\epsilon_j(t)\rangle = \sum_{\mathbf s}\sum_{\epsilon=0}^1P_{\mathbf s}(t)P_{\epsilon_j=\epsilon|\mathbf s}(t)s_i\epsilon = \sum_{\mathbf s}P_{\mathbf s}(t)s_i\sum_{\epsilon=0}^1P_{\epsilon_j=\epsilon|\mathbf s}(t)\epsilon \\
+  & =\sum_{\mathbf s}P_{\mathbf s}(t) s_i\left(-\sum_{k}A_{jk}(t)s_k+b_j(t)\right)dt = \left(-\sum_{k}\langle s_i s_k\rangle(t) A_{jk}(t) + \langle s_i\rangle(t)b_j(t)\right)dt\\
+  & =\left(-\langle \mathbf s\otimes\mathbf s\rangle(t)\mathbf A^{T}(t) + \langle \mathbf s\rangle(t)\otimes \mathbf b(t)\right)_{ij}dt,
+\end{align*}
+and thus
+\begin{align*}
+  &\langle\mathbf s(t)\otimes\epsilon(t)\rangle = \left(-\langle \mathbf s\otimes\mathbf s\rangle(t)\mathbf A^{T}(t) + \langle \mathbf s\rangle(t)\otimes \mathbf b(t)\right)dt,\\
+  &\langle\epsilon(t)\otimes\mathbf s(t)\rangle = \langle\mathbf s(t)\otimes\epsilon(t)\rangle^T = \big(-\mathbf A(t)\langle \mathbf s\otimes\mathbf s\rangle(t) + \mathbf b(t)\right\otimes\langle \mathbf s\rangle(t) \big) dt.
+\end{align*}
+Finally, we arrive to the following system of ODEs
+\begin{equation}\label{eqn:o2_ODEs}
+  \dot{\langle \mathbf s\otimes\mathbf s\rangle}(t) = -\mathbf A(t)\langle \mathbf s\otimes\mathbf s\rangle(t) -\langle \mathbf s\otimes\mathbf s\rangle(t)\mathbf A^{T}(t) + \mathbf b(t)\right\otimes\langle \mathbf s\rangle(t) + \langle\mathbf s\rangle(t)\otimes\mathbf b(t),
+\end{equation}
+which is consistent with expressions (11) and (12) from \cite{PAULSSON2005157}.
+
+Note that the system of ODEs (\ref{eqn:o2_ODEs}) is equivalent to (\ref{o2_nonstat_ODE}) and can be solved in a similar way, but it may be more efficient to integrate (\ref{eqn:o2_ODEs}) numerically instead of computing its exact solution.
+
+\subsection{Correlations in time}
+Want to compute $\langle\mathbf s(t-\tau)\otimes\mathbf s(t)\rangle$ for $\tau>0$
+\begin{align*}
+  \langle\mathbf s(t-\tau)\otimes\mathbf s(t)\rangle = \sum_\mathbf {s^\prime} P_{\mathbf s^\prime}(t-\tau)\mathbf s^\prime\otimes\sum_{\mathbf s}\mathbf sP_{s|s^\prime}(t, \tau),
+\end{align*}
+where $P_{s|s^\prime}(t, \tau)$ is the probability of state $\mathbf s$ at time $t$ given the state $s^\prime$ at earlier time $t-\tau$. Using the expression for expectations (\ref{eqn:general_solution_for_expectations}) gives
+\begin{align*}
+  &\langle\mathbf s(t-\tau)\otimes\mathbf s(t)\rangle = \sum_\mathbf {s^\prime} P_{\mathbf s^\prime}(t-\tau)\mathbf s^\prime\otimes\mathrm e^{-\int_{t-\tau}^t\mathbf A(\theta)d\theta}\left(\int_{t-\tau}^t\mathrm e^{\int_{t-\tau}^\xi\mathbf A(\zeta)d\zeta}\mathbf b(\xi)d\xi + \mathbf s^\prime\right),
+\end{align*}
+which can also be written as
+\begin{equation*}
+  \langle\mathbf s(t)\otimes\mathbf s(t-\tau)\rangle = \mathrm e^{-\int_{t-\tau}^t\mathbf A(\theta)d\theta}\left(\langle\mathbf s\otimes\mathbf s\rangle(t-\tau) + \int_{t-\tau}^t\mathrm e^{\int_{t-\tau}^\xi\mathbf A(\zeta)d\zeta}\mathbf b(\xi)d\xi\otimes \langle \mathbf s\rangle(t-\tau)\right),
+\end{equation*}
+where $\langle\mathbf s\rangle(t-\tau)$ and $\langle\mathbf s\otimes\mathbf s\rangle(t-\tau)$ can be found as the solutions to the ODEs (\ref{eqn:o1_ODE_}) and (\ref{eqn:o2_ODEs}) respectively.
+
+%% \begin{equation}
+%%   \langle\boldsymbol\epsilon(t)\rangle = \langle\boldsymbol\epsilon\rangle(t) = \sum_{\mathbf s, \boldsymbol\epsilon}P_\mathbf s(t)P_{\boldsymbol\epsilon|\mathbf s}(t)\boldsymbol\epsilon
+%% \end{equation}
+
+%% From (\ref{eqn:expectations_over_trajectories})
+%% \begin{equation}
+%%   \langle\mathbf s\rangle(t+dt) - \langle\mathbf s\rangle(t) = \left(\mathbf A(t)\langle\mathbf s\rangle(t) + \mathbf b(t)\right)dt.
+%% \end{equation}
+
 
 \appendix \label{app:Computational_optimisations}
+
+
 \section{Computational optimisations}
 It is important to note that gene activation/deactivation is completely independent from mRNA/protein dynamics, mRNA dynamics solely depends on gene dynamics, and protein dynamics only depends on mRNA dynamics. This allows separating the whole first-order system of linear equations to one equation corresponding to gene dynamics, 1+(number of dendritic segments) equations for mRNA dynamics and 1+(number of dendritic segments) + (number of synapses) equations for protein dynamics. In this setting, protein dynamics can be found by solving equation for gene dynamics and substituting the result to the r.h.s. of the mRNA equations, whose results should then be substituted to the r.h.s. of protein equations.
 
