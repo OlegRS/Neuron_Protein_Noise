@@ -1183,7 +1183,6 @@ which can also be written as
   \langle\mathbf s(t)\otimes\mathbf s(t-\tau)\rangle = \mathrm e^{-\int_{t-\tau}^t\mathbf A(\theta)d\theta}\left(\langle\mathbf s\otimes\mathbf s\rangle(t-\tau) + \int_{t-\tau}^t\mathrm e^{\int_{t-\tau}^\xi\mathbf A(\zeta)d\zeta}\mathbf b(\xi)d\xi\otimes \langle \mathbf s\rangle(t-\tau)\right),
 \end{equation*}
 where $\langle\mathbf s\rangle(t-\tau)$ and $\langle\mathbf s\otimes\mathbf s\rangle(t-\tau)$ can be found as the solutions to the ODEs (\ref{eqn:o1_ODE_}) and (\ref{eqn:o2_ODEs}) respectively.
-
 %% \begin{equation}
 %%   \langle\boldsymbol\epsilon(t)\rangle = \langle\boldsymbol\epsilon\rangle(t) = \sum_{\mathbf s, \boldsymbol\epsilon}P_\mathbf s(t)P_{\boldsymbol\epsilon|\mathbf s}(t)\boldsymbol\epsilon
 %% \end{equation}
@@ -1193,6 +1192,13 @@ where $\langle\mathbf s\rangle(t-\tau)$ and $\langle\mathbf s\otimes\mathbf s\ra
 %%   \langle\mathbf s\rangle(t+dt) - \langle\mathbf s\rangle(t) = \left(\mathbf A(t)\langle\mathbf s\rangle(t) + \mathbf b(t)\right)dt.
 %% \end{equation}
 
+Note that
+\begin{align*}
+  \lim_{t\to\infty}\langle\mathbf s(t)\otimes\mathbf s(t-\tau)\rangle &= \mathrm e^{-\mathbf A_\infty\tau}\left(\langle\mathbf s\otimes\mathbf s\rangle_\infty + \int_{t-\tau}^t\mathrm e^{\mathbf A_\infty(\xi-t+\tau)}d\xi\mathbf b_\infty\otimes\langle \mathbf s\rangle_\infty\right)\\
+  &= \mathrm e^{-\mathbf A_\infty\tau}\left(\langle\mathbf s\otimes\mathbf s\rangle_\infty + \left(\mathrm e^{\mathbf A_\infty\tau}-\mathbf 1\right)\mathbf A_\infty^{-1}\mathbf b_\infty\otimes\langle \mathbf s\rangle_\infty\right)\\
+  &= \mathrm e^{-\mathbf A_\infty\tau}\langle\mathbf s\otimes\mathbf s\rangle_\infty + \left(\mathbf 1 - \mathrm e^{-\mathbf A_\infty\tau}\right)\langle \mathbf s\rangle_\infty\otimes\langle \mathbf s\rangle_\infty,
+\end{align*}
+where $\infty$ in the subscript is equivalent to $\lim_{t\to\infty}$ if it exists.
 
 \appendix \label{app:Computational_optimisations}
 
