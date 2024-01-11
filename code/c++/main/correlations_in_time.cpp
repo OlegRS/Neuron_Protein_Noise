@@ -68,6 +68,12 @@ int main() {
   for(double t=0; t<t_max; t+=dt) {
     ofs_expectations << t << ',' << (expectations = ae.get_expectations()).t() << endl;
 
+    if(t==0)
+      ae.nonstationary_expectations(t+.5*dt, true, false);
+    else
+      ae.nonstationary_expectations(t+.5*dt);
+
+
     ofs_covariances << "t=" << t << endl
                     << "covariances:\n" << (covariances = ae.get_covariances()) << endl;
 
@@ -84,17 +90,12 @@ int main() {
       ofs_variances << sqrt(covariances(i,i) - expectations(i)*expectations(i)) << ',';
     ofs_variances << endl;
     
-    if(t==0)
-      ae.nonstationary_covariances_direct_ODE_solver_step(dt, true);
-    else
-      ae.nonstationary_covariances_direct_ODE_solver_step(dt);
-
-    ae.nonstationary_expectations(t, true, false);
-      
     // if(t==0)
-    //   ae.sem_nonstationary_expectations(t, true, false);
+    //   ae.nonstationary_covariances_direct_ODE_solver_step(dt, true);
     // else
-    //   ae.sem_nonstationary_expectations(t);
+    ae.nonstationary_covariances_direct_ODE_solver_step(dt);
+
+    // ae.nonstationary_expectations(t, true, false);
   }
 
   ae.stationary_expectations().stationary_covariances();

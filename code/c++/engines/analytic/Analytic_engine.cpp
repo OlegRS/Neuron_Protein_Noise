@@ -223,37 +223,6 @@ const Compartment* Analytic_engine::set_As_and_bs_soma() {
   return p_neuron->p_soma;
 }
 
-// const Compartment* Analytic_engine::set_As_and_bs_soma() {
-//   initialise_As_and_bs();
-  
-//   auto& soma = *p_neuron->p_soma;
- 
-//   arma::mat App(o1_dim,o1_dim), Amm(o1_dim,o1_dim);
-
-//   App(0,0) = -soma.gene_activation_rate;
-//   App(1,0) = soma.transcription_rate;
-//   App(2,1) = soma.translation_rate;
-
-//   Amm(0,0) = soma.gene_deactivation_rate;
-//   Amm(1,1) = -soma.mRNA_decay_rate;
-//   Amm(2,2) = -soma.protein_decay_rate;
-
-//   *p_Ap = App + Amm; // This is suboptimal, but easy to read
-//   *p_Am = App - Amm;
-  
-//   o1_var_names[0] = soma.name + "__Gene";
-//   o1_var_names[1] = soma.name + "__mRNA";
-//   o1_var_names[2] = soma.name + "__Prot";
-
-//   (*bp)(0) = (p_neuron->p_soma->gene_activation_rate) * (p_neuron->p_soma->number_of_gene_copies);
-
-//   p_o1_vars[0] = &soma.n_active_genes_expectation;
-//   p_o1_vars[1] = &soma.n_mRNA_expectation;
-//   p_o1_vars[2] = &soma.n_prot_expectation;
-  
-//   return p_neuron->p_soma;
-// }
-
 void Analytic_engine::set_As(const Compartment& parent) {
   if(parent.it_p_out_junctions.empty()) {
     return;
@@ -396,7 +365,6 @@ void Analytic_engine::set_o1_matrix(const Compartment& parent) {
     size_t& desc_start_ind = p_junc -> p_to -> o1_index;
     
     if(p_junc->type() == DEN_SYN) {
-      // o1_var_names.push_back(p_junc->p_to->name + "__Prot");
       o1_var_names[p_junc->p_to->o1_index] = p_junc->p_to->name + "__Prot";
       p_o1_vars[p_junc->p_to->o1_index] = &p_junc->p_to->n_prot_expectation;
       
@@ -406,9 +374,6 @@ void Analytic_engine::set_o1_matrix(const Compartment& parent) {
       o1_mat(desc_start_ind, desc_start_ind) -= p_junc->bkwd_prot_hop_rate;
     }
     else if(p_junc->type() == DEN_DEN) {
-      // o1_var_names.push_back(p_junc->p_to->name + "__mRNA");
-      // o1_var_names.push_back(p_junc->p_to->name + "__Prot");
-
       o1_var_names[p_junc->p_to->o1_index] = p_junc->p_to->name + "__mRNA";
       o1_var_names[p_junc->p_to->o1_index+1] = p_junc->p_to->name + "__Prot";
       p_o1_vars[p_junc->p_to->o1_index] = &p_junc->p_to->n_mRNA_expectation;
@@ -433,9 +398,6 @@ void Analytic_engine::set_o1_matrix(const Compartment& parent) {
       o1_var_names[p_junc->p_to->o1_index+1] = p_junc->p_to->name + "__Prot";
       p_o1_vars[p_junc->p_to->o1_index] = &p_junc->p_to->n_mRNA_expectation;
       p_o1_vars[p_junc->p_to->o1_index+1] = &p_junc->p_to->n_prot_expectation;
-
-      // o1_var_names.push_back(p_junc->p_to->name + "__mRNA");
-      // o1_var_names.push_back(p_junc->p_to->name + "__Prot");
       
       o1_mat(desc_start_ind, desc_start_ind) -= p_junc->p_to->mRNA_decay_rate;
       o1_mat(desc_start_ind+1, desc_start_ind) += p_junc->p_to->translation_rate;
@@ -508,7 +470,6 @@ void Analytic_engine::sem_set_o1_matrix(const Compartment& parent) {
     size_t& desc_mRNA_ind = p_junc -> p_to -> mRNA_ind;
 
     if(p_junc->type() == DEN_SYN) {
-      // o1_var_names.push_back(p_junc->p_to->name + "__Prot");
       o1_var_names[desc_prot_ind] = p_junc->p_to->name + "__Prot";
       p_o1_vars[desc_prot_ind] = &p_junc->p_to->n_prot_expectation;
       
@@ -518,9 +479,6 @@ void Analytic_engine::sem_set_o1_matrix(const Compartment& parent) {
       o1_mat(desc_prot_ind, desc_prot_ind) -= p_junc->bkwd_prot_hop_rate;
     }
     else if(p_junc->type() == DEN_DEN) {
-      // o1_var_names.push_back(p_junc->p_to->name + "__mRNA");
-      // o1_var_names.push_back(p_junc->p_to->name + "__Prot");
-
       o1_var_names[desc_mRNA_ind] = p_junc->p_to->name + "__mRNA";
       o1_var_names[desc_prot_ind] = p_junc->p_to->name + "__Prot";
       p_o1_vars[desc_mRNA_ind] = &p_junc->p_to->n_mRNA_expectation;
@@ -676,10 +634,12 @@ Analytic_engine& Analytic_engine::nonstationary_expectations(const std::list<dou
 }
 
 
-Analytic_engine& Analytic_engine::nonstationary_expectations(const double& t, const bool& matrix_reset, const bool& internalise) { 
+Analytic_engine& Analytic_engine::nonstationary_expectations(const double& t, const bool& reset_matrices, const bool& internalise) {
   
-  if(matrix_reset) // Setting o1_matrix
+  if(reset_matrices) { // Setting o1 matrix
     set_o1_matrix(*set_o1_soma());
+    set_As(*set_As_and_bs_soma());
+  }
   
   // Computing eigen decomposition
   arma::cx_vec eigval_c;
@@ -726,9 +686,9 @@ Analytic_engine& Analytic_engine::nonstationary_expectations(const double& t, co
 }
 
 
-Analytic_engine& Analytic_engine::sem_nonstationary_expectations(const double& t, const bool& matrix_reset, const bool& internalise) { 
+Analytic_engine& Analytic_engine::sem_nonstationary_expectations(const double& t, const bool& reset_matrices, const bool& internalise) { 
   
-  if(matrix_reset) // Setting o1_matrix
+  if(reset_matrices) // Setting o1_matrix
     sem_set_o1_matrix(*sem_set_o1_soma());
   
   // Computing eigen decomposition
@@ -862,13 +822,12 @@ Analytic_engine& Analytic_engine::nonstationary_covariances_direct_ODE_solver_st
   arma::mat M = (*p_Am)*(*p_cov_mat);  
   (*p_cov_mat) += (M + M.t())*dt;
 
-  (*p_cov_mat)(0,0) += 2*(*p_b)[0]*expectations[0]*dt;
-  for(size_t i=1; i<o1_dim; ++i)
+  arma::vec Aps = (*p_Ap)*expectations;  
+  (*p_cov_mat)(0,0) += ( 2*(*p_b)[0]*expectations[0] +  Aps[0] + (*p_b)[0] )*dt;
+  for(size_t i=1; i<o1_dim; ++i) {
     (*p_cov_mat)(i,0) = ((*p_cov_mat)(0,i) += ((*p_b)[0]*expectations[i])*dt);
-
-  arma::vec Aps = (*p_Ap)*expectations;
-  for(size_t i=0; i<o1_dim; ++i)
-    (*p_cov_mat)(i,i) += ( Aps[i] + (*p_b)[i] )*dt;
+    (*p_cov_mat)(i,i) += Aps[i]*dt;
+  }
 
   return *this;
 }
