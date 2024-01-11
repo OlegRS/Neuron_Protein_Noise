@@ -9,7 +9,7 @@ class Soma : public Compartment {
   friend class Gillespie_engine;
   
   // Parameters
-  unsigned int number_of_gene_copies = 3; //For CaMKIIa it is 2 (Fonkeu)
+  unsigned int number_of_gene_copies = 1; //For CaMKIIa it is 2 (Fonkeu)
   double gene_activation_rate = 1;
   double gene_deactivation_rate = 0;
 
@@ -27,7 +27,7 @@ class Soma : public Compartment {
   } gene_deactivation;
 
   double n_active_genes_expectation = gene_activation_rate/(gene_activation_rate + gene_deactivation_rate)*number_of_gene_copies;
-  unsigned int n_active_genes=0;
+  unsigned int n_active_genes=1;
   
 public:
   Soma(const std::string& name="no_name", const double& length=200) : Compartment(length, name), gene_activation(this), gene_deactivation(this) {

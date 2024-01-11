@@ -1144,11 +1144,11 @@ from where
 \begin{equation}
   \langle\mathbf s(t+dt)\otimes\mathbf s(t+dt)\rangle - \langle \mathbf s(t)\otimes\mathbf s(t)\rangle = \langle\mathbf s(t)\otimes\epsilon(t)\rangle + \langle\epsilon(t)\otimes\mathbf s(t)\rangle + \mathcal O(dt^2),
 \end{equation}
-where we used the fact that the second-order in $\epsilon(t)$ expectation is $\mathcal O(dt^2)$.
+where we used the fact that the second-order in $\epsilon(t)$ expectation is $\mathcal O(dt^2)$ \textcolor{red}{for everything except the diagonal elements}.
 
 Noticing that
 \begin{equation*}
-  \langle \mathbf s(t)\otimes\mathbf s(t)\rangle = \langle \mathbf s\otimes\mathbf s\rangle(t) \text{ and } \langle \mathbf s(t+dt)\otimes\mathbf s(t+dt)\rangle = \langle \mathbf s\otimes\mathbf s\rangle(t)
+  \langle \mathbf s(t)\otimes\mathbf s(t)\rangle = \langle \mathbf s\otimes\mathbf s\rangle(t) \text{ and } \langle \mathbf s(t+dt)\otimes\mathbf s(t+dt)\rangle = \langle \mathbf s\otimes\mathbf s\rangle(t+dt)
 \end{equation*}
 and evaluating the r.h.s. terms as 
 \begin{align*}
@@ -1161,7 +1161,7 @@ and thus
   &\langle\mathbf s(t)\otimes\epsilon(t)\rangle = \left(-\langle \mathbf s\otimes\mathbf s\rangle(t)\mathbf A^{T}(t) + \langle \mathbf s\rangle(t)\otimes \mathbf b(t)\right)dt,\\
   &\langle\epsilon(t)\otimes\mathbf s(t)\rangle = \langle\mathbf s(t)\otimes\epsilon(t)\rangle^T = \big(-\mathbf A(t)\langle \mathbf s\otimes\mathbf s\rangle(t) + \mathbf b(t)\right\otimes\langle \mathbf s\rangle(t) \big) dt.
 \end{align*}
-Finally, we arrive to the following system of ODEs
+Finally, we arrive to the following system of ODEs \textcolor{red}{for off-diagonal elements}
 \begin{equation}\label{eqn:o2_ODEs}
   \dot{\langle \mathbf s\otimes\mathbf s\rangle}(t) = -\mathbf A(t)\langle \mathbf s\otimes\mathbf s\rangle(t) -\langle \mathbf s\otimes\mathbf s\rangle(t)\mathbf A^{T}(t) + \mathbf b(t)\right\otimes\langle \mathbf s\rangle(t) + \langle\mathbf s\rangle(t)\otimes\mathbf b(t),
 \end{equation}

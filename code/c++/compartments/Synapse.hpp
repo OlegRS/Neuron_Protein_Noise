@@ -9,7 +9,7 @@ class Synapse : public Compartment {
   
   //Parameters
   double protein_binding_rate = .6; // per hour
-  double protein_unbinding_rate = 6.;
+  double protein_unbinding_rate = 6;
   
 public:
   Synapse();

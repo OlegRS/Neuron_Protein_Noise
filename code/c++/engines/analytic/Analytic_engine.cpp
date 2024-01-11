@@ -181,6 +181,179 @@ Analytic_engine& Analytic_engine::initialise_o1_mat_and_RHS() {
   return *this;
 }
 
+//////////////////////////////////////////////
+Analytic_engine& Analytic_engine::initialise_As_and_bs() {
+  clear_As_and_bs();
+
+  p_Ap = new arma::mat(o1_dim, o1_dim);
+  p_Am = new arma::mat(o1_dim, o1_dim);
+  
+  p_b = new arma::vec(o1_dim);
+  
+  return *this;
+}
+
+const Compartment* Analytic_engine::set_As_and_bs_soma() {
+  initialise_As_and_bs();
+  
+  auto& soma = *p_neuron->p_soma;
+
+  (*p_Am)(0,0) = -soma.gene_activation_rate - soma.gene_deactivation_rate;
+  (*p_Am)(1,0) = soma.transcription_rate;
+  (*p_Am)(1,1) = -soma.mRNA_decay_rate;
+  (*p_Am)(2,1) = soma.translation_rate;
+  (*p_Am)(2,2) = -soma.protein_decay_rate;
+
+  (*p_Ap)(0,0) = -soma.gene_activation_rate + soma.gene_deactivation_rate;
+  (*p_Ap)(1,0) = soma.transcription_rate;
+  (*p_Ap)(1,1) = soma.mRNA_decay_rate;
+  (*p_Ap)(2,1) = soma.translation_rate;
+  (*p_Ap)(2,2) = soma.protein_decay_rate;
+
+  o1_var_names[0] = soma.name + "__Gene";
+  o1_var_names[1] = soma.name + "__mRNA";
+  o1_var_names[2] = soma.name + "__Prot";
+
+  p_o1_vars[0] = &soma.n_active_genes_expectation;
+  p_o1_vars[1] = &soma.n_mRNA_expectation;
+  p_o1_vars[2] = &soma.n_prot_expectation;
+
+  (*p_b)(0) = (p_neuron->p_soma->gene_activation_rate) * (p_neuron->p_soma->number_of_gene_copies);
+  
+  return p_neuron->p_soma;
+}
+
+// const Compartment* Analytic_engine::set_As_and_bs_soma() {
+//   initialise_As_and_bs();
+  
+//   auto& soma = *p_neuron->p_soma;
+ 
+//   arma::mat App(o1_dim,o1_dim), Amm(o1_dim,o1_dim);
+
+//   App(0,0) = -soma.gene_activation_rate;
+//   App(1,0) = soma.transcription_rate;
+//   App(2,1) = soma.translation_rate;
+
+//   Amm(0,0) = soma.gene_deactivation_rate;
+//   Amm(1,1) = -soma.mRNA_decay_rate;
+//   Amm(2,2) = -soma.protein_decay_rate;
+
+//   *p_Ap = App + Amm; // This is suboptimal, but easy to read
+//   *p_Am = App - Amm;
+  
+//   o1_var_names[0] = soma.name + "__Gene";
+//   o1_var_names[1] = soma.name + "__mRNA";
+//   o1_var_names[2] = soma.name + "__Prot";
+
+//   (*bp)(0) = (p_neuron->p_soma->gene_activation_rate) * (p_neuron->p_soma->number_of_gene_copies);
+
+//   p_o1_vars[0] = &soma.n_active_genes_expectation;
+//   p_o1_vars[1] = &soma.n_mRNA_expectation;
+//   p_o1_vars[2] = &soma.n_prot_expectation;
+  
+//   return p_neuron->p_soma;
+// }
+
+void Analytic_engine::set_As(const Compartment& parent) {
+  if(parent.it_p_out_junctions.empty()) {
+    return;
+  }
+
+  for(auto& it_p_junc : parent.it_p_out_junctions) {
+    auto& p_junc = *it_p_junc;
+    
+    size_t& parent_start_ind = p_junc -> p_from -> o1_index;
+    size_t& desc_start_ind = p_junc -> p_to -> o1_index;
+    
+    if(p_junc->type() == DEN_SYN) {
+      o1_var_names[p_junc->p_to->o1_index] = p_junc->p_to->name + "__Prot";
+      p_o1_vars[p_junc->p_to->o1_index] = &p_junc->p_to->n_prot_expectation;
+      
+      (*p_Am)(parent_start_ind+1, parent_start_ind+1) -= p_junc->fwd_prot_hop_rate;
+      (*p_Am)(parent_start_ind+1, desc_start_ind) += p_junc->bkwd_prot_hop_rate;
+      (*p_Am)(desc_start_ind, parent_start_ind+1) += p_junc->fwd_prot_hop_rate;
+      (*p_Am)(desc_start_ind, desc_start_ind) -= p_junc->bkwd_prot_hop_rate;
+
+      (*p_Ap)(parent_start_ind+1, parent_start_ind+1) += p_junc->fwd_prot_hop_rate;
+      (*p_Ap)(parent_start_ind+1, desc_start_ind) += p_junc->bkwd_prot_hop_rate;
+      (*p_Ap)(desc_start_ind, parent_start_ind+1) += p_junc->fwd_prot_hop_rate;
+      (*p_Ap)(desc_start_ind, desc_start_ind) += p_junc->bkwd_prot_hop_rate;
+    }
+    else if(p_junc->type() == DEN_DEN) {
+      o1_var_names[p_junc->p_to->o1_index] = p_junc->p_to->name + "__mRNA";
+      o1_var_names[p_junc->p_to->o1_index+1] = p_junc->p_to->name + "__Prot";
+      p_o1_vars[p_junc->p_to->o1_index] = &p_junc->p_to->n_mRNA_expectation;
+      p_o1_vars[p_junc->p_to->o1_index+1] = &p_junc->p_to->n_prot_expectation;
+
+      (*p_Am)(desc_start_ind, desc_start_ind) -= p_junc->p_to->mRNA_decay_rate;
+      (*p_Am)(desc_start_ind+1, desc_start_ind) += p_junc->p_to->translation_rate;
+      (*p_Am)(desc_start_ind+1, desc_start_ind+1) -= p_junc->p_to->protein_decay_rate;
+      (*p_Am)(parent_start_ind, parent_start_ind) -= p_junc->fwd_mRNA_hop_rate;
+      (*p_Am)(parent_start_ind, desc_start_ind) += p_junc->bkwd_mRNA_hop_rate;
+      (*p_Am)(desc_start_ind, parent_start_ind) += p_junc->fwd_mRNA_hop_rate;
+      (*p_Am)(desc_start_ind, desc_start_ind) -= p_junc->bkwd_mRNA_hop_rate;
+      (*p_Am)(parent_start_ind+1, parent_start_ind+1) -= p_junc->fwd_prot_hop_rate;
+      (*p_Am)(parent_start_ind+1, desc_start_ind+1) += p_junc->bkwd_prot_hop_rate;
+      (*p_Am)(desc_start_ind+1, parent_start_ind+1) += p_junc->fwd_prot_hop_rate;
+      (*p_Am)(desc_start_ind+1, desc_start_ind+1) -= p_junc->bkwd_prot_hop_rate;
+
+      (*p_Ap)(desc_start_ind, desc_start_ind) += p_junc->p_to->mRNA_decay_rate;
+      (*p_Ap)(desc_start_ind+1, desc_start_ind) += p_junc->p_to->translation_rate;
+      (*p_Ap)(desc_start_ind+1, desc_start_ind+1) += p_junc->p_to->protein_decay_rate;
+      (*p_Ap)(parent_start_ind, parent_start_ind) += p_junc->fwd_mRNA_hop_rate;
+      (*p_Ap)(parent_start_ind, desc_start_ind) += p_junc->bkwd_mRNA_hop_rate;
+      (*p_Ap)(desc_start_ind, parent_start_ind) += p_junc->fwd_mRNA_hop_rate;
+      (*p_Ap)(desc_start_ind, desc_start_ind) += p_junc->bkwd_mRNA_hop_rate;
+      (*p_Ap)(parent_start_ind+1, parent_start_ind+1) += p_junc->fwd_prot_hop_rate;
+      (*p_Ap)(parent_start_ind+1, desc_start_ind+1) += p_junc->bkwd_prot_hop_rate;
+      (*p_Ap)(desc_start_ind+1, parent_start_ind+1) += p_junc->fwd_prot_hop_rate;
+      (*p_Ap)(desc_start_ind+1, desc_start_ind+1) += p_junc->bkwd_prot_hop_rate;
+    }
+    else if(p_junc->type() == SOM_DEN) {
+      o1_var_names[p_junc->p_to->o1_index] = p_junc->p_to->name + "__mRNA";
+      o1_var_names[p_junc->p_to->o1_index+1] = p_junc->p_to->name + "__Prot";
+      p_o1_vars[p_junc->p_to->o1_index] = &p_junc->p_to->n_mRNA_expectation;
+      p_o1_vars[p_junc->p_to->o1_index+1] = &p_junc->p_to->n_prot_expectation;
+      
+      (*p_Am)(desc_start_ind, desc_start_ind) -= p_junc->p_to->mRNA_decay_rate;
+      (*p_Am)(desc_start_ind+1, desc_start_ind) += p_junc->p_to->translation_rate;
+      (*p_Am)(desc_start_ind+1, desc_start_ind+1) -= p_junc->p_to->protein_decay_rate;
+      (*p_Am)(parent_start_ind+1, parent_start_ind+1) -= p_junc->fwd_mRNA_hop_rate;
+      (*p_Am)(parent_start_ind+1, desc_start_ind) += p_junc->bkwd_mRNA_hop_rate;
+      (*p_Am)(desc_start_ind, parent_start_ind+1) += p_junc->fwd_mRNA_hop_rate;
+      (*p_Am)(desc_start_ind, desc_start_ind) -= p_junc->bkwd_mRNA_hop_rate;
+      (*p_Am)(parent_start_ind+2, parent_start_ind+2) -= p_junc->fwd_prot_hop_rate;
+      (*p_Am)(parent_start_ind+2, desc_start_ind+1) += p_junc->bkwd_prot_hop_rate;
+      (*p_Am)(desc_start_ind+1, parent_start_ind+2) += p_junc->fwd_prot_hop_rate;
+      (*p_Am)(desc_start_ind+1, desc_start_ind+1) -= p_junc->bkwd_prot_hop_rate;
+
+      (*p_Ap)(desc_start_ind, desc_start_ind) += p_junc->p_to->mRNA_decay_rate;
+      (*p_Ap)(desc_start_ind+1, desc_start_ind) += p_junc->p_to->translation_rate;
+      (*p_Ap)(desc_start_ind+1, desc_start_ind+1) += p_junc->p_to->protein_decay_rate;
+      (*p_Ap)(parent_start_ind+1, parent_start_ind+1) += p_junc->fwd_mRNA_hop_rate;
+      (*p_Ap)(parent_start_ind+1, desc_start_ind) += p_junc->bkwd_mRNA_hop_rate;
+      (*p_Ap)(desc_start_ind, parent_start_ind+1) += p_junc->fwd_mRNA_hop_rate;
+      (*p_Ap)(desc_start_ind, desc_start_ind) += p_junc->bkwd_mRNA_hop_rate;
+      (*p_Ap)(parent_start_ind+2, parent_start_ind+2) += p_junc->fwd_prot_hop_rate;
+      (*p_Ap)(parent_start_ind+2, desc_start_ind+1) += p_junc->bkwd_prot_hop_rate;
+      (*p_Ap)(desc_start_ind+1, parent_start_ind+2) += p_junc->fwd_prot_hop_rate;
+      (*p_Ap)(desc_start_ind+1, desc_start_ind+1) += p_junc->bkwd_prot_hop_rate;
+
+    }
+    else {
+      std::cerr << "-----------------------------------------\n"
+                << "ERROR: UNKNOWN TYPE JUNCTION FOUND\n"
+                << "-----------------------------------------\n";
+      exit(1);
+    }
+  }
+
+  for(auto& it_p_junc : parent.it_p_out_junctions)
+    set_As(*((*it_p_junc)->p_to));
+}
+
+//////////////////////////////////////////////
+
 const Compartment* Analytic_engine::set_o1_soma() {
   initialise_o1_mat_and_RHS();
   
@@ -503,6 +676,105 @@ Analytic_engine& Analytic_engine::nonstationary_expectations(const std::list<dou
 }
 
 
+Analytic_engine& Analytic_engine::nonstationary_expectations(const double& t, const bool& matrix_reset, const bool& internalise) { 
+  
+  if(matrix_reset) // Setting o1_matrix
+    set_o1_matrix(*set_o1_soma());
+  
+  // Computing eigen decomposition
+  arma::cx_vec eigval_c;
+  arma::vec eigval(o1_dim);
+  arma::cx_mat eigvec_c;
+  arma::mat tm(o1_dim, o1_dim); // Transition matrix
+  arma::eig_gen(eigval_c, eigvec_c, (-*p_o1_mat));
+  
+  for(size_t i=0; i<o1_dim; ++i) {
+    eigval(i) = eigval_c(i).real();
+    for(size_t j=0; j<o1_dim; ++j)
+      tm(i,j) = eigvec_c(i,j).real();
+  }
+
+  // Inverting transition matrix
+  arma::mat inv_tm = tm.i(); // Transition matrix
+        
+  arma::vec stationary_expectations(o1_dim);
+  // Computing stationary part
+  for(size_t i=0; i<o1_dim; ++i) {
+    double sum = 0;
+    for(size_t k=0; k<o1_dim; ++k)
+      sum += 1/eigval[k]*tm(i,k)*inv_tm(k,0);
+    stationary_expectations(i) = (p_neuron->p_soma->gene_activation_rate)*(p_neuron->p_soma->number_of_gene_copies)*sum;
+  }
+
+  // Setting integrals of motion c = G(0) - A*b, where G(0)=0 for now
+  arma::vec c = 0 - stationary_expectations;
+
+  arma::vec l_sum(o1_dim); // Precomputed l_sum
+  for(size_t k=0; k<o1_dim; ++k)
+    for(size_t l=0; l<o1_dim; ++l)
+      l_sum(k) += inv_tm(k,l)*c(l);
+
+  
+  for(size_t i=0; i<o1_dim; ++i) {
+    double k_sum = 0;
+    for(size_t k=0; k<o1_dim; ++k)
+      k_sum += exp(-eigval(k)*t) * tm(i,k) * l_sum(k);
+    expectations(i) = stationary_expectations(i) + k_sum;
+  }
+  
+  return internalise ? internalise_expectations() : *this;
+}
+
+
+Analytic_engine& Analytic_engine::sem_nonstationary_expectations(const double& t, const bool& matrix_reset, const bool& internalise) { 
+  
+  if(matrix_reset) // Setting o1_matrix
+    sem_set_o1_matrix(*sem_set_o1_soma());
+  
+  // Computing eigen decomposition
+  arma::cx_vec eigval_c;
+  arma::vec eigval(o1_dim);
+  arma::cx_mat eigvec_c;
+  arma::mat tm(o1_dim, o1_dim); // Transition matrix
+  arma::eig_gen(eigval_c, eigvec_c, (-*p_o1_mat));
+  
+  for(size_t i=0; i<o1_dim; ++i) {
+    eigval(i) = eigval_c(i).real();
+    for(size_t j=0; j<o1_dim; ++j)
+      tm(i,j) = eigvec_c(i,j).real();
+  }
+
+  // Inverting transition matrix
+  arma::mat inv_tm = tm.i(); // Transition matrix
+        
+  arma::vec stationary_expectations(o1_dim);
+  // Computing stationary part
+  for(size_t i=0; i<o1_dim; ++i) {
+    double sum = 0;
+    for(size_t k=0; k<o1_dim; ++k)
+      sum += 1/eigval[k]*tm(i,k)*inv_tm(k,0);
+    stationary_expectations(i) = (p_neuron->p_soma->gene_activation_rate)*(p_neuron->p_soma->number_of_gene_copies)*sum;
+  }
+
+  // Setting integrals of motion c = G(0) - A*b, where G(0)=0 for now
+  arma::vec c = 0 - stationary_expectations;
+
+  arma::vec l_sum(o1_dim); // Precomputed l_sum
+  for(size_t k=0; k<o1_dim; ++k)
+    for(size_t l=0; l<o1_dim; ++l)
+      l_sum(k) += inv_tm(k,l)*c(l);
+
+  
+  for(size_t i=0; i<o1_dim; ++i) {
+    double k_sum = 0;
+    for(size_t k=0; k<o1_dim; ++k)
+      k_sum += exp(-eigval(k)*t) * tm(i,k) * l_sum(k);
+    expectations(i) = stationary_expectations(i) + k_sum;
+  }
+  
+  return internalise ? internalise_expectations() : *this;
+}
+
 Analytic_engine& Analytic_engine::sem_nonstationary_expectations(const std::list<double>& times) { //const Neuron& neur) {
   
   std::cerr << "Setting o1_matrix...\n";
@@ -566,6 +838,70 @@ Analytic_engine& Analytic_engine::sem_nonstationary_expectations(const std::list
 
   return internalise_expectations();
 }
+
+
+
+//////////////////////////////
+Analytic_engine& Analytic_engine::nonstationary_expectations_direct_ODE_solver_step(const double& dt, const bool& reset_matrices, const bool& internalise) {
+  if(reset_matrices) // Setting o1 matrix
+    set_As(*set_As_and_bs_soma());
+
+  expectations += ((*p_Am)*expectations + (*p_b))*dt;
+  
+  return internalise ? internalise_expectations() : *this;
+}
+
+Analytic_engine& Analytic_engine::nonstationary_covariances_direct_ODE_solver_step(const double& dt, const bool& reset_matrices) {
+  if(reset_matrices) //{// Setting o1 matrix
+    set_As(*set_As_and_bs_soma());
+  //   std::cerr << "Ap:\n" << *p_Ap << std::endl
+  //             << "Am:\n" << *p_Am << std::endl
+  //             << "b:\n" << (*p_b).t() << std::endl;
+  // }
+  
+  arma::mat M = (*p_Am)*(*p_cov_mat);  
+  (*p_cov_mat) += (M + M.t())*dt;
+
+  (*p_cov_mat)(0,0) += 2*(*p_b)[0]*expectations[0]*dt;
+  for(size_t i=1; i<o1_dim; ++i)
+    (*p_cov_mat)(i,0) = ((*p_cov_mat)(0,i) += ((*p_b)[0]*expectations[i])*dt);
+
+  arma::vec Aps = (*p_Ap)*expectations;
+  for(size_t i=0; i<o1_dim; ++i)
+    (*p_cov_mat)(i,i) += ( Aps[i] + (*p_b)[i] )*dt;
+
+  return *this;
+}
+
+Analytic_engine& Analytic_engine::sem_nonstationary_expectations_direct_ODE_solver_step(const double& dt, const bool& reset_matrices, const bool& internalise) {
+  if(reset_matrices) // Setting o1 matrix
+    sem_set_o1_matrix(*sem_set_o1_soma());
+
+  expectations += ((*p_o1_mat)*expectations - (*p_o1_RHS))*dt;
+  
+  return internalise ? internalise_expectations() : *this;
+}
+
+Analytic_engine& Analytic_engine::sem_nonstationary_covariances_direct_ODE_solver_step(const double& dt, const bool& reset_matrices) {
+  if(reset_matrices) // Setting o1 matrix
+    sem_set_o1_matrix(*sem_set_o1_soma());
+  
+  arma::mat M = (*p_o1_mat)*(*p_cov_mat);  
+  (*p_cov_mat) += (M + M.t())*dt;
+
+  (*p_cov_mat)(0,0) -= 2*(*p_o1_RHS)[0]*expectations[0]*dt;
+  for(size_t i=1; i<o1_dim; ++i)
+    (*p_cov_mat)(i,0) = ((*p_cov_mat)(0,i) -= ((*p_o1_RHS)[0]*expectations[i])*dt);
+
+  arma::vec As = (*p_o1_mat)*expectations;
+  for(size_t i=0; i<o1_dim; ++i)
+    (*p_cov_mat)(i,i) += ( As[i] - (*p_o1_RHS)[i] )*dt;
+
+  return *this;
+}
+//////////////////////////////
+
+
 
 Analytic_engine& Analytic_engine::nonstationary_covariances(const std::list<double>& times, arma::vec* initial_G1, arma::vec* initial_G2) {
   std::cerr << "Setting o1_matrix...\n";
@@ -2110,8 +2446,25 @@ Analytic_engine& Analytic_engine::clear_o1_mat_and_RHS() {
   return *this;
 }
 
+Analytic_engine& Analytic_engine::clear_As_and_bs() {
+  if(p_Ap) {
+    delete p_Ap;
+    p_Ap = NULL;
+  }
+  if(p_Am) {
+    delete p_Am;
+    p_Am = NULL;
+  }
+  if(p_b) {
+    delete p_b;
+    p_b = NULL;
+  }
+  return *this;
+}
+
 Analytic_engine& Analytic_engine::clear_o1() {
   clear_o1_mat_and_RHS();
+  clear_As_and_bs();
   // Other stuff like o1_var_names that is now in stack
   return *this;
 }

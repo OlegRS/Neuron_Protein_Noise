@@ -12,13 +12,13 @@ using namespace std;
 void fork_dendrite(Dendritic_segment* ds, size_t depth=0) {
   if (depth < N_FORKS) {
     auto ds1 = new Dendritic_segment(*ds, ds->get_name() + "-1");
-    // new Synapse(*ds1, "s_" + ds1->get_name() + "_1");
-    // new Synapse(*ds1, "s_" + ds1->get_name() + "_2");
+    new Synapse(*ds1, "s_" + ds1->get_name() + "_1");
+    new Synapse(*ds1, "s_" + ds1->get_name() + "_2", .6, 6 + .01);
     fork_dendrite(ds1, depth+1);
 
     auto ds2 = new Dendritic_segment(*ds, ds->get_name() + "-2");
-    // new Synapse(*ds2, "s_" + ds2->get_name() + "_1");
-    // new Synapse(*ds2, "s_" + ds2->get_name() + "_2", .6, 6 + .00000001);
+    new Synapse(*ds2, "s_" + ds2->get_name() + "_1");
+    new Synapse(*ds2, "s_" + ds2->get_name() + "_2", .6, 6 + .02);
     fork_dendrite(ds2, depth+1);
   }
 }
@@ -39,17 +39,17 @@ int main() {
   // }
 
 
-  // ///// Branching neuron
-  // Dendritic_segment* p_ds = new Dendritic_segment(soma, "d_1");
-  // // new Synapse(*p_ds, "s_1_1");
-  // // new Synapse(*p_ds, "s_1_2");
+  ///// Branching neuron
+  Dendritic_segment* p_ds = new Dendritic_segment(soma, "d_1");
+  new Synapse(*p_ds, "s_1_1", .6, 6 + .03);
+  new Synapse(*p_ds, "s_1_2", .6, 6 + .04);
 
-  // fork_dendrite(p_ds);
+  fork_dendrite(p_ds);
 
 
   Neuron neuron(soma, "Test_neuron");
   
-  // cout << neuron << endl;
+  cout << neuron << endl;
 
 
   // cout << "----------------- ANALYTIC ENGINE -----------------\n";
@@ -70,6 +70,7 @@ int main() {
   // ae.sem_stationary_expectations().sem_stationary_covariances();
   arma::vec G2_init(ae.o2_dimension()); //= *ae.G2();
   arma::vec G1_init(ae.o1_dimension());// = *ae.G1();
+  G1_init[0] = 1;
   // soma.set_gene_activation_rate(1).set_gene_deactivation_rate(0);//.set_transcription_rate(10);
 
   // std::list<double> times;
@@ -78,11 +79,11 @@ int main() {
 
   std::list<double> times;
   for(size_t i=0; i<100000; ++i)
-    times.push_back(i*.01);
+    times.push_back(i*.1);
 
 
   // Analytic_engine(neuron).sem_nonstationary_expectations(times);
-
+  
   // ae.sem_stationary_expectations();
   // ae.stationary_covariances();
 
@@ -99,7 +100,7 @@ int main() {
   // ae.sem_nonstationary_covariances(times, &G1_init, &G2_init);
   // ae.sem_nonstationary_covariances_using_integral(times, &G1_init, &G2_init);
   // ae.sem_nonstationary_covariances_direct_ODE_solver(times, &G1_init, &G2_init);
-  ae.sem_nonstationary_covariances_direct_ODE_solver_no_D_matrix(times, &G1_init, &G2_init);
+  // ae.sem_nonstationary_covariances_direct_ODE_solver_no_D_matrix(times, &G1_init, &G2_init);
 
   // ae.sem_nonstationary_expectations(times);
   
