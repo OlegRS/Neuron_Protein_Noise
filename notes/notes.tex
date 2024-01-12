@@ -954,7 +954,7 @@ Some preliminary results for stationary problem are shown in Figs.\ref{fig:3_bra
 \section{Nonstationary problem}
 \subsection{First order}\label{subsec:o1_nonstat_problem}
 In this section we no longer assume stationarity and consider the dynamics of the expectations. When in the PDE for the generating function the coefficients corresponding to certain $x$ are collected and equated, in first order one gets the following nonhomogeneous linear system of first-order ODEs
-\begin{equation}
+\begin{equation}\label{o1_system}
 \frac{d\boldsymbol{\mathcal G}^{(1)}(t)}{dt} = -\mathbf A \boldsymbol{\mathcal G}^{(1)}(t) + \mathbf b,
 \end{equation}
 whose general solution is given by
@@ -1025,7 +1025,7 @@ The comparison of the above predictions with the results of the corresponding Gi
   \label{fig:Gillespie_simulation}
 \end{figure}
 
-\subsection{Second order}
+\subsection{Second order}\label{subsec:NSC_second_order}
 When in the PDE for the generating function the coefficients corresponding to certain pairs $x_ix_j$ are collected and equated, one gets an nonhomogeneous linear system of first-order ODEs for $\boldsymbol{\mathcal G^{(2)}}$ of the form\footnote{Note that when the matrices are constructed using the results of Section \ref{subsubsec:2nd_order_expansions}, the combinatorial factor of 2 from the definition of $\boldsymbol{\mathcal G}^{(2)}$ by asymptotic expansion (\ref{eqn:basic_expansion}) needs to be taken into account.}
 \begin{equation}\label{o2_nonstat_ODE}
   \frac{d\boldsymbol{\mathcal G}^{(2)}(t)}{dt} = \mathbf D\boldsymbol{\mathcal G}^{(1)}(t) - \mathbf C\boldsymbol{\mathcal G}^{(2)}(t),
@@ -1097,7 +1097,7 @@ which corresponds to a situation where some dynamical modes of $\boldsymbol{\mat
 
 The initial conditions $\boldsymbol{\mathcal G}^{(1)}(t=0)$ and $\boldsymbol{\mathcal G}^{(2)}(t=0)$ should be set in a way consistent with some underlying probability distribution from which these quantities can arise. It is necessary (and, possibly, sufficient) to check that the covariance matrix is positive semi-definite.
 
-\section{Alternative derivation}
+\section{Moment ODEs from averaging over trajectories}
 Suppose
 \begin{equation}\label{eqn:s_next}
   \mathbf s(t+dt) = \mathbf s(t) + \boldsymbol\epsilon(t),
@@ -1106,11 +1106,13 @@ where $\boldsymbol\epsilon(t)$ is the noise given by
 \begin{equation*}
   \epsilon_i(t) = 
   \begin{dcases}
-    1 \text{ with probability } P_{\epsilon_i=1 | \mathbf s}(t, dt) = \left(-\sum_{j}A_{ij}(t)s_j+b_i(t)\right)dt;\\
+    1 \text{ with probability } P_{\epsilon_i=1 | \mathbf s}(t, dt) = \left(\sum_j\mathcal A^+_{ij}(t)s_j+r^+_i(t)\right)dt;\\
+    -1 \text{ with probability } P_{\epsilon_i=-1 | \mathbf s}(t, dt) = \left(\sum_j\mathcal A^-_{ij}(t)s_j+r^-_i(t)\right)dt;\\
     0 \text{ otherwise}.
   \end{dcases}
 \end{equation*}
-In equation (\ref{eqn:s_next}), taking $s(t)$ to the left and averaging over trajectories gives
+\subsection{First order}
+In equation (\ref{eqn:s_next}), taking $s(t)$ to the l.h.s. and averaging over trajectories gives
 \begin{equation}\label{eqn:expectations_over_trajectories}
   \langle\mathbf s(t+dt)\rangle - \langle\mathbf s(t)\rangle = \langle\boldsymbol\epsilon(t)\rangle.
 \end{equation}
@@ -1120,14 +1122,18 @@ Here and below we assume that at time $t$, the probability of state $\mathbf s$ 
 \end{equation}
 is the expectation computed with this probability, while $\langle \mathbf s(t)\rangle$ is the expectation computed over the trajectories.
 
-\begin{equation}
-  \langle\epsilon_i(t)\rangle =   \langle\epsilon_i\rangle(t) = \sum_{\mathbf s}\sum_{\epsilon=0}^1P_{\mathbf s}(t)P_{\epsilon_i=\epsilon|\mathbf s}\epsilon = \sum_{\mathbf s}P_{\mathbf s}(t)\left(-\sum_{j}A_{ij}(t)s_j+b_i(t)\right)dt,
-\end{equation}
+\begin{align*}
+  &\langle\epsilon_i(t)\rangle = \langle\epsilon_i\rangle(t) = \sum_{\mathbf s}\sum_{\epsilon=-1}^1P_{\mathbf s}(t)P_{\epsilon_i=\epsilon|\mathbf s}\epsilon\\
+  &= \sum_{\mathbf s}P_{\mathbf s}(t)\left(\sum_{j}\mathcal A^+_{ij}(t)s_j+r^+_i(t) - \sum_{j}\mathcal A^-_{ij}(t)s_j-r^-_i(t)\right)dt\\
+  &= \sum_{\mathbf s}P_{\mathbf s}(t)\left(\sum_{j}\left(\mathcal A^+_{ij}(t)-\mathcal A^-_{ij}(t)\right)s_j + r^+_i(t) - r^-_i(t)\right)dt,
+\end{align*}
 from where
 \begin{equation}
-  \langle\boldsymbol \epsilon(t)\rangle = \left(-\mathbf A(t)\langle \mathbf s\rangle(t) + \mathbf b(t)\right)dt,
+  \langle\boldsymbol \epsilon(t)\rangle = \left(\mathbf A^-(t)\langle \mathbf s\rangle(t) + \mathbf r^-(t)\right)dt,
 \end{equation}
-and thus
+with $\mathbf A^- \equiv \boldsymbol{\mathcal A}^+(t)- \boldsymbol{\mathcal A}^-(t)$ and $\mathbf b^-(t) \equiv \mathbf r^+(t) - \mathbf r^-(t)$. (Note that $\mathbf A^- = -(\mathbf A\text{ from Section \ref{subsec:o1_nonstat_problem})}$ while $\mathbf b^-(t) = (\mathbf b\text{ from Section \ref{subsec:o1_nonstat_problem})}$.)
+
+Finally, we arrive to the following system of ODEs for the expectations\footnote{Same as (\ref{o1_system}).}
 \begin{equation}\label{eqn:o1_ODE_}
   \dot{\langle\mathbf s\rangle}(t) = -\mathbf A(t)\langle \mathbf s\rangle(t) + \mathbf b(t),
 \end{equation}
@@ -1135,54 +1141,84 @@ whose general solution is given by
 \begin{equation}\label{eqn:general_solution_for_expectations}
   \langle\mathbf s\rangle(t) = \mathrm e^{-\int_0^t\mathbf A(\theta)d\theta}\left(\int_0^t\mathrm e^{\int_0^\xi\mathbf A(\zeta)d\zeta}\mathbf b(\xi)d\xi + \langle\mathbf s\rangle(t=0)\right).
 \end{equation}
+Note that it may be easier to integrate the system of ODEs (\ref{eqn:o1_ODE_}) iteratively rather than computing its exact solution (\ref{eqn:general_solution_for_expectations}).
 
+\subsection{Second order}
 The second moments can be obtained as follows.
-\begin{equation*}
-  \mathbf s(t+dt)\otimes\mathbf s(t+dt) = (\mathbf s(t)+\epsilon(t))\otimes(\mathbf s(t)+\epsilon(t)) = \mathbf s(t)\otimes\mathbf s(t) + \mathbf s(t)\otimes\epsilon(t) + \epsilon(t)\otimes\mathbf s(t) + \epsilon(t)\otimes\epsilon(t),
-\end{equation*}
-from where
-\begin{equation}
-  \langle\mathbf s(t+dt)\otimes\mathbf s(t+dt)\rangle - \langle \mathbf s(t)\otimes\mathbf s(t)\rangle = \langle\mathbf s(t)\otimes\epsilon(t)\rangle + \langle\epsilon(t)\otimes\mathbf s(t)\rangle + \mathcal O(dt^2),
-\end{equation}
-where we used the fact that the second-order in $\epsilon(t)$ expectation is $\mathcal O(dt^2)$ \textcolor{red}{for everything except the diagonal elements}.
 
-Noticing that
+Consider the product $s_i(t+dt)s_j(t+dt)$, which using the expression (\ref{eqn:s_next}) can be written as follows
 \begin{equation*}
-  \langle \mathbf s(t)\otimes\mathbf s(t)\rangle = \langle \mathbf s\otimes\mathbf s\rangle(t) \text{ and } \langle \mathbf s(t+dt)\otimes\mathbf s(t+dt)\rangle = \langle \mathbf s\otimes\mathbf s\rangle(t+dt)
+  s_i(t+dt)s_j(t+dt) = (s_i(t) + \epsilon_i(t))(s_j(t) + \epsilon_j(t)) = s_i(t)s_j(t) + s_i(t)\epsilon_j(t) + \epsilon_i(t)s_j(t) + \epsilon_i(t)\epsilon_j(t).
 \end{equation*}
-and evaluating the r.h.s. terms as 
-\begin{align*}
-  & \langle\mathbf s(t)\otimes\epsilon(t)\rangle_{ij} = \langle s_i(t)\epsilon_j(t)\rangle = \sum_{\mathbf s}\sum_{\epsilon=0}^1P_{\mathbf s}(t)P_{\epsilon_j=\epsilon|\mathbf s}(t)s_i\epsilon = \sum_{\mathbf s}P_{\mathbf s}(t)s_i\sum_{\epsilon=0}^1P_{\epsilon_j=\epsilon|\mathbf s}(t)\epsilon \\
-  & =\sum_{\mathbf s}P_{\mathbf s}(t) s_i\left(-\sum_{k}A_{jk}(t)s_k+b_j(t)\right)dt = \left(-\sum_{k}\langle s_i s_k\rangle(t) A_{jk}(t) + \langle s_i\rangle(t)b_j(t)\right)dt\\
-  & =\left(-\langle \mathbf s\otimes\mathbf s\rangle(t)\mathbf A^{T}(t) + \langle \mathbf s\rangle(t)\otimes \mathbf b(t)\right)_{ij}dt,
+Averaging the above equation over trajectories gives
+\begin{equation*}
+  \langle s_i(t+dt)s_j(t+dt)\rangle  = \langle s_i(t)s_j(t)\rangle + \langle s_i(t)\epsilon_j(t)\rangle + \langle\epsilon_i(t)s_j(t)\rangle + \langle\epsilon_i(t)\epsilon_j(t)\rangle.
+\end{equation*}
+In the above expression different terms can be computed as
+\begin{align*}\small
+  &\langle s_i(t)s_j(t)\rangle = \langle s_is_j\rangle(t);\\
+  &\langle\epsilon_i(t) s_j(t)\rangle = \langle\epsilon_i s_{j}\rangle(t) = \sum_{\mathbf s}\sum_{\epsilon=-1}^1P_{\mathbf s}(t)P_{\epsilon_i=\epsilon|\mathbf s}(t,dt)\epsilon s_{j} = \langle s_{j}\left(\sum_{k}A^-_{ik}(t)s_k + b^-_i(t)\right)dt\rangle\\
+  &= \left(\sum_kA^-_{ik}\langle s_ks_j\rangle + \langle s_j\rangle b^-_i(t)\right);\\
+  &\langle s_i(t)\epsilon_j(t)\rangle = \langle s_i\epsilon_j\rangle(t) = \sum_{\mathbf s}\sum_{\epsilon=-1}^1P_{\mathbf s}(t)P_{\epsilon_j=\epsilon|\mathbf s}(t,dt)s_i\epsilon = \langle s_i\left(\sum_{k}A^-_{jk}(t)s_k + b^-_j(t)\right)dt\rangle\\
+  &= \left(\sum_kA^-_{jk}\langle s_ks_i\rangle + \langle s_i\rangle b^-_j(t)\right)dt;\\
+  &\langle\epsilon_i(t)\epsilon_j(t)\rangle = \langle\epsilon_i\epsilon_j\rangle(t) = \delta_{ij}\sum_{\mathbf s}\sum_{\epsilon=-1}^1P_{\mathbf s}(t)P_{\epsilon_i=\epsilon|\mathbf s}(t,dt)\epsilon^2 + (1-\delta_{ij})\mathcal O(dt^2)\\
+  & = \delta_{ij}\left[\sum_kA^+_{ik}\langle s_k\rangle + b^+_i\right] + \mathcal O(dt^2),
 \end{align*}
-and thus
-\begin{align*}
-  &\langle\mathbf s(t)\otimes\epsilon(t)\rangle = \left(-\langle \mathbf s\otimes\mathbf s\rangle(t)\mathbf A^{T}(t) + \langle \mathbf s\rangle(t)\otimes \mathbf b(t)\right)dt,\\
-  &\langle\epsilon(t)\otimes\mathbf s(t)\rangle = \langle\mathbf s(t)\otimes\epsilon(t)\rangle^T = \big(-\mathbf A(t)\langle \mathbf s\otimes\mathbf s\rangle(t) + \mathbf b(t)\right\otimes\langle \mathbf s\rangle(t) \big) dt.
-\end{align*}
-Finally, we arrive to the following system of ODEs \textcolor{red}{for off-diagonal elements}
-\begin{equation}\label{eqn:o2_ODEs}
-  \dot{\langle \mathbf s\otimes\mathbf s\rangle}(t) = -\mathbf A(t)\langle \mathbf s\otimes\mathbf s\rangle(t) -\langle \mathbf s\otimes\mathbf s\rangle(t)\mathbf A^{T}(t) + \mathbf b(t)\right\otimes\langle \mathbf s\rangle(t) + \langle\mathbf s\rangle(t)\otimes\mathbf b(t),
-\end{equation}
-which is consistent with expressions (11) and (12) from \cite{PAULSSON2005157}.
+where in the evaluation of $\langle\epsilon_i\epsilon_j\rangle$ we used the fact that the probability of it being nonzero is $\mathcal O(dt^2)$ whenever $i\neq j$.
 
-Note that the system of ODEs (\ref{eqn:o2_ODEs}) is equivalent to (\ref{o2_nonstat_ODE}) and can be solved in a similar way, but it may be more efficient to integrate (\ref{eqn:o2_ODEs}) numerically instead of computing its exact solution.
+Finally, we arrive to the following ODE for the covariance matrix
+\begin{equation}\label{eqn:o2_ODEs_}
+  \dot{\langle s_is_j\rangle} = \sum_kA^-_{ik}\langle s_ks_j\rangle + \sum_k\langle s_is_k\rangle A^-_{kj} + b^-_i\langle s_j\rangle + \langle s_i\rangle b^-_j + \delta_{ij}\left[\sum_kA^+_{ik}\langle s_k\rangle + b^+_i\right].
+\end{equation}
+This linear system of ODEs should be equivalent to the one from Section \ref{subsec:NSC_second_order}, but it is written in an implicit form where the independent elements of the covariance matrix are not arranged into a vector and the explicit matrix of the system is not constructed. For this reason, integrating the above system of ODEs numerically may be much simpler than computing its exact solution which requires constructing the second-order matrix of size $d(d+1)/2\times d(d+1)/2$, where $d=\text{dim}(\mathbf s)$.
+
+
+%% \begin{equation*}
+%%   \mathbf s(t+dt)\otimes\mathbf s(t+dt) = (\mathbf s(t)+\epsilon(t))\otimes(\mathbf s(t)+\epsilon(t)) = \mathbf s(t)\otimes\mathbf s(t) + \mathbf s(t)\otimes\epsilon(t) + \epsilon(t)\otimes\mathbf s(t) + \epsilon(t)\otimes\epsilon(t),
+%% \end{equation*}
+%% from where
+%% \begin{equation}
+%%   \langle\mathbf s(t+dt)\otimes\mathbf s(t+dt)\rangle - \langle \mathbf s(t)\otimes\mathbf s(t)\rangle = \langle\mathbf s(t)\otimes\epsilon(t)\rangle + \langle\epsilon(t)\otimes\mathbf s(t)\rangle + \mathcal O(dt^2),
+%% \end{equation}
+%% where we used the fact that the second-order in $\epsilon(t)$ expectation is $\mathcal O(dt^2)$ \textcolor{red}{for everything except the diagonal elements}.
+
+%% Noticing that
+%% \begin{equation*}
+%%   \langle \mathbf s(t)\otimes\mathbf s(t)\rangle = \langle \mathbf s\otimes\mathbf s\rangle(t) \text{ and } \langle \mathbf s(t+dt)\otimes\mathbf s(t+dt)\rangle = \langle \mathbf s\otimes\mathbf s\rangle(t+dt)
+%% \end{equation*}
+%% and evaluating the r.h.s. terms as 
+%% \begin{align*}
+%%   & \langle\mathbf s(t)\otimes\epsilon(t)\rangle_{ij} = \langle s_i(t)\epsilon_j(t)\rangle = \sum_{\mathbf s}\sum_{\epsilon=0}^1P_{\mathbf s}(t)P_{\epsilon_j=\epsilon|\mathbf s}(t)s_i\epsilon = \sum_{\mathbf s}P_{\mathbf s}(t)s_i\sum_{\epsilon=0}^1P_{\epsilon_j=\epsilon|\mathbf s}(t)\epsilon \\
+%%   & =\sum_{\mathbf s}P_{\mathbf s}(t) s_i\left(-\sum_{k}A_{jk}(t)s_k+b_j(t)\right)dt = \left(-\sum_{k}\langle s_i s_k\rangle(t) A_{jk}(t) + \langle s_i\rangle(t)b_j(t)\right)dt\\
+%%   & =\left(-\langle \mathbf s\otimes\mathbf s\rangle(t)\mathbf A^{T}(t) + \langle \mathbf s\rangle(t)\otimes \mathbf b(t)\right)_{ij}dt,
+%% \end{align*}
+%% and thus
+%% \begin{align*}
+%%   &\langle\mathbf s(t)\otimes\epsilon(t)\rangle = \left(-\langle \mathbf s\otimes\mathbf s\rangle(t)\mathbf A^{T}(t) + \langle \mathbf s\rangle(t)\otimes \mathbf b(t)\right)dt,\\
+%%   &\langle\epsilon(t)\otimes\mathbf s(t)\rangle = \langle\mathbf s(t)\otimes\epsilon(t)\rangle^T = \big(-\mathbf A(t)\langle \mathbf s\otimes\mathbf s\rangle(t) + \mathbf b(t)\right\otimes\langle \mathbf s\rangle(t) \big) dt.
+%% \end{align*}
+%% Finally, we arrive to the following system of ODEs \textcolor{red}{for off-diagonal elements}
+%% \begin{equation}\label{eqn:o2_ODEs}
+%%   \dot{\langle \mathbf s\otimes\mathbf s\rangle}(t) = -\mathbf A(t)\langle \mathbf s\otimes\mathbf s\rangle(t) -\langle \mathbf s\otimes\mathbf s\rangle(t)\mathbf A^{T}(t) + \mathbf b(t)\right\otimes\langle \mathbf s\rangle(t) + \langle\mathbf s\rangle(t)\otimes\mathbf b(t),
+%% \end{equation}
+%% which is consistent with expressions (11) and (12) from \cite{PAULSSON2005157}.
+
+%% Note that the system of ODEs (\ref{eqn:o2_ODEs}) is equivalent to (\ref{o2_nonstat_ODE}) and can be solved in a similar way, but it may be more efficient to integrate (\ref{eqn:o2_ODEs}) numerically instead of computing its exact solution.
 
 \subsection{Correlations in time}
-Want to compute $\langle\mathbf s(t-\tau)\otimes\mathbf s(t)\rangle$ for $\tau>0$
+Correlations in time can be obtained from $\langle\mathbf s(t)\otimes\mathbf s(t-\tau)\rangle$ for $\tau>0$, which can be computed as follows.
 \begin{align*}
-  \langle\mathbf s(t-\tau)\otimes\mathbf s(t)\rangle = \sum_\mathbf {s^\prime} P_{\mathbf s^\prime}(t-\tau)\mathbf s^\prime\otimes\sum_{\mathbf s}\mathbf sP_{s|s^\prime}(t, \tau),
+  \langle\mathbf s(t-\tau)\otimes\mathbf s(t)\rangle = \sum_{\mathbf s^\prime} P_{\mathbf s^\prime}(t-\tau)\mathbf s^\prime\otimes\sum_{\mathbf s}\mathbf sP_{\mathbf s|\mathbf s^\prime}(t, \tau),
 \end{align*}
-where $P_{s|s^\prime}(t, \tau)$ is the probability of state $\mathbf s$ at time $t$ given the state $s^\prime$ at earlier time $t-\tau$. Using the expression for expectations (\ref{eqn:general_solution_for_expectations}) gives
+where $P_{s|s^\prime}(t, \tau)$ is the probability of state $\mathbf s$ at time $t$ given the state $\mathbf s^\prime$ at earlier time $t-\tau$. Using the expression for expectations (\ref{eqn:general_solution_for_expectations}) gives
 \begin{align*}
   &\langle\mathbf s(t-\tau)\otimes\mathbf s(t)\rangle = \sum_\mathbf {s^\prime} P_{\mathbf s^\prime}(t-\tau)\mathbf s^\prime\otimes\mathrm e^{-\int_{t-\tau}^t\mathbf A(\theta)d\theta}\left(\int_{t-\tau}^t\mathrm e^{\int_{t-\tau}^\xi\mathbf A(\zeta)d\zeta}\mathbf b(\xi)d\xi + \mathbf s^\prime\right),
 \end{align*}
-which can also be written as
+which is equivalent to
 \begin{equation*}
   \langle\mathbf s(t)\otimes\mathbf s(t-\tau)\rangle = \mathrm e^{-\int_{t-\tau}^t\mathbf A(\theta)d\theta}\left(\langle\mathbf s\otimes\mathbf s\rangle(t-\tau) + \int_{t-\tau}^t\mathrm e^{\int_{t-\tau}^\xi\mathbf A(\zeta)d\zeta}\mathbf b(\xi)d\xi\otimes \langle \mathbf s\rangle(t-\tau)\right),
 \end{equation*}
-where $\langle\mathbf s\rangle(t-\tau)$ and $\langle\mathbf s\otimes\mathbf s\rangle(t-\tau)$ can be found as the solutions to the ODEs (\ref{eqn:o1_ODE_}) and (\ref{eqn:o2_ODEs}) respectively.
+where $\langle\mathbf s\rangle(t-\tau)$ and $\langle\mathbf s\otimes\mathbf s\rangle(t-\tau)$ can be found as the solutions to the ODEs (\ref{eqn:o1_ODE_}) and (\ref{eqn:o2_ODEs}) respectively with the specified initial conditions.
 %% \begin{equation}
 %%   \langle\boldsymbol\epsilon(t)\rangle = \langle\boldsymbol\epsilon\rangle(t) = \sum_{\mathbf s, \boldsymbol\epsilon}P_\mathbf s(t)P_{\boldsymbol\epsilon|\mathbf s}(t)\boldsymbol\epsilon
 %% \end{equation}
@@ -1192,13 +1228,13 @@ where $\langle\mathbf s\rangle(t-\tau)$ and $\langle\mathbf s\otimes\mathbf s\ra
 %%   \langle\mathbf s\rangle(t+dt) - \langle\mathbf s\rangle(t) = \left(\mathbf A(t)\langle\mathbf s\rangle(t) + \mathbf b(t)\right)dt.
 %% \end{equation}
 
-Note that
+Note that if the parameters of the model become constant in the limit $t\to\infty$, the stationary correlations in time can be obtained as
 \begin{align*}
   \lim_{t\to\infty}\langle\mathbf s(t)\otimes\mathbf s(t-\tau)\rangle &= \mathrm e^{-\mathbf A_\infty\tau}\left(\langle\mathbf s\otimes\mathbf s\rangle_\infty + \int_{t-\tau}^t\mathrm e^{\mathbf A_\infty(\xi-t+\tau)}d\xi\mathbf b_\infty\otimes\langle \mathbf s\rangle_\infty\right)\\
   &= \mathrm e^{-\mathbf A_\infty\tau}\left(\langle\mathbf s\otimes\mathbf s\rangle_\infty + \left(\mathrm e^{\mathbf A_\infty\tau}-\mathbf 1\right)\mathbf A_\infty^{-1}\mathbf b_\infty\otimes\langle \mathbf s\rangle_\infty\right)\\
   &= \mathrm e^{-\mathbf A_\infty\tau}\langle\mathbf s\otimes\mathbf s\rangle_\infty + \left(\mathbf 1 - \mathrm e^{-\mathbf A_\infty\tau}\right)\langle \mathbf s\rangle_\infty\otimes\langle \mathbf s\rangle_\infty,
 \end{align*}
-where $\infty$ in the subscript is equivalent to $\lim_{t\to\infty}$ if it exists.
+where $\infty$ in the subscript is equivalent to $\lim_{t\to\infty}$.
 
 \appendix \label{app:Computational_optimisations}
 
