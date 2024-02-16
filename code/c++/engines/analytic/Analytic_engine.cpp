@@ -193,6 +193,14 @@ Analytic_engine& Analytic_engine::initialise_As_and_bs() {
   return *this;
 }
 
+Analytic_engine& Analytic_engine::initialise_hopping_rate_matrix() {
+  clear_hopping_rate_matrix();
+
+  p_H = new arma::mat(o1_dim, o1_dim);
+  
+  return *this;
+}
+
 const Compartment* Analytic_engine::set_As_and_bs_soma() {
   initialise_As_and_bs();
   
@@ -319,6 +327,48 @@ void Analytic_engine::set_As(const Compartment& parent) {
 
   for(auto& it_p_junc : parent.it_p_out_junctions)
     set_As(*((*it_p_junc)->p_to));
+}
+
+void Analytic_engine::set_hopping_rate_matrix(const Compartment& parent) {
+  if(parent.it_p_out_junctions.empty()) {
+    return;
+  }
+
+  for(auto& it_p_junc : parent.it_p_out_junctions) {
+    auto& p_junc = *it_p_junc;
+    
+    size_t& parent_start_ind = p_junc -> p_from -> o1_index;
+    size_t& desc_start_ind = p_junc -> p_to -> o1_index;
+    
+    if(p_junc->type() == DEN_SYN) {
+      (*p_H)(parent_start_ind+1, desc_start_ind) = p_junc->fwd_prot_hop_rate;
+      (*p_H)(desc_start_ind, parent_start_ind+1) = p_junc->bkwd_prot_hop_rate;
+    }
+    else if(p_junc->type() == DEN_DEN) {
+      (*p_H)(parent_start_ind, desc_start_ind) = p_junc->fwd_mRNA_hop_rate;
+      (*p_H)(desc_start_ind, parent_start_ind) = p_junc->bkwd_mRNA_hop_rate;
+      
+      (*p_H)(parent_start_ind+1, desc_start_ind+1) = p_junc->fwd_prot_hop_rate;
+      (*p_H)(desc_start_ind+1, parent_start_ind+1) = p_junc->bkwd_prot_hop_rate;
+
+    }
+    else if(p_junc->type() == SOM_DEN) {
+      (*p_H)(parent_start_ind+1, desc_start_ind) = p_junc->fwd_mRNA_hop_rate;
+      (*p_H)(desc_start_ind, parent_start_ind+1) = p_junc->bkwd_mRNA_hop_rate;
+
+      (*p_H)(parent_start_ind+2, desc_start_ind+1) = p_junc->fwd_prot_hop_rate;
+      (*p_H)(desc_start_ind+1, parent_start_ind+2) = p_junc->bkwd_prot_hop_rate;
+    }
+    else {
+      std::cerr << "-----------------------------------------\n"
+                << "ERROR: UNKNOWN TYPE JUNCTION FOUND\n"
+                << "-----------------------------------------\n";
+      exit(1);
+    }
+  }
+
+  for(auto& it_p_junc : parent.it_p_out_junctions)
+    set_hopping_rate_matrix(*((*it_p_junc)->p_to));
 }
 
 //////////////////////////////////////////////
@@ -803,8 +853,15 @@ Analytic_engine& Analytic_engine::sem_nonstationary_expectations(const std::list
 
 //////////////////////////////
 Analytic_engine& Analytic_engine::nonstationary_expectations_direct_ODE_solver_step(const double& dt, const bool& reset_matrices, const bool& internalise) {
-  if(reset_matrices) // Setting o1 matrix
+  if(reset_matrices) {// Setting matrices
     set_As(*set_As_and_bs_soma());
+    initialise_hopping_rate_matrix();
+    set_hopping_rate_matrix(*p_neuron->p_soma);
+    std::cerr << "Ap:\n" << *p_Ap << std::endl
+              << "Am:\n" << *p_Am << std::endl
+              << "b:\n" << (*p_b).t() << std::endl
+              << "H:\n" << (*p_H) << std::endl;
+  }
 
   expectations += ((*p_Am)*expectations + (*p_b))*dt;
   
@@ -812,22 +869,28 @@ Analytic_engine& Analytic_engine::nonstationary_expectations_direct_ODE_solver_s
 }
 
 Analytic_engine& Analytic_engine::nonstationary_covariances_direct_ODE_solver_step(const double& dt, const bool& reset_matrices) {
-  if(reset_matrices) //{// Setting o1 matrix
+  if(reset_matrices) {// Setting matrices
     set_As(*set_As_and_bs_soma());
-  //   std::cerr << "Ap:\n" << *p_Ap << std::endl
-  //             << "Am:\n" << *p_Am << std::endl
-  //             << "b:\n" << (*p_b).t() << std::endl;
-  // }
+    set_hopping_rate_matrix(*p_neuron->p_soma);
+    std::cerr << "Ap:\n" << *p_Ap << std::endl
+              << "Am:\n" << *p_Am << std::endl
+              << "b:\n" << (*p_b).t() << std::endl
+              << "H:\n" << (*p_H) << std::endl;
+  }
   
-  arma::mat M = (*p_Am)*(*p_cov_mat);  
+  arma::mat M = (*p_Am)*(*p_cov_mat);
   (*p_cov_mat) += (M + M.t())*dt;
 
+  // Computing diffusion matrix
   arma::vec Aps = (*p_Ap)*expectations;  
   (*p_cov_mat)(0,0) += ( 2*(*p_b)[0]*expectations[0] +  Aps[0] + (*p_b)[0] )*dt;
   for(size_t i=1; i<o1_dim; ++i) {
-    (*p_cov_mat)(i,0) = ((*p_cov_mat)(0,i) += ((*p_b)[0]*expectations[i])*dt);
+    (*p_cov_mat)(i,0) = ((*p_cov_mat)(0,i) += (*p_b)[0]*expectations[i]*dt);
     (*p_cov_mat)(i,i) += Aps[i]*dt;
   }
+  for(size_t i=1; i<o1_dim; ++i)
+    for(size_t j=1; j<i; ++j)
+      (*p_cov_mat)(j,i) = ((*p_cov_mat)(i,j) -= ((*p_H)(i,j)*expectations[i] + (*p_H)(j,i)*expectations[j])*dt);
 
   return *this;
 }
@@ -2421,9 +2484,18 @@ Analytic_engine& Analytic_engine::clear_As_and_bs() {
   return *this;
 }
 
+Analytic_engine& Analytic_engine::clear_hopping_rate_matrix() {
+  if(p_H) {
+    delete p_H;
+    p_H = NULL;
+  }
+  return *this;
+}
+
 Analytic_engine& Analytic_engine::clear_o1() {
   clear_o1_mat_and_RHS();
   clear_As_and_bs();
+  clear_hopping_rate_matrix();
   // Other stuff like o1_var_names that is now in stack
   return *this;
 }

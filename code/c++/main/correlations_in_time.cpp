@@ -43,7 +43,6 @@ int main() {
   Dendritic_segment* p_ds = new Dendritic_segment(soma, "d_1");
   new Synapse(*p_ds, "s_1_1", .6, 6);
   new Synapse(*p_ds, "s_1_2", .6, 6);
-
   fork_dendrite(p_ds);
 
 
@@ -55,50 +54,52 @@ int main() {
   // cout << "----------------- ANALYTIC ENGINE -----------------\n";
   Analytic_engine ae(neuron);
 
-  arma::mat covariances(15,15);
-  arma::vec expectations(15), variances(15);
+#define dim 15
+  
+  arma::mat covariances(dim,dim);
+  arma::vec expectations(dim), variances(dim);
 
   ofstream ofs_expectations("expectations"),
     ofs_covariances("covariances"),
     ofs_variances("variances"),
     ofs_correlations("correlations");
 
-  double dt = .1;
-  double t_max = 5e3;
-  for(double t=0; t<t_max; t+=dt) {
-    ofs_expectations << t << ',' << (expectations = ae.get_expectations()).t() << endl;
+  // double dt = .1;
+  // double t_max = 5e3;
+  // for(double t=0; t<t_max; t+=dt) {
+  //   ofs_expectations << t << ',' << (expectations = ae.get_expectations()).t() << endl;
 
-    if(t==0)
-      ae.nonstationary_expectations(t+.5*dt, true, false);
-    else
-      ae.nonstationary_expectations(t+.5*dt);
+  //   if(t==0)
+  //     ae.nonstationary_expectations(t+.5*dt, true, false);
+  //   else
+  //     ae.nonstationary_expectations(t+.5*dt);
 
 
-    ofs_covariances << "t=" << t << endl
-                    << "covariances:\n" << (covariances = ae.get_covariances()) << endl;
+  //   ofs_covariances << "t=" << t << endl
+  //                   << "covariances:\n" << (covariances = ae.get_covariances()) << endl;
 
     
-    ofs_correlations << "t=" << t << std::endl;
-    for(size_t i=0; i<15; ++i) {
-      for(size_t j=0; j<15; ++j)
-        ofs_correlations << covariances(i,j) - expectations(i)*expectations(j) << ',';
-      ofs_correlations << std::endl;
-    }        
+  //   ofs_correlations << "t=" << t << std::endl;
+  //   for(size_t i=0; i<dim; ++i) {
+  //     for(size_t j=0; j<dim; ++j)
+  //       ofs_correlations << covariances(i,j) - expectations(i)*expectations(j) << ',';
+  //     ofs_correlations << std::endl;
+  //   }        
 
-    ofs_variances << t << ',';
-    for(size_t i=0; i<15; ++i)
-      ofs_variances << sqrt(covariances(i,i) - expectations(i)*expectations(i)) << ',';
-    ofs_variances << endl;
+  //   ofs_variances << t << ',';
+  //   for(size_t i=0; i<dim; ++i)
+  //     ofs_variances << sqrt(covariances(i,i) - expectations(i)*expectations(i)) << ',';
+  //   ofs_variances << endl;
     
-    // if(t==0)
-    //   ae.nonstationary_covariances_direct_ODE_solver_step(dt, true);
-    // else
-    ae.nonstationary_covariances_direct_ODE_solver_step(dt);
+  //   // if(t==0)
+  //   //   ae.nonstationary_covariances_direct_ODE_solver_step(dt, true);
+  //   // else
+  //   ae.nonstationary_covariances_direct_ODE_solver_step(dt);
 
-    // ae.nonstationary_expectations(t, true, false);
-  }
+  //   // ae.nonstationary_expectations(t, true, false);
+  // }
 
-  ae.stationary_expectations().stationary_covariances();
+  // ae.stationary_expectations().stationary_covariances();
 
   
 
@@ -121,7 +122,7 @@ int main() {
   //                   << "covariances:\n" << (covariances = ae.get_covariances()) << endl;
 
   //   ofs_variances << t << ',';
-  //   for(size_t i=0; i<15; ++i)
+  //   for(size_t i=0; i<dim; ++i)
   //     ofs_variances << covariances(i,i) - expectations(i)*expectations(i) << ',';
   //   ofs_variances << endl;
 
@@ -129,8 +130,7 @@ int main() {
 
   // }
 
-
-  // double 
+  
   // for(double t=0; t<t_max; t+=o2_dt) {
   //   // cout << "t=" << t << endl
   //   //      << "covariances:\n" << (covariances = ae.get_covariances()) << endl;
@@ -140,36 +140,52 @@ int main() {
   //        << "covariances:\n" << (covariances = ae.get_covariances()) << endl;
 
   //   ofs_variances << t << ',';
-  //   for(size_t i=0; i<15; ++i)
+  //   for(size_t i=0; i<dim; ++i)
   //     ofs_variances << covariances(i,i) - expectations(i)*expectations(i) << ',';
   //   ofs_variances << endl;
 
   //   ae.sem_nonstationary_covariances_direct_ODE_solver_step(o2_dt);
   // }
 
+  
+
+  double dt = .1;
+  for(double t=0; t<10000; t+=dt) {
+
+    ofs_expectations << t << ',' << (expectations = ae.get_expectations()).t() << endl;
+    
+    if(t==0)
+      ae.nonstationary_expectations_direct_ODE_solver_step(dt, true);
+    //      ae.nonstationary_covariances_direct_ODE_solver_step(dt, true);
+    else
+      //      ae.nonstationary_covariances_direct_ODE_solver_step(dt);
+      ae.nonstationary_expectations_direct_ODE_solver_step(dt);
+
+
+    ofs_covariances << "t=" << t << endl
+                    << "covariances:\n" << (covariances = ae.get_covariances()) << endl;
+    
+    ofs_correlations << "t=" << t << std::endl;
+    for(size_t i=0; i<dim; ++i) {
+      for(size_t j=0; j<dim; ++j)
+        ofs_correlations << covariances(i,j) - expectations(i)*expectations(j) << ',';
+      ofs_correlations << std::endl;
+    }        
+
+    ofs_variances << t;
+    for(size_t i=0; i<dim; ++i)
+      ofs_variances  << ',' << sqrt(covariances(i,i) - expectations(i)*expectations(i));
+    ofs_variances << endl;
+
+    
+    ae.nonstationary_covariances_direct_ODE_solver_step(dt);
+  }
+
   ofs_expectations.close();
   ofs_covariances.close();
-  ofs_variances.close();  
+  ofs_variances.close();
 
-  
-  
-  // for(double t=0; t<10000; t+=dt) {
-  //   cout << "t=" << t << endl
-  //        << "expextations: " << (expectations = ae.get_expectations()).t() << endl
-  //        << "covariances:\n" << (covariances = ae.get_covariances()) << endl;
-  //   cout << "Variances:" << endl;
-  //   for(size_t i=0; i<15; ++i)
-  //     cout << covariances(i,i) - expectations(i)*expectations(i) << ',';
-  //   cout << endl;
-
-  //   if(t==0)
-  //     ae.sem_nonstationary_expectations_direct_ODE_solver_step(dt, true);
-  //   //      ae.sem_nonstationary_covariances_direct_ODE_solver_step(dt, true);
-  //   else
-  //     //      ae.sem_nonstationary_covariances_direct_ODE_solver_step(dt);
-  //     ae.sem_nonstationary_expectations_direct_ODE_solver_step(dt);
-  //   ae.sem_nonstationary_covariances_direct_ODE_solver_step(dt);
-  // }
+  ae.stationary_expectations().stationary_covariances();
   
   return 0;
 }

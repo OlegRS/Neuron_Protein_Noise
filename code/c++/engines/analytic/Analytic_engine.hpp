@@ -15,7 +15,7 @@ class Analytic_engine {
   // Parameters
   Neuron* p_neuron = NULL;
   unsigned int o1_dim, o2_dim;
-  arma::mat *p_Ap, *p_Am,
+  arma::mat *p_Ap, *p_Am, *p_H,
     *p_o1_mat, *p_o2_mat,
     o1_mRNA_matrix, o1_prot_matrix,
     *o2_gene_mRNA_mat, *o2_gene_prot_mat,
@@ -46,6 +46,9 @@ class Analytic_engine {
   // Sets 1st order matrix starting from the given compartment
   const Compartment* set_As_and_bs_soma();
   void set_As(const Compartment&);
+
+  Analytic_engine& initialise_hopping_rate_matrix();
+  void set_hopping_rate_matrix(const Compartment&);
 
   const Compartment* set_o1_soma();
   void set_o1_matrix(const Compartment&);
@@ -93,6 +96,7 @@ class Analytic_engine {
   void sem_set_o2_RHS();
   Analytic_engine& clear_o1_mat_and_RHS();
   Analytic_engine& clear_As_and_bs();
+  Analytic_engine& clear_hopping_rate_matrix();
   Analytic_engine& clear_o1();
   Analytic_engine& clear_o2_mat_and_RHS();
   Analytic_engine& clear_o2();
@@ -109,7 +113,7 @@ public:
     p_neuron(&neuron),
     o1_dim(3 + 2*neuron.p_dend_segments.size() + neuron.p_synapses.size()),
     o2_dim(o1_dim*(o1_dim+1)/2),
-    p_Ap(NULL), p_Am(NULL), p_b(NULL),
+    p_Ap(NULL), p_Am(NULL), p_H(NULL), p_b(NULL),
     p_o1_mat(NULL), p_o1_RHS(NULL),
     o1_mRNA_matrix(1+neuron.p_dend_segments.size(), 1+neuron.p_dend_segments.size()),
     o1_prot_matrix(1+neuron.p_dend_segments.size()+neuron.p_synapses.size(), 1+neuron.p_dend_segments.size()+neuron.p_synapses.size()),

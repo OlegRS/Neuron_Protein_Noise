@@ -49,8 +49,8 @@ protected:
     protein_diffusion_constant = .24, //0.24 um2/s for CaMKII
     mRNA_forward_trafficking_velocity = .5e-2, // 4e-2 um/s for CaMKII
     mRNA_backward_trafficking_velocity = .1e-2, // 4e-2 um/s for CaMKII
-    protein_forward_trafficking_velocity = 0, // 4e-2 um/s for CaMKII
-    protein_backward_trafficking_velocity = 0; // 4e-2 um/s for CaMKII
+    protein_forward_trafficking_velocity = 0, 
+    protein_backward_trafficking_velocity = 0;
 
   double x, y, z, r,
     length = 200; //micrometers
