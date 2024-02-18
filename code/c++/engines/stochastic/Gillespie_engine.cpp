@@ -36,11 +36,12 @@ void Gillespie_engine::initialise_from(Compartment& comp) {
       p_events[ev_ind++] = &p_junc->prot_hop_backward.set_rate(p_junc->bkwd_prot_hop_rate*desc.n_proteins);
       p_neuron->total_rate += p_junc->prot_hop_backward.rate;
 
-      // No mRNAs and protein creation/decay in synapses (descendant is a synapse)
+      // No mRNAs creation/decay and protein creation in synapses (descendant is a synapse)
       desc.mRNA_creation.rate = 0;
       desc.mRNA_decay.rate = 0;
       desc.protein_creation.rate = 0;
-      desc.protein_decay.rate = 0;
+      p_events[ev_ind++] = &desc.protein_decay.set_rate(desc.protein_decay_rate*desc.n_proteins);
+      p_neuron->total_rate += desc.protein_decay.rate;
     }
     else if(p_junc->type() == DEN_DEN || p_junc->type() == SOM_DEN) {
       p_events[ev_ind++] = &p_junc->mRNA_hop_forward.set_rate(p_junc->fwd_mRNA_hop_rate*par.n_mRNAs);

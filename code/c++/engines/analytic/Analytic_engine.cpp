@@ -249,12 +249,14 @@ void Analytic_engine::set_As(const Compartment& parent) {
       (*p_Am)(parent_start_ind+1, parent_start_ind+1) -= p_junc->fwd_prot_hop_rate;
       (*p_Am)(parent_start_ind+1, desc_start_ind) += p_junc->bkwd_prot_hop_rate;
       (*p_Am)(desc_start_ind, parent_start_ind+1) += p_junc->fwd_prot_hop_rate;
-      (*p_Am)(desc_start_ind, desc_start_ind) -= p_junc->bkwd_prot_hop_rate;
+      (*p_Am)(desc_start_ind, desc_start_ind) -= p_junc->bkwd_prot_hop_rate;      
+      (*p_Am)(desc_start_ind, desc_start_ind) -= p_junc->p_to->protein_decay_rate;
 
       (*p_Ap)(parent_start_ind+1, parent_start_ind+1) += p_junc->fwd_prot_hop_rate;
       (*p_Ap)(parent_start_ind+1, desc_start_ind) += p_junc->bkwd_prot_hop_rate;
       (*p_Ap)(desc_start_ind, parent_start_ind+1) += p_junc->fwd_prot_hop_rate;
       (*p_Ap)(desc_start_ind, desc_start_ind) += p_junc->bkwd_prot_hop_rate;
+      (*p_Ap)(desc_start_ind, desc_start_ind) += p_junc->p_to->protein_decay_rate;
     }
     else if(p_junc->type() == DEN_DEN) {
       o1_var_names[p_junc->p_to->o1_index] = p_junc->p_to->name + "__mRNA";
@@ -416,6 +418,8 @@ void Analytic_engine::set_o1_matrix(const Compartment& parent) {
     if(p_junc->type() == DEN_SYN) {
       o1_var_names[p_junc->p_to->o1_index] = p_junc->p_to->name + "__Prot";
       p_o1_vars[p_junc->p_to->o1_index] = &p_junc->p_to->n_prot_expectation;
+
+      o1_mat(desc_start_ind, desc_start_ind) -= p_junc->p_to->protein_decay_rate;
       
       o1_mat(parent_start_ind+1, parent_start_ind+1) -= p_junc->fwd_prot_hop_rate;
       o1_mat(parent_start_ind+1, desc_start_ind) += p_junc->bkwd_prot_hop_rate;
@@ -521,6 +525,8 @@ void Analytic_engine::sem_set_o1_matrix(const Compartment& parent) {
     if(p_junc->type() == DEN_SYN) {
       o1_var_names[desc_prot_ind] = p_junc->p_to->name + "__Prot";
       p_o1_vars[desc_prot_ind] = &p_junc->p_to->n_prot_expectation;
+
+      o1_mat(desc_prot_ind, desc_prot_ind) -= p_junc->p_to->protein_decay_rate;
       
       o1_mat(parent_prot_ind, parent_prot_ind) -= p_junc->fwd_prot_hop_rate;
       o1_mat(parent_prot_ind, desc_prot_ind) += p_junc->bkwd_prot_hop_rate;
@@ -1864,6 +1870,8 @@ void Analytic_engine::set_o2_matrix() {
         o2_mat(o2_ind(desc_start_ind, i), o2_ind(parent_start_ind+1, i)) += p_junc->fwd_prot_hop_rate;
         o2_mat(o2_ind(desc_start_ind, i), o2_ind(desc_start_ind, i)) -= p_junc->bkwd_prot_hop_rate;
         o2_mat(o2_ind(parent_start_ind+1, i), o2_ind(desc_start_ind, i)) += p_junc->bkwd_prot_hop_rate;
+
+        o2_mat(o2_ind(desc_start_ind, i), o2_ind(desc_start_ind, i)) -= p_junc->p_to->protein_decay_rate;
       }
     else if(p_junc->type() == DEN_DEN)
       for(size_t i=0; i<o1_dim; ++i) {
@@ -1941,6 +1949,8 @@ void Analytic_engine::sem_set_o2_matrix() {
         o2_mat(sem_o2_ind(desc_prot_ind, i), sem_o2_ind(par_prot_ind, i)) += p_junc->fwd_prot_hop_rate;
         o2_mat(sem_o2_ind(desc_prot_ind, i), sem_o2_ind(desc_prot_ind, i)) -= p_junc->bkwd_prot_hop_rate;
         o2_mat(sem_o2_ind(par_prot_ind, i), sem_o2_ind(desc_prot_ind, i)) += p_junc->bkwd_prot_hop_rate;
+
+        o2_mat(sem_o2_ind(desc_prot_ind, i), sem_o2_ind(desc_prot_ind, i)) -= p_junc->p_to->protein_decay_rate;
       }
     else if(p_junc->type() == DEN_DEN)
       for(size_t i=0; i<o1_dim; ++i) {
