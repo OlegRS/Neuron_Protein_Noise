@@ -97,7 +97,7 @@ int main() {
   // }
 
   // ae.nonstationary_covariances(times, &G1_init, &G2_init);
-  // ae.sem_nonstationary_covariances(times, &G1_init, &G2_init);
+  ae.sem_nonstationary_covariances(times, &G1_init, &G2_init);
   // ae.sem_nonstationary_covariances_using_integral(times, &G1_init, &G2_init);
   // ae.sem_nonstationary_covariances_direct_ODE_solver(times, &G1_init, &G2_init);
   // ae.sem_nonstationary_covariances_direct_ODE_solver_no_D_matrix(times, &G1_init, &G2_init);

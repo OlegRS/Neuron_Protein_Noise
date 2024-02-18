@@ -982,20 +982,6 @@ Analytic_engine& Analytic_engine::nonstationary_covariances(const std::list<doub
   set_o2_matrix();
   set_o2_nonstationary_RHS_mat();
 
-  // Debug_start
-  std::cerr << "Nonstationary RHS_mat:\n" << *o2_nonstationary_RHS_mat << std::endl;
-  // this->stationary_expectations();
-  set_o2_RHS();
-  std::cerr << "(*p_o2_RHS):\n" << (*p_o2_RHS) << std::endl;
-  for(size_t j=0; j<o2_dim; ++j) {
-    double sum = 0;
-    for(size_t i=0; i<o1_dim; ++i)
-      sum -= (*o2_nonstationary_RHS_mat)(j,i)*stationary_expectations(i);
-    std::cerr << "sum = " << sum << ", (*p_o2_RHS)(j) = " << (*p_o2_RHS)(j) << std::endl;
-  }
-  std::cerr << std::endl;
-  // Debug_end
-
   std::vector<double> k_sum(o1_dim); // to store precomputed k-sum
   
   auto& covariances = *p_covariances;
@@ -1270,15 +1256,9 @@ Analytic_engine& Analytic_engine::sem_nonstationary_covariances(const std::list<
     std::cout << t;
     for(size_t i=0; i<o1_dim; ++i) {
       rmss[i] = sqrt((*p_covariances)(sem_o2_ind(i,i)) - expectations(i)*(expectations(i)-1));
-      // if(rmss[i]>=0) {
-      //   std::cout << o1_var_names[i] + ": " << expectations(i) << ", " << rmss[i] << std::endl;
-      // }
-      // else
-      //   std::cout << o1_var_names[i] + ": " << expectations(i) << ", " << rmss[i] << " NEGATIVE!\n";
       std::cout  << ',' << expectations(i) << ',' << rmss[i];
     }
     std::cout << std::endl;
-    // std::cout << t << ", " << expectations(2) << ", " << rmss[2] << std::endl;
     //////////////////////////////////////////
   }
 

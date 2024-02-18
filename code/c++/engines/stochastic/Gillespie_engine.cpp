@@ -116,7 +116,7 @@ void Gillespie_engine::update_Gillespie() {
   }      
 }
 
-void Gillespie_engine::run_Gillespie(const double& time) {
+Gillespie_engine& Gillespie_engine::run_Gillespie(const double& time) {
   initialise_soma();
   initialise_from(*p_neuron->p_soma);
 
@@ -141,9 +141,10 @@ void Gillespie_engine::run_Gillespie(const double& time) {
     }
     update_Gillespie();
   }
+  return *this;
 }
 
-void Gillespie_engine::run_Gillespie(const std::list<double>& times, std::ofstream& ofs) {
+Gillespie_engine& Gillespie_engine::run_Gillespie(const std::list<double>& times, std::ofstream& ofs) {
   std::cerr << "Running Gillespie...\n";
   size_t n_jumps = 0;
   initialise_soma();
@@ -186,4 +187,5 @@ void Gillespie_engine::run_Gillespie(const std::list<double>& times, std::ofstre
     }
   }
   std::cerr << "n_jumps = " << n_jumps << std::endl;
+  return *this;
 }

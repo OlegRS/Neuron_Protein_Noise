@@ -91,6 +91,12 @@ protected:
   double n_mRNA_expectation, n_prot_expectation;
   unsigned int n_mRNAs=0, n_proteins=0;
 
+  Compartment& clear_junctions() {
+    it_p_out_junctions.clear();
+    it_p_out_junctions.clear();
+    return *this;
+  }
+
 public:
   Compartment(const std::string& name = "no_name") : name(name),
                                                      protein_creation(this),

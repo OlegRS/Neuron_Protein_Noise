@@ -33,7 +33,7 @@ void Neuron::associate(Compartment& compartment) {
   }
 
   // Writing junctions
-  for (auto& p_d_comp : compartment.p_descendants){
+  for(auto& p_d_comp : compartment.p_descendants){//Loop over descendants
     auto d_type = p_d_comp->type();
     bool p_dend = p_type == APICAL_DENDRITE || p_type == BASAL_DENDRITE;
     bool d_dend = d_type == APICAL_DENDRITE || d_type == BASAL_DENDRITE;
@@ -79,6 +79,19 @@ void Neuron::associate(Compartment& compartment) {
 //   for (auto& comp : compartment.p_descendants)
 //     dissociate(*comp);
 // }
+
+Neuron& Neuron::refresh() {
+  clear_junctions();
+    
+  p_dend_segments.clear();
+  p_synapses.clear();
+  
+  o1_index=0; mRNA_ind=1; comp_id=0;
+
+  associate(static_cast<Compartment&>(*p_soma));
+  
+  return *this;
+}
 
 Neuron::Neuron(Soma &soma, const std::string &name) : name(name) {
   p_soma = &soma;
@@ -142,9 +155,6 @@ Neuron::Neuron(const std::string& file_name, const std::string& name) : name(nam
   ifs.close();
 }
 
-// void Neuron::save(const std::string& file_name) const {
-// }
-
 std::ostream& operator<<(std::ostream &os , const Neuron &neur) {
 
   os << "******* COMPARTMENTS *******:\n"
@@ -165,8 +175,22 @@ std::ostream& operator<<(std::ostream &os , const Neuron &neur) {
   return os;
 }
 
+Neuron& Neuron::clear_junctions() {
+  p_soma->clear_junctions();
+  for(auto p_ds : p_dend_segments)
+    p_ds -> clear_junctions();
+  for(auto p_s : p_synapses)
+    p_s -> clear_junctions();
+  for(auto& junct : p_junctions)
+    delete junct;
+  p_junctions.clear();
+
+  n_SDJ=0; n_DSJ=0; n_DDJ=0; // Numbers of different junctions
+
+  return *this;
+}
 
 Neuron::~Neuron() {
   for(auto& junct : p_junctions)
-    delete junct;
+    delete junct;  
 }

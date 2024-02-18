@@ -48,12 +48,16 @@ protected:
   void associate(Compartment& comaprtment); // Associates compartment with the neuron
   void dissociate(Compartment& comaprtment); // Dissociates compartment from the neuron
 
+  Neuron& clear_junctions();
+
 public:
  
   Neuron() {};
   Neuron(Soma &soma, const std::string& name="no_name");
   Neuron(const Neuron&);
   Neuron(const std::string& file_name, const std::string& name);
+
+  Neuron& refresh();
 
   // void save(const std::string& file_name) const;
   // Neuron& load(const std::string& file_name);
