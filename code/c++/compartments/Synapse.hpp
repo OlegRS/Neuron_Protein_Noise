@@ -21,6 +21,9 @@ public:
   const double& get_protein_binding_rate() const {return protein_binding_rate;}
   const double& get_protein_unbinding_rate() const {return protein_unbinding_rate;}
 
+  Synapse& set_protein_binding_rate(const double& rate) {protein_binding_rate=rate; return *this;}
+  Synapse& set_protein_unbinding_rate(const double& rate) {protein_unbinding_rate=rate; return *this;}
+
   Compartment::Type type() const {return SYNAPSE;}
 
   friend std::ostream& operator<<(std::ostream&, const Synapse&);

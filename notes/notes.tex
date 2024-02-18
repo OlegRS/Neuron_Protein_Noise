@@ -1129,7 +1129,7 @@ is the expectation computed with this probability, while $\langle \mathbf s(t)\r
 \end{align*}
 from where
 \begin{equation}
-  \langle\boldsymbol \epsilon(t)\rangle = \left(\mathbf A^-(t)\langle \mathbf s\rangle(t) + \mathbf r^-(t)\right)dt,
+  \langle\boldsymbol \epsilon(t)\rangle = \left(\mathbf A^-(t)\langle \mathbf s\rangle(t) + \mathbf b^-(t)\right)dt,
 \end{equation}
 with $\mathbf A^- \equiv \boldsymbol{\mathcal A}^+(t)- \boldsymbol{\mathcal A}^-(t)$ and $\mathbf b^-(t) \equiv \mathbf r^+(t) - \mathbf r^-(t)$. (Note that $\mathbf A^- = -(\mathbf A\text{ from Section \ref{subsec:o1_nonstat_problem})}$ while $\mathbf b^-(t) = (\mathbf b\text{ from Section \ref{subsec:o1_nonstat_problem})}$.)
 
@@ -1218,7 +1218,7 @@ which is equivalent to
 \begin{equation*}
   \langle\mathbf s(t)\otimes\mathbf s(t-\tau)\rangle = \mathrm e^{-\int_{t-\tau}^t\mathbf A(\theta)d\theta}\left(\langle\mathbf s\otimes\mathbf s\rangle(t-\tau) + \int_{t-\tau}^t\mathrm e^{\int_{t-\tau}^\xi\mathbf A(\zeta)d\zeta}\mathbf b(\xi)d\xi\otimes \langle \mathbf s\rangle(t-\tau)\right),
 \end{equation*}
-where $\langle\mathbf s\rangle(t-\tau)$ and $\langle\mathbf s\otimes\mathbf s\rangle(t-\tau)$ can be found as the solutions to the ODEs (\ref{eqn:o1_ODE_}) and (\ref{eqn:o2_ODEs}) respectively with the specified initial conditions.
+where $\langle\mathbf s\rangle(t-\tau)$ and $\langle\mathbf s\otimes\mathbf s\rangle(t-\tau)$ can be found as the solutions to the ODEs (\ref{eqn:o1_ODE_}) and (\ref{eqn:o2_ODEs_}) respectively with the specified initial conditions.
 %% \begin{equation}
 %%   \langle\boldsymbol\epsilon(t)\rangle = \langle\boldsymbol\epsilon\rangle(t) = \sum_{\mathbf s, \boldsymbol\epsilon}P_\mathbf s(t)P_{\boldsymbol\epsilon|\mathbf s}(t)\boldsymbol\epsilon
 %% \end{equation}

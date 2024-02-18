@@ -175,8 +175,6 @@ public:
   Analytic_engine& sem_nonstationary_covariances_direct_ODE_solver(const std::list<double>& times, arma::vec* initial_G1, arma::vec* initial_G2);
   Analytic_engine& sem_nonstationary_covariances_direct_ODE_solver_no_D_matrix(const std::list<double>& times, arma::vec* initial_G1, arma::vec* initial_G2);
 
-
-
   Analytic_engine& nonstationary_expectations_direct_ODE_solver_step(const double& dt, const bool& reset_matrices=false, const bool& internalise=false);
   Analytic_engine& nonstationary_covariances_direct_ODE_solver_step(const double& dt, const bool& reset_matrices=false);
   Analytic_engine& sem_nonstationary_expectations_direct_ODE_solver_step(const double& dt, const bool& reset_matrices=false, const bool& internalise=false);
@@ -191,6 +189,8 @@ public:
   const arma::vec& get_expectations() {return expectations;}
   const arma::mat& get_covariances() {return *p_cov_mat;}
   const arma::mat& get_o1_matrix() {return *p_o1_mat;}
+
+  Analytic_engine& set_neuron(Neuron *p_n) {p_neuron=p_n; return *this;}
   
   // std::vector<std::pair<std::string,double>> expectations();
   // std::vector<std::vector<std::pair<std::string,double>>> Analytic_engine& correlations();

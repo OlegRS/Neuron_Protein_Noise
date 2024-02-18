@@ -350,7 +350,6 @@ void Analytic_engine::set_hopping_rate_matrix(const Compartment& parent) {
       
       (*p_H)(parent_start_ind+1, desc_start_ind+1) = p_junc->fwd_prot_hop_rate;
       (*p_H)(desc_start_ind+1, parent_start_ind+1) = p_junc->bkwd_prot_hop_rate;
-
     }
     else if(p_junc->type() == SOM_DEN) {
       (*p_H)(parent_start_ind+1, desc_start_ind) = p_junc->fwd_mRNA_hop_rate;
@@ -849,21 +848,22 @@ Analytic_engine& Analytic_engine::sem_nonstationary_expectations(const std::list
   return internalise_expectations();
 }
 
-
-
 //////////////////////////////
 Analytic_engine& Analytic_engine::nonstationary_expectations_direct_ODE_solver_step(const double& dt, const bool& reset_matrices, const bool& internalise) {
   if(reset_matrices) {// Setting matrices
     set_As(*set_As_and_bs_soma());
     initialise_hopping_rate_matrix();
     set_hopping_rate_matrix(*p_neuron->p_soma);
+    
     std::cerr << "Ap:\n" << *p_Ap << std::endl
               << "Am:\n" << *p_Am << std::endl
               << "b:\n" << (*p_b).t() << std::endl
-              << "H:\n" << (*p_H) << std::endl;
+              << "H:\n" << (*p_H) << std::endl
+              << "expectations:\n" << expectations << std::endl;
   }
 
   expectations += ((*p_Am)*expectations + (*p_b))*dt;
+  // std::cerr << (((*p_Am)*expectations + (*p_b))*dt).t() << '\n';
   
   return internalise ? internalise_expectations() : *this;
 }
