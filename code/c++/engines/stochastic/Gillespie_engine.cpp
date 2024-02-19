@@ -102,7 +102,6 @@ void Gillespie_engine::update_Gillespie() {
   double r = rnd()*p_neuron->total_rate;
   for(double sum=p_events[0]->rate; sum<r; sum += p_events[i]->rate)
     ++i;
-
   if(i<p_events.size())
     (*p_events[i])(); // Triggering the event
   else {
@@ -113,7 +112,7 @@ void Gillespie_engine::update_Gillespie() {
     for(auto& p_event : p_events)
       s+=p_event->rate;
     std::cerr << "total_rate - s = " << p_neuron->total_rate - s << std::endl;
-  }      
+  }
 }
 
 Gillespie_engine& Gillespie_engine::run_Gillespie(const double& time) {
@@ -124,8 +123,8 @@ Gillespie_engine& Gillespie_engine::run_Gillespie(const double& time) {
   std::cout << "t," << "Soma_AG," << "Soma_mRNA,"<< "Soma_Prot,";
   for(auto& p_ds : p_neuron->p_dend_segments)
     std::cout << p_ds->name + "_mRNA," << p_ds->name+"_Prot,";
-  for(auto& p_ds : p_neuron->p_synapses)
-    std::cout << p_ds->name + "_Prot,";
+  for(auto& p_s : p_neuron->p_synapses)
+    std::cout << p_s->name + "_Prot,";
   std::cout << std::endl;
 
   double t_prev=-1.1, delta_t_write = 1;
@@ -134,8 +133,8 @@ Gillespie_engine& Gillespie_engine::run_Gillespie(const double& time) {
       std::cout << t << ',' << p_neuron->p_soma->n_active_genes << ',' << p_neuron->p_soma->n_mRNAs << ',' << p_neuron->p_soma->n_proteins << ',';
       for(auto& p_ds : p_neuron->p_dend_segments)
         std::cout << p_ds->n_mRNAs << ',' << p_ds->n_proteins << ',';
-      for(auto& p_ds : p_neuron->p_synapses)
-        std::cout << p_ds->n_proteins << ',';
+      for(auto& p_s : p_neuron->p_synapses)
+        std::cout << p_s->n_proteins << ',';
       std::cout << std::endl;
       t_prev = t;
     }
@@ -153,8 +152,8 @@ Gillespie_engine& Gillespie_engine::run_Gillespie(const std::list<double>& times
   ofs << "t," << "time," << "Soma_AG," << "Soma_mRNA,"<< "Soma_Prot";
   for(auto& p_ds : p_neuron->p_dend_segments)
     ofs << ',' + p_ds->name + "_mRNA," + p_ds->name + "_Prot";
-  for(auto& p_ds : p_neuron->p_synapses)
-    ofs << ',' + p_ds->name + "_Prot";
+  for(auto& p_s : p_neuron->p_synapses)
+    ofs << ',' + p_s->name + "_Prot";
   ofs << std::endl;
 
   double t = 0;
@@ -166,12 +165,13 @@ Gillespie_engine& Gillespie_engine::run_Gillespie(const std::list<double>& times
         ofs << t << ',' << (time_written=*it_times) << ',' << p_neuron->p_soma->n_active_genes << ',' << p_neuron->p_soma->n_mRNAs << ',' << p_neuron->p_soma->n_proteins;
         for(auto& p_ds : p_neuron->p_dend_segments)
           ofs << ',' << p_ds->n_mRNAs << ',' << p_ds->n_proteins;
-        for(auto& p_ds : p_neuron->p_synapses)
-          ofs << ',' << p_ds->n_proteins;
+        for(auto& p_s : p_neuron->p_synapses)
+          ofs << ',' << p_s->n_proteins;
         ofs << std::endl;
         ++it_times;
       }
       update_Gillespie();
+           
       n_jumps++;
     }
     else {
@@ -179,8 +179,8 @@ Gillespie_engine& Gillespie_engine::run_Gillespie(const std::list<double>& times
         ofs << t << ',' << *it_times << ',' << p_neuron->p_soma->n_active_genes << ',' << p_neuron->p_soma->n_mRNAs << ',' << p_neuron->p_soma->n_proteins;
         for(auto& p_ds : p_neuron->p_dend_segments)
           ofs << ',' << p_ds->n_mRNAs << ',' << p_ds->n_proteins;
-        for(auto& p_ds : p_neuron->p_synapses)
-          ofs << ',' << p_ds->n_proteins;
+        for(auto& p_s : p_neuron->p_synapses)
+          ofs << ',' << p_s->n_proteins;
         ofs << std::endl;
       }
       ++it_times;

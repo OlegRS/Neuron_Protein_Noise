@@ -88,8 +88,8 @@ int main() {
 
   // Gillespie simulation
   PRNG rnd(1);
-  // std::string file_name = "../../data/gillespie/heterosynaptic_plasticity";
-  std::string file_name = "gillespie";
+
+  std::string file_name = "gillespie.csv";
   std::list<double> times;
   for(double t=0; t<t1; t+=dt)
     times.push_back(t);
@@ -97,12 +97,13 @@ int main() {
   std::cerr << "Writing Gillespie results to\n" << file_name << '\n';
   
   std::ofstream ofs_gillespie(file_name);
-  // Gillespie_engine ge = Gillespie_engine(neuron, rnd).run_Gillespie(times, ofs_gillespie);
+  Gillespie_engine(neuron, rnd).run_Gillespie(times, ofs_gillespie);
   
 
   std::cerr << "------------------- Loop_2 -----------------------\n";
 
   p_syn_1_2 -> set_protein_binding_rate(1.2);
+  // p_ds -> set_translation_rate(0.021*3600*10);
 
   neuron.refresh();
   std::cerr << "neuron:\n" << neuron << std::endl;
@@ -147,7 +148,7 @@ int main() {
 
   std::cerr << "Writing Gillespie results to\n" << file_name << '\n';
 
-  // ge.run_Gillespie(times_, ofs_gillespie, false);
+  Gillespie_engine(neuron, rnd).run_Gillespie(times_, ofs_gillespie);
   
   ofs_gillespie.close();
   

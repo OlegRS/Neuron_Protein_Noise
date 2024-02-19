@@ -28,7 +28,7 @@ int main() {
 
   PRNG rnd(1);
 
-  std::string file_name = "../../data/gillespie/genes_on_single_Y_fork/single_Y_fork_";
+  std::string file_name = "../../data/gillespie/single_Y_fork_test/single_Y_fork_";
   // std::string file_name = "../../data/soma_only/tests2/fast_gene_activation__fast_protein_decay_";//"../../data/soma_only/slow_proteins_1e-2/sim/g_";
 
   std::list<double> times;

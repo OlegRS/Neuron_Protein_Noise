@@ -93,7 +93,7 @@ protected:
 
   Compartment& clear_junctions() {
     it_p_out_junctions.clear();
-    it_p_out_junctions.clear();
+    it_p_in_junctions.clear();
     return *this;
   }
 
@@ -123,6 +123,7 @@ public:
   Compartment& connect_to(Compartment&); // Linking another compartment
   Compartment& disconnect_from(Compartment&); // Unlinking another compartment
 
+  Compartment& set_translation_rate(const double& rate) {translation_rate=rate; return *this;}
   Compartment& set_mRNA_decay_rate(const double& rate) {mRNA_decay_rate=rate; return *this;}
 
   ~Compartment() {};

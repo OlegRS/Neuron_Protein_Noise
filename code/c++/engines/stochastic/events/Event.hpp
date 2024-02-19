@@ -34,7 +34,7 @@ struct Event {
   
   void* p_location; // Compartment or junction, where event takes place
   double rate;
-  Event& set_rate(double r) {rate=r; return *this;};
+  Event& set_rate(double r) {rate=r; return *this;}
   virtual void operator()() = 0;
   virtual Type type() = 0;
 };

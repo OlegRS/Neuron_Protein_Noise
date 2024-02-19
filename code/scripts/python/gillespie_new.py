@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 import os
 
-main_dir = "../../data/gillespie/genes_on_single_Y_fork"
+main_dir = "../../data/gillespie/single_Y_fork_test"
 
 file_count = len(os.listdir(main_dir))
 
@@ -17,7 +17,7 @@ n_points = 99999
 step = .1
 x_lim = n_points*step
 sim_run_count = 10 # Number of files with Gillespie simulations
-mult_sim_run_count = file_count
+mult_sim_run_count = 850# file_count
 n_compartments = 16
 #####################################
 
@@ -75,8 +75,8 @@ num = np.genfromtxt("../../data/gillespie/genes_on_single_Y_fork/single_Y_fork_c
 averages = np.zeros((n_points, n_compartments))
 variances = np.zeros((n_points, n_compartments))
 
-for file_id in range(len(os.listdir(main_dir))-1):
-    file_name = "../../data/gillespie/genes_on_single_Y_fork/single_Y_fork_" + str(file_id)
+for file_id in range(mult_sim_run_count):#range(len(os.listdir(main_dir))-1):
+    file_name = "../../data/gillespie/single_Y_fork_test/single_Y_fork_" + str(file_id)
     print(file_name)
     data = np.genfromtxt(file_name, delimiter=',')[1:n_points+1, 1:]
     averages[:, 1:] += data[:, 1:]/mult_sim_run_count

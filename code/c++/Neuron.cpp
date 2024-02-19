@@ -89,6 +89,8 @@ Neuron& Neuron::refresh() {
   o1_index=0; mRNA_ind=1; comp_id=0;
 
   associate(static_cast<Compartment&>(*p_soma));
+
+  total_rate = 0; //For Gillespie engine
   
   return *this;
 }
