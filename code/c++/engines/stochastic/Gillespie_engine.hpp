@@ -15,7 +15,6 @@ class Gillespie_engine {
   void initialise_from(Compartment&);
   inline double draw_delta_t();
   void update_Gillespie();
-  void update_Gillespie_debug();
 
   std::vector<Event*> p_events;
   size_t ev_ind = 0; // Event index (needed for recursions)
