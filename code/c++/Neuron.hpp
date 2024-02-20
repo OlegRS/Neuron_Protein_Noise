@@ -43,7 +43,7 @@ protected:
   std::list<Compartment*> p_synapses;
   
   std::list<Junction*> p_junctions;
-  unsigned int n_SDJ, n_DSJ, n_DDJ; // Numbers of different junctions
+  unsigned int n_SDJ=0, n_DSJ=0, n_DDJ=0; // Numbers of different junctions
 
   void associate(Compartment& comaprtment); // Associates compartment with the neuron
   void dissociate(Compartment& comaprtment); // Dissociates compartment from the neuron

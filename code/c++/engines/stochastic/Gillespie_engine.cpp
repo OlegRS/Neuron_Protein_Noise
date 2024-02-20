@@ -1,22 +1,36 @@
 #include <math.h>
 #include "Gillespie_engine.hpp"
 
+size_t count = 0;
+
 Compartment* Gillespie_engine::initialise_soma() {
 
   auto& soma = *p_neuron->p_soma;
 
   p_events[0] = &soma.gene_activation.set_rate(soma.gene_activation_rate*(soma.number_of_gene_copies-soma.n_active_genes));
-  p_neuron->total_rate = soma.gene_activation.rate;
+  p_neuron->total_rate = soma.gene_activation.rate; ++count;
+  std::cerr << "soma.gene_activation.rate = " << soma.gene_activation.rate <<','
+   << "p_neuron->total_rate = " << p_neuron->total_rate <<std::endl;
   p_events[1] = &soma.gene_deactivation.set_rate(soma.gene_deactivation_rate*soma.n_active_genes);
-  p_neuron->total_rate += soma.gene_deactivation.rate;
+  p_neuron->total_rate += soma.gene_deactivation.rate; ++count;
+  std::cerr << "soma.gene_deactivation.rate = " << soma.gene_deactivation.rate <<','
+   << "p_neuron->total_rate = " << p_neuron->total_rate <<std::endl;
   p_events[2] = &soma.mRNA_creation.set_rate(soma.transcription_rate*soma.n_active_genes);
-  p_neuron->total_rate += soma.mRNA_creation.rate;
+  p_neuron->total_rate += soma.mRNA_creation.rate; ++count;
+  std::cerr << "soma.mRNA_creation.rate = " << soma.mRNA_creation.rate <<','
+   << "p_neuron->total_rate = " << p_neuron->total_rate <<std::endl;
   p_events[3] = &soma.mRNA_decay.set_rate(soma.mRNA_decay_rate*soma.n_mRNAs);
-  p_neuron->total_rate += soma.mRNA_decay.rate;
+  p_neuron->total_rate += soma.mRNA_decay.rate; ++count;
+  std::cerr << "soma.mRNA_decay.rate = " << soma.mRNA_decay.rate <<','
+   << "p_neuron->total_rate = " << p_neuron->total_rate <<std::endl;
   p_events[4] = &soma.protein_creation.set_rate(soma.translation_rate*soma.n_mRNAs);
-  p_neuron->total_rate += soma.protein_creation.rate*soma.n_mRNAs;
+  p_neuron->total_rate += soma.protein_creation.rate; ++count;
+  std::cerr << "soma.protein_creation.rate = " << soma.protein_creation.rate <<','
+   << "p_neuron->total_rate = " << p_neuron->total_rate <<std::endl;
   p_events[5] = &soma.protein_decay.set_rate(soma.protein_decay_rate*soma.n_proteins);
-  p_neuron->total_rate += soma.protein_decay.rate;
+  p_neuron->total_rate += soma.protein_decay.rate; ++count;
+  std::cerr << "soma.protein_decay.rate = " << soma.protein_decay.rate <<','
+   << "p_neuron->total_rate = " << p_neuron->total_rate <<std::endl;
   
   ev_ind = 6;
 
@@ -32,34 +46,54 @@ void Gillespie_engine::initialise_from(Compartment& comp) {
 
     if(p_junc->type() == DEN_SYN) {
       p_events[ev_ind++] = &p_junc->prot_hop_forward.set_rate(p_junc->fwd_prot_hop_rate*par.n_proteins);
-      p_neuron->total_rate += p_junc->prot_hop_forward.rate;
+      p_neuron->total_rate += p_junc->prot_hop_forward.rate; ++count;
+      std::cerr << "p_junc->prot_hop_forward.rate = " << p_junc->prot_hop_forward.rate << ','
+       << "p_neuron->total_rate = " << p_neuron->total_rate <<std::endl;
       p_events[ev_ind++] = &p_junc->prot_hop_backward.set_rate(p_junc->bkwd_prot_hop_rate*desc.n_proteins);
-      p_neuron->total_rate += p_junc->prot_hop_backward.rate;
+      p_neuron->total_rate += p_junc->prot_hop_backward.rate; ++count;
+      std::cerr << "p_junc->prot_hop_backward.rate = " << p_junc->prot_hop_backward.rate << ','
+       << "p_neuron->total_rate = " << p_neuron->total_rate <<std::endl;
 
       // No mRNAs creation/decay and protein creation in synapses (descendant is a synapse)
       desc.mRNA_creation.rate = 0;
       desc.mRNA_decay.rate = 0;
       desc.protein_creation.rate = 0;
       p_events[ev_ind++] = &desc.protein_decay.set_rate(desc.protein_decay_rate*desc.n_proteins);
-      p_neuron->total_rate += desc.protein_decay.rate;
+      p_neuron->total_rate += desc.protein_decay.rate; ++count;
+      std::cerr << "desc.protein_decay.rate = " << desc.protein_decay.rate << ','
+       << "p_neuron->total_rate = " << p_neuron->total_rate <<std::endl;
     }
     else if(p_junc->type() == DEN_DEN || p_junc->type() == SOM_DEN) {
       p_events[ev_ind++] = &p_junc->mRNA_hop_forward.set_rate(p_junc->fwd_mRNA_hop_rate*par.n_mRNAs);
-      p_neuron->total_rate += p_junc->mRNA_hop_forward.rate;
+      p_neuron->total_rate += p_junc->mRNA_hop_forward.rate; ++count;
+      std::cerr << "p_junc->mRNA_hop_forward.rate = " << p_junc->mRNA_hop_forward.rate << ','
+       << "p_neuron->total_rate = " << p_neuron->total_rate <<std::endl;
       p_events[ev_ind++] = &p_junc->mRNA_hop_backward.set_rate(p_junc->bkwd_mRNA_hop_rate*desc.n_mRNAs);
-      p_neuron->total_rate += p_junc->mRNA_hop_backward.rate;
+      p_neuron->total_rate += p_junc->mRNA_hop_backward.rate; ++count;
+      std::cerr << "p_junc->mRNA_hop_backward.rate = " << p_junc->mRNA_hop_backward.rate << ','
+                << "p_neuron->total_rate = " << p_neuron->total_rate <<std::endl;
       p_events[ev_ind++] = &p_junc->prot_hop_forward.set_rate(p_junc->fwd_prot_hop_rate*par.n_proteins);
-      p_neuron->total_rate += p_junc->prot_hop_forward.rate;
+      p_neuron->total_rate += p_junc->prot_hop_forward.rate; ++count;
+      std::cerr << "p_junc->prot_hop_forward.rate = " << p_junc->prot_hop_forward.rate << ','
+       << "p_neuron->total_rate = " << p_neuron->total_rate <<std::endl;
       p_events[ev_ind++] = &p_junc->prot_hop_backward.set_rate(p_junc->bkwd_prot_hop_rate*desc.n_proteins);
-      p_neuron->total_rate += p_junc->prot_hop_backward.rate;
+      p_neuron->total_rate += p_junc->prot_hop_backward.rate; ++count;
+      std::cerr << "p_junc->prot_hop_backward.rate = " << p_junc->prot_hop_backward.rate << ','
+       << "p_neuron->total_rate = " << p_neuron->total_rate <<std::endl;
 
       desc.mRNA_creation.rate = 0;
       p_events[ev_ind++] = &desc.mRNA_decay.set_rate(desc.mRNA_decay_rate*desc.n_mRNAs);
-      p_neuron->total_rate += desc.mRNA_decay.rate;
+      p_neuron->total_rate += desc.mRNA_decay.rate; ++count;
+      std::cerr << "desc.mRNA_decay.rate = " << desc.mRNA_decay.rate << ','
+       << "p_neuron->total_rate = " << p_neuron->total_rate <<std::endl;
       p_events[ev_ind++] = &desc.protein_creation.set_rate(desc.translation_rate*desc.n_mRNAs);
-      p_neuron->total_rate += desc.protein_creation.rate;
+      p_neuron->total_rate += desc.protein_creation.rate; ++count;
+      std::cerr << "desc.protein_creation.rate = " << desc.protein_creation.rate << ','
+       << "p_neuron->total_rate = " << p_neuron->total_rate <<std::endl;
       p_events[ev_ind++] = &desc.protein_decay.set_rate(desc.protein_decay_rate*desc.n_proteins);
-      p_neuron->total_rate += desc.protein_decay.rate;
+      p_neuron->total_rate += desc.protein_decay.rate; ++count;
+      std::cerr << "desc.protein_decay.rate = " << desc.protein_decay.rate << ','
+       << "p_neuron->total_rate = " << p_neuron->total_rate <<std::endl;
     }
     else {
       std::cerr << "-----------------------------------------\n"
@@ -115,6 +149,31 @@ void Gillespie_engine::update_Gillespie() {
   }
 }
 
+void Gillespie_engine::update_Gillespie_debug() {  
+  // Sampling the event
+  size_t i=0;
+  double r = rnd()*p_neuron->total_rate;
+  
+  for(double sum=p_events[0]->rate; sum<r; sum += p_events[i]->rate) {
+    ++i;
+    std::cerr << "i = " << i << std::endl;
+  }
+  std::cerr << "p_events[i]->type() = " << p_events[i]->type() << std::endl;
+
+  if(i<p_events.size())
+    (*p_events[i])(); // Triggering the event
+  else {
+    std::cerr <<"\n------------------------------\n"
+              <<" WARNING: GILLESPIE ENGINE ANOMALY DETECTED\n"
+              <<"\n------------------------------\n";
+    double s=0;
+    for(auto& p_event : p_events)
+      s+=p_event->rate;
+    std::cerr << "total_rate - s = " << p_neuron->total_rate - s << std::endl;
+  }
+}
+
+
 Gillespie_engine& Gillespie_engine::run_Gillespie(const double& time) {
   initialise_soma();
   initialise_from(*p_neuron->p_soma);
@@ -146,8 +205,21 @@ Gillespie_engine& Gillespie_engine::run_Gillespie(const double& time) {
 Gillespie_engine& Gillespie_engine::run_Gillespie(const std::list<double>& times, std::ofstream& ofs) {
   std::cerr << "Running Gillespie...\n";
   size_t n_jumps = 0;
+  std::cerr << "total_rate BEFORE INITIALISATION = " << p_neuron->total_rate << std::endl;
+
   initialise_soma();
   initialise_from(*p_neuron->p_soma);
+  std::cerr << "total_rate AFTER INITIALISATION = " << p_neuron->total_rate << std::endl;
+
+  double sum = 0;
+  for(auto p_ev : p_events) {
+    std::cerr << p_ev->type() << ": rate=" << p_ev->rate << std::endl;
+    sum += p_ev->rate;
+  }
+  std::cerr << "sum = " << sum << "; p_neuron->total_rate = " << p_neuron->total_rate << std::endl;
+
+
+  std::cerr << "Number of total_rate increments = " << count << std::endl;
 
   ofs << "t," << "time," << "Soma_AG," << "Soma_mRNA,"<< "Soma_Prot";
   for(auto& p_ds : p_neuron->p_dend_segments)
@@ -159,6 +231,21 @@ Gillespie_engine& Gillespie_engine::run_Gillespie(const std::list<double>& times
   double t = 0;
   double time_written;
   for(auto it_times=times.begin(); it_times!=times.end(); ) {
+    // Debug
+    if(*it_times >= 4999.9) {
+      std::cerr << "p_events.size() = " << p_events.size() << std::endl;
+      double sum = 0;
+      std::cerr << "p_events.size() = " << p_events.size() << std::endl;
+      for(auto p_ev : p_events)
+        sum += p_ev->rate;
+      std::cerr << "sum = " << sum << "; p_neuron->total_rate = " << p_neuron->total_rate << std::endl;
+      if(abs(sum - p_neuron->total_rate)>.1) {
+        exit(1);
+      }
+      std::cerr << *p_neuron << std::endl;
+    }
+    // Debug
+    
     if(*it_times > t) {
       t += draw_delta_t();
       while(*it_times <= t && it_times!=times.end()) {
@@ -170,7 +257,10 @@ Gillespie_engine& Gillespie_engine::run_Gillespie(const std::list<double>& times
         ofs << std::endl;
         ++it_times;
       }
-      update_Gillespie();
+      if(*it_times < 4999.9)
+        update_Gillespie();
+      else
+        update_Gillespie_debug();
            
       n_jumps++;
     }
