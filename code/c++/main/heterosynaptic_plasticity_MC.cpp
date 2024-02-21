@@ -6,8 +6,8 @@
 #include "../engines/stochastic/Gillespie_engine.hpp"
 
 #define N_AVRG  10000
-#define t1 5000
-#define t2 10000
+#define t1 2500
+#define t2 5000
 
 #define N_FORKS 1 // Note that it is (2^N_FORKS - 1)*3 compartments (if 2 synapses on each dend seg)!
 void fork_dendrite(Dendritic_segment* ds, size_t depth=0) {
@@ -28,9 +28,9 @@ int main() {
 
   PRNG rnd(1);
 
-  double dt = .1;  
+  double dt = .001;  
   
-  std::string file_name = "../../data/gillespie/heterosynaptic_plasticity/HM_";
+  std::string file_name = "../../data/gillespie/heterosynaptic_plasticity_HR/HP_";
 
   std::list<double> times1;
   for(double t=0; t<t1; t+=dt)
@@ -66,7 +66,7 @@ int main() {
   
     std::cerr << "------------------- Loop_2 -----------------------\n";
 
-    // syn_1_2.set_protein_binding_rate(.6);
+    syn_1_2.set_protein_binding_rate(.6*2);
     // ds.set_translation_rate(0.021*3600*10);
     
     neuron.refresh();

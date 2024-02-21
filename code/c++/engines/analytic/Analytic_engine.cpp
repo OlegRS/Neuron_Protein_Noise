@@ -2367,7 +2367,7 @@ Analytic_engine& Analytic_engine::protein_protein_stationary_covariances() {
   return *this;
 }
 
-Analytic_engine& Analytic_engine::stationary_covariances() {
+Analytic_engine& Analytic_engine::stationary_covariances(bool write_covariance_matrix) {
   initialise_o2();
   set_o2_matrix();
   set_o2_RHS();
@@ -2383,6 +2383,13 @@ Analytic_engine& Analytic_engine::stationary_covariances() {
     rmss[i] = sqrt(covariances(o2_ind(i,i)) - expectations(i)*(expectations(i)-1));
     std::cerr << o1_var_names[i] + ": " << expectations(i) << ", " << rmss[i] << std::endl;
   }
+
+  if(p_cov_mat && write_covariance_matrix) // Setting covariance matrix for direct ODE solvers
+    for(size_t i=0; i<o1_dim; ++i)
+      for(size_t j=0; j<i; ++j)
+        (*p_cov_mat)(j,i) = (*p_cov_mat)(i,j) = covariances(o2_ind(i,j));
+  for(size_t i=0; i<o1_dim; ++i)
+    (*p_cov_mat)(i,i) = (*p_cov_mat)(i,i) = covariances(o2_ind(i,i)) + expectations(i);
   
   return *this;
 }

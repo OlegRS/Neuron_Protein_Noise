@@ -50,15 +50,14 @@ int main() {
     ofs_variances("variances"),
     ofs_correlations("correlations");
 
-#define t_start 0
-#define t1 10
-#define t2 500
+#define t1 5000
+#define t2 10000
   double dt = .001;
 
-  ae.stationary_expectations().stationary_covariances(true); // Initialising at stationarity
+  // ae.stationary_expectations().stationary_covariances();
   
   std::cerr << "------------------- Loop_1 -----------------------\n";
-  for(double t=t_start; t<t1; t+=dt) {
+  for(double t=0; t<t1; t+=dt) {
     expectations = ae.get_expectations();
     ofs_expectations << t;
     for(size_t i=0; i<dim; ++i)
@@ -88,10 +87,11 @@ int main() {
     ae.nonstationary_covariances_direct_ODE_solver_step(dt);
   }
 
+  ae.stationary_expectations().stationary_covariances();  
+
   std::cerr << "------------------- Loop_2 -----------------------\n";
 
   p_syn_1_2 -> set_protein_binding_rate(1.2);
-  soma.set_transcription_rate(3.*200/10000*0.001*3600*2);
   // p_ds -> set_translation_rate(0.021*3600*10);
 
   neuron.refresh();

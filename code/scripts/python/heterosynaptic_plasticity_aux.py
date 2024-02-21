@@ -1,72 +1,4 @@
-import matplotlib
-matplotlib.rcParams['font.family']='serif'
-matplotlib.rcParams['mathtext.fontset']='cm'
-
-import numpy as np
-import matplotlib.pyplot as plt
-
-import os
-
-main_dir = "../../data/gillespie/heterosynaptic_plasticity"
-
-file_count = len(os.listdir(main_dir))
-
-
-############ PARAMETERS #############
-n_points = 99999
-step = .1
-x_lim = n_points*step
-sim_run_count = 10 # Number of files with Gillespie simulations
-mult_sim_run_count = 1# file_count
-dim = 8
-#####################################
-
 fig, axs = plt.subplots(nrows=4, ncols=1, figsize=(10*1.6*1.1, 3.2*1.9*1.7))
-
-num_exp = np.genfromtxt("../../data/gillespie/heterosynaptic_plasticity/expectations", delimiter=',')[:n_points, :]
-
-# 0: t
-
-# 0: time
-# 1: Soma_AG
-# 2: Soma_mRNA
-# 3: Soma_Prot
-# 4: d_1_mRNA
-# 5: d_1_Prot
-# 6: s_1_1_Prot
-# 7: s_1_1_Prot
-
-averages = np.zeros((n_points, dim))
-variances = np.zeros((n_points, dim))
-
-for file_id in range(mult_sim_run_count):#range(len(os.listdir(main_dir))-1):
-    file_name = "../../data/gillespie/heterosynaptic_plasticity/HM_" + str(file_id)
-    print(file_name)
-    data = np.vstack((np.genfromtxt(file_name, delimiter=',')[1:50000, 1:], np.genfromtxt(file_name, delimiter=',')[50001:n_points+2, 1:]))
-    
-    print("data: \n", data[50000])
-    # for i in range(data.shape[0]):
-    #     if data[i,0] == "t" :
-    #         print("i = ", i)
-
-    averages[:, 1:] += data[:, 1:]/mult_sim_run_count
-    variances[:, 1:] += data[:, 1:]**2/mult_sim_run_count
-    
-#   axs[2].plot(data[:,0], data[:,15], label="Synapse_1-2_2", alpha=.5, color='pink')
-
-# for i in range(1,6):
-#     for file_id in range(len(os.listdir("../../data/gillespie/single_Y_fork_aux" + str(i)))):
-#         file_name = "../../data/gillespie/single_Y_fork_aux" + str(i) + "/single_Y_fork" + str(file_id)
-#         print(file_name)
-#         data = np.genfromtxt(file_name, delimiter=',')[1:n_points+1, 1:]
-#         averages[:, 1:] += data[:, 1:]/mult_sim_run_count
-#         variances[:, 1:] += data[:, 1:]**2/mult_sim_run_count
-
-
-averages[:, 0] = data[:, 0]
-variances[:, 0] = data[:, 0]
-variances[:, 1:] = np.sqrt(variances[:, 1:] - averages[:, 1:]**2)
-
 
 # axs[0].plot(num[:,0], num[:,1], color='red', linewidth=2, zorder=1e4)
 # axs[0].plot(num[:,0], num[:,1] + num[:,2], linestyle='--', color='red', linewidth=2)
@@ -143,13 +75,10 @@ axs[2].set_ylabel(r'Bulk proteins', fontsize=20)
 
 ###################################################
 
-axs[3].plot(num_exp[:,0], num_exp[:,6], label="Dend_1-1", color='red', alpha=.7)
 axs[3].plot(averages[:,0], averages[:,6], label="Dend_1-1", color='blue', alpha=.7)
 axs[3].plot(averages[:,0], averages[:,6] + variances[:,7], linestyle='--', color='blue')
 axs[3].plot(averages[:,0], averages[:,6] - variances[:,7], linestyle='--', color='blue')
 
-
-axs[3].plot(num_exp[:,0], num_exp[:,7], label="Dend_1-1", color='red', alpha=.7)
 axs[3].plot(averages[:,0], averages[:,7], label="Dend_1-1", color='red', alpha=.7)
 axs[3].plot(averages[:,0], averages[:,7] + variances[:,7], linestyle='--', color='red')
 axs[3].plot(averages[:,0], averages[:,7] - variances[:,7], linestyle='--', color='red')

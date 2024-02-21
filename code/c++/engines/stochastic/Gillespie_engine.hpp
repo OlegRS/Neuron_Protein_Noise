@@ -33,8 +33,10 @@ public:
     p_neuron(&neuron),
     dim(3 + 2*neuron.p_dend_segments.size() + neuron.p_synapses.size()),
     p_events(6 + 3*neuron.p_dend_segments.size() + neuron.p_synapses.size() + 4*(neuron.n_SDJ + neuron.n_DDJ) + 2*neuron.n_DSJ),
-    rnd(prng)
-  {}
+    rnd(prng) {
+    initialise_soma();
+    initialise_from(*p_neuron->p_soma);
+  }
 
   Gillespie_engine& run_Gillespie(const double& time);
   Gillespie_engine& run_Gillespie(const std::list<double>& write_times, std::ofstream&);

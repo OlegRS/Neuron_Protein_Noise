@@ -160,7 +160,7 @@ public:
   Analytic_engine& sem_nonstationary_expectations(const double& time, const bool& reset_matrices = false, const bool& internalise=false);
   Analytic_engine& sem_nonstationary_expectations(const std::list<double>& times);
   
-  Analytic_engine& stationary_covariances();//const Neuron& neur = *p_neuron);
+  Analytic_engine& stationary_covariances(bool write_covariance_matrix=false);//const Neuron& neur = *p_neuron);
   Analytic_engine& sem_stationary_covariances(); // Semantically grouped stationary covariances
   Analytic_engine& sem_stationary_pearson_correlations();
 
