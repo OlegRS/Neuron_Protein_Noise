@@ -81,8 +81,9 @@ void Neuron::associate(Compartment& compartment) {
 // }
 
 Neuron& Neuron::refresh() {
+
   clear_junctions();
-    
+
   p_dend_segments.clear();
   p_synapses.clear();
   

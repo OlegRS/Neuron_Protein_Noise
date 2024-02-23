@@ -10,8 +10,5 @@ Junction& Neuron::Som_den_junction::set_hopping_rate_constants() {
   fwd_prot_hop_rate = p_from->protein_diffusion_constant*3600/((p_from->length)*(p_from->length)) + p_from->protein_forward_trafficking_velocity*3600/p_from->length;
   bkwd_prot_hop_rate = p_to->protein_diffusion_constant*3600/((p_to->length)*(p_to->length)) + p_to->protein_backward_trafficking_velocity*3600/p_to->length;
 
-  std::cerr << "SOM_DEN:\n"
-            << "fwd_mRNA_hop_rate=" << fwd_mRNA_hop_rate << ", bkwd_mRNA_hop_rate=" << bkwd_mRNA_hop_rate << ", fwd_prot_hop_rate=" << fwd_prot_hop_rate << ", bkwd_prot_hop_rate=" << bkwd_prot_hop_rate << std::endl;
-
   return *this;
 }

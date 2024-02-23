@@ -7,31 +7,20 @@
 
 using namespace std;
 
-#define N_FORKS 1 // Note that it is (2^N_FORKS - 1)*3 compartments (if 2 synapses on each dend seg)!
-void fork_dendrite(Dendritic_segment* ds, size_t depth=0) {
-  if (depth < N_FORKS) {
-    auto ds1 = new Dendritic_segment(*ds, ds->get_name() + "-1");
-    new Synapse(*ds1, "s_" + ds1->get_name() + "_1");
-    new Synapse(*ds1, "s_" + ds1->get_name() + "_2", .6, 6);
-    fork_dendrite(ds1, depth+1);
-
-    auto ds2 = new Dendritic_segment(*ds, ds->get_name() + "-2");
-    new Synapse(*ds2, "s_" + ds2->get_name() + "_1");
-    new Synapse(*ds2, "s_" + ds2->get_name() + "_2", .6, 6);
-    fork_dendrite(ds2, depth+1);
-  }
-}
-
 int main() {
 
   Soma soma("soma" /*,Parameters of the soma*/);
 
   ///// Branching neuron
-  Dendritic_segment* p_ds = new Dendritic_segment(soma, "d_1");
-  Synapse *p_syn_1_1 = new Synapse(*p_ds, "s_1_1", .6, 6, 1.2e-5*3600 * 10);
-  Synapse *p_syn_1_2 = new Synapse(*p_ds, "s_1_2", .6, 6, 1.2e-5*3600 * 10);
-  // fork_dendrite(p_ds);
-
+  Dendritic_segment ds(soma, "d_1");
+  Synapse syn_1_1(ds, "s_1_1", .6, 6, 1.2e-5*3600 * 10);
+  Synapse syn_1_2(ds, "s_1_2", .6, 6, 1.2e-5*3600 * 10);
+  Dendritic_segment ds_1(ds, "d_1-1");
+  Synapse syn_11_1(ds_1, "s_1_1-1", .6, 6, 1.2e-5*3600 * 10);
+  Synapse syn_11_2(ds_1, "s_1_1-2", .6, 6, 1.2e-5*3600 * 10);
+  Dendritic_segment ds_2(ds, "d_1-1");
+  Synapse syn_12_1(ds_2, "s_1_2-1", .6, 6, 1.2e-5*3600 * 10);
+  Synapse syn_12_2(ds_2, "s_1_2-2", .6, 6, 1.2e-5*3600 * 10);
 
   Neuron neuron(soma, "Test_neuron");
   
@@ -40,7 +29,7 @@ int main() {
   // cout << "----------------- ANALYTIC ENGINE -----------------\n";
   Analytic_engine ae(neuron);
 
-#define dim 7
+#define dim 15
   
   arma::mat covariances(dim,dim);
   arma::vec expectations(dim), variances(dim);
@@ -90,9 +79,9 @@ int main() {
 
   std::cerr << "------------------- Loop_2 -----------------------\n";
 
-  p_syn_1_2 -> set_protein_binding_rate(.6  * 10);
+  syn_11_2.set_protein_binding_rate(.6  * 10);
   soma.set_transcription_rate(3.*200/10000*0.001*3600  * 2);
-  // p_ds -> set_translation_rate(0.021*3600*10);
+  // ds.set_translation_rate(0.021*3600*10);
 
   neuron.refresh();
   std::cerr << "neuron:\n" << neuron << std::endl;

@@ -181,7 +181,7 @@ public:
   Analytic_engine& sem_nonstationary_covariances_direct_ODE_solver_step(const double& dt, const bool& reset_matrices=false);
 
   arma::vec* G1() {return &expectations;}
-  std::vector<std::string>* o1_variables_names() {return &o1_var_names;}
+  std::vector<std::string>* o1_variable_names() {return &o1_var_names;}
   arma::vec* G2() {return p_covariances;}
 
   size_t dim_o1() const {return o1_dim;}

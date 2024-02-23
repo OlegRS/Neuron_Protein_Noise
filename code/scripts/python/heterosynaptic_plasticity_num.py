@@ -23,17 +23,26 @@ axs[1].plot(num_exp[:,0], num_exp[:,2] + num_std[:,2], label="Soma", color='red'
 axs[1].plot(num_exp[:,0], num_exp[:,2] - num_std[:,2], label="Soma", color='red', alpha=.7, linestyle='--')
 
 axs[1].plot(num_exp[:,0], num_exp[:,4], label="Dendrite", color='blue', alpha=.7)
-axs[1].plot(num_exp[:,0], num_exp[:,4] + num_std[:,4], label="Soma", color='blue', alpha=.7, linestyle='--')
-axs[1].plot(num_exp[:,0], num_exp[:,4] - num_std[:,4], label="Soma", color='blue', alpha=.7, linestyle='--')
-
+axs[1].plot(num_exp[:,0], num_exp[:,4] + num_std[:,4], label="Dendrite", color='blue', alpha=.7, linestyle='--')
+axs[1].plot(num_exp[:,0], num_exp[:,4] - num_std[:,4], label="Dendrite", color='blue', alpha=.7, linestyle='--')
 
 axs[2].set_ylabel(r'Bulk proteins', fontsize=20)
 axs[2].plot(num_exp[:,0], num_exp[:,3], label="Soma", color='red', alpha=.7)
+axs[2].plot(num_exp[:,0], num_exp[:,3] + num_std[:,3], label="Soma", color='red', alpha=.7, linestyle='--')
+axs[2].plot(num_exp[:,0], num_exp[:,3] - num_std[:,3], label="Soma", color='red', alpha=.7, linestyle='--')
+
 axs[2].plot(num_exp[:,0], num_exp[:,5], label="Dendrite", color='blue', alpha=.7)
+axs[2].plot(num_exp[:,0], num_exp[:,5] + num_std[:,5], label="Dendrite", color='blue', alpha=.7, linestyle='--')
+axs[2].plot(num_exp[:,0], num_exp[:,5] - num_std[:,5], label="Dendrite", color='blue', alpha=.7, linestyle='--')
 
 axs[3].set_ylabel(r'Synaptic proteins', fontsize=18)
 axs[3].plot(num_exp[:,0], num_exp[:,6], label="Syn_1-1", color='teal', alpha=.7)
-axs[3].plot(num_exp[:,0], num_exp[:,7], label="Syn_1-1", color='cyan', alpha=.7)
+axs[3].plot(num_exp[:,0], num_exp[:,6] + num_std[:,6], label="Syn_1-1", color='teal', alpha=.7, linestyle='--')
+axs[3].plot(num_exp[:,0], num_exp[:,6] - num_std[:,6], label="Syn_1-1", color='teal', alpha=.7, linestyle='--')
+
+axs[3].plot(num_exp[:,0], num_exp[:,7], label="Syn_1-2", color='cyan', alpha=.7)
+axs[3].plot(num_exp[:,0], num_exp[:,7] + num_std[:,7], label="Syn_1-2", color='cyan', alpha=.7, linestyle='--')
+axs[3].plot(num_exp[:,0], num_exp[:,7] - num_std[:,7], label="Syn_1-2", color='cyan', alpha=.7, linestyle='--')
 
 axs[3].set_xlabel(r'Time in hours', fontsize=18)
 

@@ -14,7 +14,7 @@ class Synapse : public Compartment {
 public:
   Synapse();
   Synapse(Compartment &parent, const std::string& name = "no_name");
-  Synapse(Compartment &parent, const std::string& name, const double &protein_binding_rate, const double &protein_unbinding_rate, const unsigned int &protein_number = 0);
+  Synapse(Compartment &parent, const std::string& name, const double &protein_binding_rate, const double &protein_unbinding_rate, const double &protein_decay_rate=0, const unsigned int &protein_number = 0);
 
   Synapse& copy() const;
 

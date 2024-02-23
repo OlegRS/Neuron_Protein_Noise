@@ -5,133 +5,87 @@
 #include "../compartments/Synapse.hpp"
 #include "../engines/analytic/Analytic_engine.hpp"
 
-using namespace std;
-
-#define N_FORKS 1 // Note that it is (2^N_FORKS - 1)*3 compartments (if 2 synapses on each dend seg)!
-void fork_dendrite(Dendritic_segment* ds, size_t depth=0) {
-  if (depth < N_FORKS) {
-    auto ds1 = new Dendritic_segment(*ds, ds->get_name() + "-1");
-    new Synapse(*ds1, "s_" + ds1->get_name() + "_1");
-    new Synapse(*ds1, "s_" + ds1->get_name() + "_2", .6, 6);
-    fork_dendrite(ds1, depth+1);
-
-    auto ds2 = new Dendritic_segment(*ds, ds->get_name() + "-2");
-    new Synapse(*ds2, "s_" + ds2->get_name() + "_1");
-    new Synapse(*ds2, "s_" + ds2->get_name() + "_2", .6, 6);
-    fork_dendrite(ds2, depth+1);
-  }
-}
-
 int main() {
 
   Soma soma("soma" /*,Parameters of the soma*/);
 
   ///// Branching neuron
-  Dendritic_segment* p_ds = new Dendritic_segment(soma, "d_1");
-  Synapse *p_syn_1_1 = new Synapse(*p_ds, "s_1_1", .6, 6);
-  Synapse *p_syn_1_2 = new Synapse(*p_ds, "s_1_2", .6, 6);
-  // fork_dendrite(p_ds);
-
+  std::list<Synapse*> p_synapses;
+  Dendritic_segment ds(soma, "d_1");
+  Synapse syn_1_1(ds, "s_1_1", .6, 6, 1.2e-5*3600 * 10);
+  p_synapses.push_back(&syn_1_1);
+  Synapse syn_1_2(ds, "s_1_2", .6, 6, 1.2e-5*3600 * 10);
+  p_synapses.push_back(&syn_1_2);
+  Dendritic_segment ds_1(ds, "d_1-1");
+  Synapse syn_11_1(ds_1, "s_1_1-1", .6, 6, 1.2e-5*3600 * 10);
+  p_synapses.push_back(&syn_11_1);
+  Synapse syn_11_2(ds_1, "s_1_1-2", .6, 6, 1.2e-5*3600 * 10);
+  p_synapses.push_back(&syn_11_2);
+  Dendritic_segment ds_2(ds, "d_1-2");
+  Synapse syn_12_1(ds_2, "s_1_2-1", .6, 6, 1.2e-5*3600 * 10);
+  p_synapses.push_back(&syn_12_1);
+  Synapse syn_12_2(ds_2, "s_1_2-2", .6, 6, 1.2e-5*3600 * 10);
+  p_synapses.push_back(&syn_12_2);
 
   Neuron neuron(soma, "Test_neuron");
   
-  cout << neuron << endl;
-
-  // cout << "----------------- ANALYTIC ENGINE -----------------\n";
+  std::cout << neuron << std::endl;
+  
   Analytic_engine ae(neuron);
 
-#define dim 7
+#define dim 15
   
-  arma::mat covariances(dim,dim);
-  arma::vec expectations(dim), variances(dim);
+#define pdr_start 0 // protein decay rate
+#define pdr_fin   50
+#define d_prot_dec_rate     .0001
+#define prot_bind_rate      .6
+#define d_prot_bind_rate    .001
+#define SYN                 syn_11_2
 
-  ofstream ofs_expectations("expectations"),
-    ofs_covariances("covariances"),
-    ofs_variances("variances"),
-    ofs_correlations("correlations");
+  std::ofstream ofs_exp_diff("expectation_differences"),
+    ofs_expectations1("expectations1"),
+    ofs_expectations2("expectations2");
 
-#define t1 5000
-#define t2 10000
-  double dt = .001;
-
-  // ae.stationary_expectations().stationary_covariances();
+  arma::vec exp_diff(dim), expectations(dim);
   
-  std::cerr << "------------------- Loop_1 -----------------------\n";
-  for(double t=0; t<t1; t+=dt) {
-    expectations = ae.get_expectations();
-    ofs_expectations << t;
-    for(size_t i=0; i<dim; ++i)
-      ofs_expectations  << ',' << expectations(i);
-    ofs_expectations << endl;
+  std::cerr << "------------------- Merged loop -----------------------\n";
+  for(double prot_dec_rate=pdr_start; prot_dec_rate<pdr_fin; prot_dec_rate+=d_prot_dec_rate) {
+    for(auto syn : p_synapses)
+      syn->set_protein_decay_rate(prot_dec_rate);
+    //    SYN.set_protein_decay_rate(prot_dec_rate);
     
-    if(t==0)
-      ae.nonstationary_expectations_direct_ODE_solver_step(dt, true);
-    else
-      ae.nonstationary_expectations_direct_ODE_solver_step(dt);
+    SYN.set_protein_binding_rate(prot_bind_rate + d_prot_bind_rate);
+    neuron.refresh();
+    ae.stationary_expectations();
+    exp_diff  = ae.get_expectations();
 
-    ofs_covariances << "t=" << t << endl
-                    << "covariances:\n" << (covariances = ae.get_covariances()) << endl;
-    
-    ofs_correlations << "t=" << t << std::endl;
-    for(size_t i=0; i<dim; ++i) {
-      for(size_t j=0; j<dim; ++j)
-        ofs_correlations << covariances(i,j) - expectations(i)*expectations(j) << ',';
-      ofs_correlations << std::endl;
-    }        
-
-    ofs_variances << t;
+    ofs_expectations1 << prot_dec_rate;
     for(size_t i=0; i<dim; ++i)
-      ofs_variances  << ',' << sqrt(covariances(i,i) - expectations(i)*expectations(i));
-    ofs_variances << endl;
+      ofs_expectations1  << ',' << exp_diff(i);
+    ofs_expectations1 << std::endl;
+    
+ 
+    SYN.set_protein_binding_rate(prot_bind_rate - d_prot_bind_rate);
+    neuron.refresh();
+    ae.stationary_expectations();
 
-    ae.nonstationary_covariances_direct_ODE_solver_step(dt);
+    exp_diff -= expectations = ae.get_expectations();
+    ofs_expectations2 << prot_dec_rate;
+    for(size_t i=0; i<dim; ++i)
+      ofs_expectations2  << ',' << expectations(i);
+    ofs_expectations2 << std::endl;
+
+    for(size_t i=0; i<dim; ++i)
+      exp_diff[i] /= (2*d_prot_bind_rate) * expectations[i];
+    ofs_exp_diff << prot_dec_rate;
+    for(size_t i=0; i<dim; ++i)
+      ofs_exp_diff  << ',' << exp_diff(i);
+    ofs_exp_diff << std::endl;
   }
 
-  ae.stationary_expectations().stationary_covariances();  
-
-  std::cerr << "------------------- Loop_2 -----------------------\n";
-
-  p_syn_1_2 -> set_protein_binding_rate(1.2);
-  // p_ds -> set_translation_rate(0.021*3600*10);
-
-  neuron.refresh();
-  std::cerr << "neuron:\n" << neuron << std::endl;
-  
-  for(double t=t1; t<t2; t+=dt) {
-    ofs_expectations << t;
-    expectations = ae.get_expectations();
-    for(size_t i=0; i<dim; ++i)
-      ofs_expectations  << ',' << expectations(i);
-    ofs_expectations << endl;
-    
-    if(t==t1)
-      ae.nonstationary_expectations_direct_ODE_solver_step(dt, true);
-    else
-      ae.nonstationary_expectations_direct_ODE_solver_step(dt);
-
-    ofs_covariances << "t=" << t << endl
-                    << "covariances:\n" << (covariances = ae.get_covariances()) << endl;
-    
-    ofs_correlations << "t=" << t << std::endl;
-    for(size_t i=0; i<dim; ++i) {
-      for(size_t j=0; j<dim; ++j)
-        ofs_correlations << covariances(i,j) - expectations(i)*expectations(j) << ',';
-      ofs_correlations << std::endl;
-    }        
-
-    ofs_variances << t;
-    for(size_t i=0; i<dim; ++i)
-      ofs_variances  << ',' << sqrt(covariances(i,i) - expectations(i)*expectations(i));
-    ofs_variances << endl;
-
-    ae.nonstationary_covariances_direct_ODE_solver_step(dt);
-  }
-
-  ofs_expectations.close();
-  ofs_covariances.close();
-  ofs_variances.close();
-
-  ae.stationary_expectations().stationary_covariances();
+  auto var_names = *(ae.o1_variable_names());
+  for(size_t i=0; i<dim; ++i)
+    std::cerr << i+1 << ") " << var_names[i] << '\n';
   
   return 0;
 }

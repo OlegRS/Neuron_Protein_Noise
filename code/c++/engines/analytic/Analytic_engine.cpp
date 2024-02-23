@@ -592,17 +592,17 @@ Analytic_engine& Analytic_engine::internalise_expectations() {
 }
 
 Analytic_engine& Analytic_engine::stationary_expectations() {
-  std::cerr << "Setting o1_matrix...\n";
+  // std::cerr << "Setting o1_matrix...\n";
   set_o1_matrix(*set_o1_soma());
-  std::cerr << "Inverting o1_matrix...\n";
+  // std::cerr << "Inverting o1_matrix...\n";
   arma::mat inv_o1_matrix = (*p_o1_mat).i();
-  std::cerr << "Done with o1_matrix inversion\n";
+  // std::cerr << "Done with o1_matrix inversion\n";
 
   expectations = inv_o1_matrix * (*p_o1_RHS);
 
-  size_t i=0;
-  for(auto& o1_var_name : o1_var_names)
-    std::cout << o1_var_name << "=\t" << expectations[i++] << std::endl;
+  // size_t i=0;
+  // for(auto& o1_var_name : o1_var_names)
+  //   std::cout << o1_var_name << "=\t" << expectations[i++] << std::endl;
   
   return internalise_expectations();
 }
@@ -1892,22 +1892,6 @@ void Analytic_engine::set_o2_matrix() {
       exit(1);
     }
   }
-
-  auto& o2_var_names = *p_o2_var_names;
-  std::cout << "-,";
-  for(size_t i=0; i<o2_dim; ++i)
-    std::cout << o2_var_names[i] << ',';
-
-  for(size_t i=0; i<o2_dim; ++i) {
-    std::cout << '\n';
-    for(size_t j=0; j<o2_dim; ++j)
-      if(j==0)
-        std::cout << o2_var_names[i] << ',' << o2_mat(i,j) << ',';
-      else
-        std::cout << o2_mat(i,j) << ',';
-  }
-  std::cout << std::endl;
-  // std::cout << "o2_matrix:\n" << o2_mat << std::endl;
 }  
 
 
@@ -2371,18 +2355,18 @@ Analytic_engine& Analytic_engine::stationary_covariances(bool write_covariance_m
   initialise_o2();
   set_o2_matrix();
   set_o2_RHS();
-  std::cerr << "(*p_o2_RHS)(j) = " << (*p_o2_RHS) << std::endl;
+  // std::cerr << "(*p_o2_RHS)(j) = " << (*p_o2_RHS) << std::endl;
   auto& covariances = *p_covariances;
   auto& o2_mat = *p_o2_mat;
   auto& o2_RHS = *p_o2_RHS;
   std::cerr << "Computing covariances...\n";
   covariances = o2_mat.i()*o2_RHS;
 
-  std::vector<double> rmss(o1_dim);
-  for(size_t i=0; i<o1_dim; ++i) {  
-    rmss[i] = sqrt(covariances(o2_ind(i,i)) - expectations(i)*(expectations(i)-1));
-    std::cerr << o1_var_names[i] + ": " << expectations(i) << ", " << rmss[i] << std::endl;
-  }
+  // std::vector<double> rmss(o1_dim);
+  // for(size_t i=0; i<o1_dim; ++i) {  
+  //   rmss[i] = sqrt(covariances(o2_ind(i,i)) - expectations(i)*(expectations(i)-1));
+  //   std::cerr << o1_var_names[i] + ": " << expectations(i) << ", " << rmss[i] << std::endl;
+  // }
 
   if(p_cov_mat && write_covariance_matrix) // Setting covariance matrix for direct ODE solvers
     for(size_t i=0; i<o1_dim; ++i)

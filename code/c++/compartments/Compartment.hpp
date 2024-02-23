@@ -123,8 +123,10 @@ public:
   Compartment& connect_to(Compartment&); // Linking another compartment
   Compartment& disconnect_from(Compartment&); // Unlinking another compartment
 
-  Compartment& set_translation_rate(const double& rate) {translation_rate=rate; return *this;}
+  Compartment& set_transcription_rate(const double& rate) {transcription_rate=rate; return *this;}
   Compartment& set_mRNA_decay_rate(const double& rate) {mRNA_decay_rate=rate; return *this;}
+  Compartment& set_translation_rate(const double& rate) {translation_rate=rate; return *this;}
+  Compartment& set_protein_decay_rate(const double& rate) {protein_decay_rate=rate; return *this;}
 
   ~Compartment() {};
 
