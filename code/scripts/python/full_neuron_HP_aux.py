@@ -26,8 +26,25 @@ import os
 
 fig, axs = plt.subplots(nrows=4, ncols=1, figsize=(10*1.6*1.1, 3.2*1.9*1.7))
 
-num_exp = np.genfromtxt("../../bin/exe/expectations", delimiter=',')
-num_std = np.genfromtxt("../../bin/exe/variances", delimiter=',')
+
+# 1 - Active genes
+# 2 - Soma mRNA
+# 3 - Soma proteins
+# 4 - d_1 mRNA
+# 5 - d_1 proteins
+# 6 - d_1_1 mRNAs
+# 7 - d_1_1 proteins
+# 8 - d_1_2 mRNAs
+# 9 - d_1_2 proteins
+# 10 - s_1-1 proteins
+# 11 - s_1-2 proteins
+# 12 - s_1-1_1 proteins
+# 13 - s_1-1_2 proteions
+# 14 - s_1-2_1 proteins
+# 15 - s_1-2_2 proteions
+
+axs[0].plot(data[:,0]-5000+10, averages[:,10], label='Average active genes', color='red', alpha=.5)
+
 
 axs[0].set_ylabel(r'S_1-1', fontsize=20)
 axs[0].plot(num_exp[:,0], num_exp[:,6], label="Soma", color='red', alpha=.7)
@@ -43,6 +60,12 @@ axs[2].set_ylabel(r'S_1-1_2', fontsize=20)
 axs[2].plot(num_exp[:,0], num_exp[:,11], label="Soma", color='blue', alpha=.7)
 axs[2].plot(num_exp[:,0], num_exp[:,11] + num_std[:,11], label="Soma", color='blue', alpha=.7, linestyle='--')
 axs[2].plot(num_exp[:,0], num_exp[:,11] - num_std[:,11], label="Soma", color='blue', alpha=.7, linestyle='--')
+
+
+axs[3].set_ylabel(r'S_1-2_1', fontsize=20)
+axs[3].plot(num_exp[:,0], num_exp[:,14], label="Soma", color='red', alpha=.7)
+axs[3].plot(num_exp[:,0], num_exp[:,14] + num_std[:,14], label="Soma", color='red', alpha=.7, linestyle='--')
+axs[3].plot(num_exp[:,0], num_exp[:,14] - num_std[:,14], label="Soma", color='red', alpha=.7, linestyle='--')
 
 axs[3].set_ylabel(r'S_1-2_2', fontsize=20)
 axs[3].plot(num_exp[:,0], num_exp[:,15], label="Soma", color='red', alpha=.7)

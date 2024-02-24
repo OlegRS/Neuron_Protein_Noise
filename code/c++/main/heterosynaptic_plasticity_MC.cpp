@@ -6,52 +6,48 @@
 #include "../engines/stochastic/Gillespie_engine.hpp"
 
 #define N_AVRG  10000
-#define t1 2500
-#define t2 5000
+#define event_time 5000
 
-#define N_FORKS 1 // Note that it is (2^N_FORKS - 1)*3 compartments (if 2 synapses on each dend seg)!
-void fork_dendrite(Dendritic_segment* ds, size_t depth=0) {
-  if (depth < N_FORKS) {
-    auto ds1 = new Dendritic_segment(*ds, ds->get_name() + "-1");
-    new Synapse(*ds1, "s_" + ds1->get_name() + "_1");
-    new Synapse(*ds1, "s_" + ds1->get_name() + "_2", .6, 6);
-    fork_dendrite(ds1, depth+1);
+#define syn_dec_rate 0 //1.2e-5*3600
+#define transcription_rate_multiplier 2
+#define binding_rate_multiplier 10
+#define SYN syn_12_2
+std::string syn_name = "syn_1-2_2";
 
-    auto ds2 = new Dendritic_segment(*ds, ds->get_name() + "-2");
-    new Synapse(*ds2, "s_" + ds2->get_name() + "_1");
-    new Synapse(*ds2, "s_" + ds2->get_name() + "_2", .6, 6);
-    fork_dendrite(ds2, depth+1);
-  }
-}
 
 int main() {
 
   PRNG rnd(1);
 
-  double dt = .001;  
+  double dt = .01;  
   
-  std::string file_name = "../../data/gillespie/heterosynaptic_plasticity_HR/HP_";
+  std::string file_name = "../../data/gillespie/heterosynaptic_plasticity_full_new/HP_" + syn_name + "_transcription_rate_multiplier_" + std::to_string(transcription_rate_multiplier) + "_bind_rate_multiplier_" + std::to_string(binding_rate_multiplier) + '_';
 
-  std::list<double> times1;
-  for(double t=0; t<t1; t+=dt)
-    times1.push_back(t);
-
-  std::list<double> times2;
-  for(double t=t1; t<t2; t+=dt)
-    times2.push_back(t);
-
+  std::list<double> times;
+  for(double t=0; t<event_time; t+=dt)
+    times.push_back(t);
   
   for(size_t i=0; i<N_AVRG; ++i) {
-    Soma soma("soma" /*,Parameters of the soma*/);
-    // ///// Branching neuron
-    // Dendritic_segment* p_ds = new Dendritic_segment(soma, "d_1");
-    // Synapse *p_syn_1_1 = new Synapse(*p_ds, "s_1_1", .6, 6);
-    // Synapse *p_syn_1_2 = new Synapse(*p_ds, "s_1_2", .6, 6);
-    // // fork_dendrite(p_ds);
 
+    Soma soma("soma" /*,Parameters of the soma*/);
+
+    ///// Branching neuron
+    std::list<Synapse*> p_synapses;
     Dendritic_segment ds(soma, "d_1");
-    Synapse syn_1_1(ds, "s_1_1", .6, 6);
-    Synapse syn_1_2(ds, "s_1_1", .6, 6);
+    Synapse syn_1_1(ds, "s_1_1", .6, 6, syn_dec_rate);
+    p_synapses.push_back(&syn_1_1);
+    Synapse syn_1_2(ds, "s_1_2", .6, 6, syn_dec_rate);
+    p_synapses.push_back(&syn_1_2);
+    Dendritic_segment ds_1(ds, "d_1_1");
+    Synapse syn_11_1(ds_1, "s_1_1-1", .6, 6, syn_dec_rate);
+    p_synapses.push_back(&syn_11_1);
+    Synapse syn_11_2(ds_1, "s_1_1-2", .6, 6, syn_dec_rate);
+    p_synapses.push_back(&syn_11_2);
+    Dendritic_segment ds_2(ds, "d_1_2");
+    Synapse syn_12_1(ds_2, "s_1_2-1", .6, 6, syn_dec_rate);
+    p_synapses.push_back(&syn_12_1);
+    Synapse syn_12_2(ds_2, "s_1_2-2", .6, 6, syn_dec_rate);
+    p_synapses.push_back(&syn_12_2);
 
     Neuron neuron(soma, "Test_neuron");  
 
@@ -62,17 +58,17 @@ int main() {
     std::cerr << "------------------- Loop_1 -----------------------\n";
     std::cout << neuron << std::endl;
  
-    Gillespie_engine(neuron, rnd).run_Gillespie(times1, ofs_gillespie);
+    Gillespie_engine(neuron, rnd).run_Gillespie(times, ofs_gillespie);
   
     std::cerr << "------------------- Loop_2 -----------------------\n";
 
-    syn_1_2.set_protein_binding_rate(.6*2);
-    // ds.set_translation_rate(0.021*3600*10);
-    
+    SYN.set_protein_binding_rate(.6*binding_rate_multiplier);
+    soma.set_transcription_rate(3.*200/10000*0.001*3600*transcription_rate_multiplier);
     neuron.refresh();
+
     std::cout << neuron << std::endl;
-  
-    Gillespie_engine(neuron, rnd).run_Gillespie(times2, ofs_gillespie);
+    
+    Gillespie_engine(neuron, rnd).run_Gillespie(times, ofs_gillespie, event_time);
   
     ofs_gillespie.close();
   }

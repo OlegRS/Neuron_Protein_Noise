@@ -16,12 +16,12 @@ int main() {
   p_synapses.push_back(&syn_1_1);
   Synapse syn_1_2(ds, "s_1_2", .6, 6, 1.2e-5*3600 * 10);
   p_synapses.push_back(&syn_1_2);
-  Dendritic_segment ds_1(ds, "d_1-1");
+  Dendritic_segment ds_1(ds, "d_1_1");
   Synapse syn_11_1(ds_1, "s_1_1-1", .6, 6, 1.2e-5*3600 * 10);
   p_synapses.push_back(&syn_11_1);
   Synapse syn_11_2(ds_1, "s_1_1-2", .6, 6, 1.2e-5*3600 * 10);
   p_synapses.push_back(&syn_11_2);
-  Dendritic_segment ds_2(ds, "d_1-2");
+  Dendritic_segment ds_2(ds, "d_1_2");
   Synapse syn_12_1(ds_2, "s_1_2-1", .6, 6, 1.2e-5*3600 * 10);
   p_synapses.push_back(&syn_12_1);
   Synapse syn_12_2(ds_2, "s_1_2-2", .6, 6, 1.2e-5*3600 * 10);
@@ -36,15 +36,15 @@ int main() {
 #define dim 15
   
 #define pdr_start 0 // protein decay rate
-#define pdr_fin   50
+#define pdr_fin   5
 #define d_prot_dec_rate     .0001
 #define prot_bind_rate      .6
 #define d_prot_bind_rate    .001
-#define SYN                 syn_11_2
+#define SYN                 syn_1_1
 
-  std::ofstream ofs_exp_diff("expectation_differences"),
-    ofs_expectations1("expectations1"),
-    ofs_expectations2("expectations2");
+  std::ofstream ofs_exp_diff("expectation_differences_syn_1_1"),
+    ofs_expectations1("expectations1_syn_1_1"),
+    ofs_expectations2("expectations2_syn_1_1");
 
   arma::vec exp_diff(dim), expectations(dim);
   
@@ -53,6 +53,8 @@ int main() {
     for(auto syn : p_synapses)
       syn->set_protein_decay_rate(prot_dec_rate);
     //    SYN.set_protein_decay_rate(prot_dec_rate);
+    // ds_2.set_translation_rate(0.021*3600*10);
+    // ds.set_translation_rate(0.021*3600*5);
     
     SYN.set_protein_binding_rate(prot_bind_rate + d_prot_bind_rate);
     neuron.refresh();

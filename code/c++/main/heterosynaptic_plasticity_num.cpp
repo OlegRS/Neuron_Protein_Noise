@@ -7,30 +7,33 @@
 
 using namespace std;
 
-#define N_FORKS 1 // Note that it is (2^N_FORKS - 1)*3 compartments (if 2 synapses on each dend seg)!
-void fork_dendrite(Dendritic_segment* ds, size_t depth=0) {
-  if (depth < N_FORKS) {
-    auto ds1 = new Dendritic_segment(*ds, ds->get_name() + "-1");
-    new Synapse(*ds1, "s_" + ds1->get_name() + "_1");
-    new Synapse(*ds1, "s_" + ds1->get_name() + "_2", .6, 6);
-    fork_dendrite(ds1, depth+1);
-
-    auto ds2 = new Dendritic_segment(*ds, ds->get_name() + "-2");
-    new Synapse(*ds2, "s_" + ds2->get_name() + "_1");
-    new Synapse(*ds2, "s_" + ds2->get_name() + "_2", .6, 6);
-    fork_dendrite(ds2, depth+1);
-  }
-}
+#define syn_dec_rate 0 //1.2e-5*3600
+#define transcription_rate_multiplier 2
+#define binding_rate_multiplier 10
+#define SYN syn_12_2
 
 int main() {
 
   Soma soma("soma" /*,Parameters of the soma*/);
 
   ///// Branching neuron
-  Dendritic_segment* p_ds = new Dendritic_segment(soma, "d_1");
-  Synapse *p_syn_1_1 = new Synapse(*p_ds, "s_1_1", .6, 6, 1.2e-5*3600 * 10);
-  Synapse *p_syn_1_2 = new Synapse(*p_ds, "s_1_2", .6, 6, 1.2e-5*3600 * 10);
-  // fork_dendrite(p_ds);
+  std::list<Synapse*> p_synapses;
+  Dendritic_segment ds(soma, "d_1");
+  Synapse syn_1_1(ds, "s_1_1", .6, 6, syn_dec_rate);
+  p_synapses.push_back(&syn_1_1);
+  Synapse syn_1_2(ds, "s_1_2", .6, 6, syn_dec_rate);
+  p_synapses.push_back(&syn_1_2);
+  Dendritic_segment ds_1(ds, "d_1_1");
+  Synapse syn_11_1(ds_1, "s_1_1-1", .6, 6, syn_dec_rate);
+  p_synapses.push_back(&syn_11_1);
+  Synapse syn_11_2(ds_1, "s_1_1-2", .6, 6, syn_dec_rate);
+  p_synapses.push_back(&syn_11_2);
+  Dendritic_segment ds_2(ds, "d_1_2");
+  Synapse syn_12_1(ds_2, "s_1_2-1", .6, 6, syn_dec_rate);
+  p_synapses.push_back(&syn_12_1);
+  Synapse syn_12_2(ds_2, "s_1_2-2", .6, 6, syn_dec_rate);
+  p_synapses.push_back(&syn_12_2);
+
 
 
   Neuron neuron(soma, "Test_neuron");
@@ -40,15 +43,15 @@ int main() {
   // cout << "----------------- ANALYTIC ENGINE -----------------\n";
   Analytic_engine ae(neuron);
 
-#define dim 7
+#define dim 15
   
   arma::mat covariances(dim,dim);
   arma::vec expectations(dim), variances(dim);
 
-  ofstream ofs_expectations("expectations"),
-    ofs_covariances("covariances"),
-    ofs_variances("variances"),
-    ofs_correlations("correlations");
+  ofstream ofs_expectations("expectations_"+ SYN.get_name() + "_transcription_rate_multiplier_" + std::to_string(transcription_rate_multiplier) + "_bind_r_mult_" + std::to_string(binding_rate_multiplier)),
+    // ofs_covariances("covariances_"+ SYN.get_name() + "_transcription_rate_multiplier_" + std::to_string(transcription_rate_multiplier) + "_bind_r_mult_" + std::to_string(binding_rate_multiplier)),
+    ofs_variances("variances_"+ SYN.get_name() + "_transcription_rate_multiplier_" + std::to_string(transcription_rate_multiplier) + "_bind_r_mult_" + std::to_string(binding_rate_multiplier));
+    //ofs_correlations("correlations_"+ SYN.get_name() + "_transcription_rate_multiplier_" + std::to_string(transcription_rate_multiplier) + "_bind_r_mult_" + std::to_string(binding_rate_multiplier));
 
 #define t_start 0
 #define t1 10
@@ -70,15 +73,17 @@ int main() {
     else
       ae.nonstationary_expectations_direct_ODE_solver_step(dt);
 
-    ofs_covariances << "t=" << t << endl
-                    << "covariances:\n" << (covariances = ae.get_covariances()) << endl;
+    // ofs_covariances << "t=" << t << endl
+    //                 << "covariances:\n" << (covariances = ae.get_covariances()) << endl;
+
+    covariances = ae.get_covariances();
     
-    ofs_correlations << "t=" << t << std::endl;
-    for(size_t i=0; i<dim; ++i) {
-      for(size_t j=0; j<dim; ++j)
-        ofs_correlations << covariances(i,j) - expectations(i)*expectations(j) << ',';
-      ofs_correlations << std::endl;
-    }        
+    // ofs_correlations << "t=" << t << std::endl;
+    // for(size_t i=0; i<dim; ++i) {
+    //   for(size_t j=0; j<dim; ++j)
+    //     ofs_correlations << covariances(i,j) - expectations(i)*expectations(j) << ',';
+    //   ofs_correlations << std::endl;
+    // }        
 
     ofs_variances << t;
     for(size_t i=0; i<dim; ++i)
@@ -90,9 +95,8 @@ int main() {
 
   std::cerr << "------------------- Loop_2 -----------------------\n";
 
-  p_syn_1_2 -> set_protein_binding_rate(.6  * 10);
-  soma.set_transcription_rate(3.*200/10000*0.001*3600  * 2);
-  // p_ds -> set_translation_rate(0.021*3600*10);
+  SYN.set_protein_binding_rate(.6*binding_rate_multiplier);
+  soma.set_transcription_rate(3.*200/10000*0.001*3600*transcription_rate_multiplier);
 
   neuron.refresh();
   std::cerr << "neuron:\n" << neuron << std::endl;
@@ -109,15 +113,17 @@ int main() {
     else
       ae.nonstationary_expectations_direct_ODE_solver_step(dt);
 
-    ofs_covariances << "t=" << t << endl
-                    << "covariances:\n" << (covariances = ae.get_covariances()) << endl;
-    
-    ofs_correlations << "t=" << t << std::endl;
-    for(size_t i=0; i<dim; ++i) {
-      for(size_t j=0; j<dim; ++j)
-        ofs_correlations << covariances(i,j) - expectations(i)*expectations(j) << ',';
-      ofs_correlations << std::endl;
-    }        
+    // ofs_covariances << "t=" << t << endl
+    //                 << "covariances:\n" << (covariances = ae.get_covariances()) << endl;
+
+    covariances = ae.get_covariances();
+      
+    // ofs_correlations << "t=" << t << std::endl;
+    // for(size_t i=0; i<dim; ++i) {
+    //   for(size_t j=0; j<dim; ++j)
+    //     ofs_correlations << covariances(i,j) - expectations(i)*expectations(j) << ',';
+    //   ofs_correlations << std::endl;
+    // }        
 
     ofs_variances << t;
     for(size_t i=0; i<dim; ++i)
@@ -128,7 +134,7 @@ int main() {
   }
 
   ofs_expectations.close();
-  ofs_covariances.close();
+  // ofs_covariances.close();
   ofs_variances.close();
 
   ae.stationary_expectations().stationary_covariances();
