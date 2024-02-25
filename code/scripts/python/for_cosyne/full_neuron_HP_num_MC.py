@@ -22,14 +22,24 @@ import os
 fig, axs = plt.subplots(nrows=6, ncols=3, figsize=(10*1.6*1.1, 3.2*1.9*1.7))
 
 print("Loading 1st expectations and stds...")
-num_exp_1 = np.genfromtxt("data/expectations_s_1_1_transcription_rate_multiplier_1_bind_r_mult_10", delimiter=',')
-num_std_1 = np.genfromtxt("data/variances_s_1_1_transcription_rate_multiplier_1_bind_r_mult_10", delimiter=',')
+# num_exp_1 = np.genfromtxt("data/expectations_s_1_1_transcription_rate_multiplier_1_bind_r_mult_10", delimiter=',')
+# num_std_1 = np.genfromtxt("data/variances_s_1_1_transcription_rate_multiplier_1_bind_r_mult_10", delimiter=',')
+# print("Loading 2nd expectations and stds...")
+# num_exp_2 = np.genfromtxt("data/expectations_s_1_2-2_transcription_rate_multiplier_1_bind_r_mult_10", delimiter=',')
+# num_std_2 = np.genfromtxt("data/variances_s_1_2-2_transcription_rate_multiplier_1_bind_r_mult_10", delimiter=',')
+# print("Loading 3rd expectations and stds...")
+# num_exp_3 = np.genfromtxt("data/expectations_s_1_2-2_transcription_rate_multiplier_2_bind_r_mult_10", delimiter=',')
+# num_std_3 = np.genfromtxt("data/variances_s_1_2-2_transcription_rate_multiplier_2_bind_r_mult_10", delimiter=',')
+
+num_exp_1 = np.genfromtxt("data/2_genes_expectations_s_1_1_transcription_rate_multiplier_1_bind_r_mult_10", delimiter=',')
+num_std_1 = np.genfromtxt("data/2_genes_stds_s_1_1_transcription_rate_multiplier_1_bind_r_mult_10", delimiter=',')
 print("Loading 2nd expectations and stds...")
-num_exp_2 = np.genfromtxt("data/expectations_s_1_2-2_transcription_rate_multiplier_1_bind_r_mult_10", delimiter=',')
-num_std_2 = np.genfromtxt("data/variances_s_1_2-2_transcription_rate_multiplier_1_bind_r_mult_10", delimiter=',')
+num_exp_2 = np.genfromtxt("data/2_genes_expectations_s_1_2-2_transcription_rate_multiplier_1_bind_r_mult_10", delimiter=',')
+num_std_2 = np.genfromtxt("data/2_genes_stds_s_1_2-2_transcription_rate_multiplier_1_bind_r_mult_10", delimiter=',')
 print("Loading 3rd expectations and stds...")
-num_exp_3 = np.genfromtxt("data/expectations_s_1_2-2_transcription_rate_multiplier_2_bind_r_mult_10", delimiter=',')
-num_std_3 = np.genfromtxt("data/variances_s_1_2-2_transcription_rate_multiplier_2_bind_r_mult_10", delimiter=',')
+num_exp_3 = np.genfromtxt("data/2_genes_expectations_s_1_1_transcription_rate_multiplier_2_bind_r_mult_10", delimiter=',')
+num_std_3 = np.genfromtxt("data/2_genes_stds_s_1_1_transcription_rate_multiplier_2_bind_r_mult_10", delimiter=',')
+
 
 
 ################### Gillespie #####################
@@ -65,7 +75,8 @@ averages_1 = np.zeros((n_points, n_compartments))
 variances_1 = np.zeros((n_points, n_compartments))
 for file_id in range(mult_sim_run_count):
     print("Loading file " + str(file_id))
-    file_name = "data/HP_syn_1-1_transcription_rate_multiplier_1_bind_rate_multiplier_10_" + str(file_id)
+    # file_name = "data/HP_syn_1-1_transcription_rate_multiplier_1_bind_rate_multiplier_10_" + str(file_id)
+    file_name = "data/HP_syn_1_1_transcription_rate_multiplier_1_bind_rate_multiplier_10_" + str(file_id)
     print(file_name)
     data = np.genfromtxt(file_name, delimiter=',')[:, 1:]
     averages_1[:, 1:] += data[:, 1:]/mult_sim_run_count
@@ -75,6 +86,7 @@ averages_2 = np.zeros((n_points, n_compartments))
 variances_2 = np.zeros((n_points, n_compartments))
 for file_id in range(mult_sim_run_count):
     print("Loading file " + str(file_id))
+    # file_name = "data/HP_syn_1-2_2_transcription_rate_multiplier_1_bind_rate_multiplier_10_" + str(file_id)
     file_name = "data/HP_syn_1-2_2_transcription_rate_multiplier_1_bind_rate_multiplier_10_" + str(file_id)
     print(file_name)
     data = np.genfromtxt(file_name, delimiter=',')[:, 1:]
@@ -85,7 +97,9 @@ averages_3 = np.zeros((n_points, n_compartments))
 variances_3 = np.zeros((n_points, n_compartments))
 for file_id in range(mult_sim_run_count):
     print("Loading file " + str(file_id))
-    file_name = "data/HP_syn_1-2_2_transcription_rate_multiplier_2_bind_rate_multiplier_10_" + str(file_id)
+    # file_name = "data/HP_syn_1-2_2_transcription_rate_multiplier_2_bind_rate_multiplier_10_" + str(file_id)
+    # file_name = "data/HP_syn_1-2_2_transcription_rate_multiplier_2_bind_rate_multiplier_10_" + str(file_id)
+    file_name = "data/HP_syn_1_1_transcription_rate_multiplier_2_bind_rate_multiplier_10_" + str(file_id)
     print(file_name)
     data = np.genfromtxt(file_name, delimiter=',')[:, 1:]
     averages_3[:, 1:] += data[:, 1:]/mult_sim_run_count

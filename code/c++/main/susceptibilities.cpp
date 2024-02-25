@@ -40,11 +40,9 @@ int main() {
 #define d_prot_dec_rate     .0001
 #define prot_bind_rate      .6
 #define d_prot_bind_rate    .001
-#define SYN                 syn_1_1
-
-  std::ofstream ofs_exp_diff("expectation_differences_syn_1_1"),
-    ofs_expectations1("expectations1_syn_1_1"),
-    ofs_expectations2("expectations2_syn_1_1");
+#define SYN                 syn_12_2
+  
+  std::ofstream ofs_exp_diff("susceptibilities_" + SYN.get_name());
 
   arma::vec exp_diff(dim), expectations(dim);
   
@@ -60,11 +58,6 @@ int main() {
     neuron.refresh();
     ae.stationary_expectations();
     exp_diff  = ae.get_expectations();
-
-    ofs_expectations1 << prot_dec_rate;
-    for(size_t i=0; i<dim; ++i)
-      ofs_expectations1  << ',' << exp_diff(i);
-    ofs_expectations1 << std::endl;
     
  
     SYN.set_protein_binding_rate(prot_bind_rate - d_prot_bind_rate);
@@ -72,10 +65,6 @@ int main() {
     ae.stationary_expectations();
 
     exp_diff -= expectations = ae.get_expectations();
-    ofs_expectations2 << prot_dec_rate;
-    for(size_t i=0; i<dim; ++i)
-      ofs_expectations2  << ',' << expectations(i);
-    ofs_expectations2 << std::endl;
 
     for(size_t i=0; i<dim; ++i)
       exp_diff[i] /= (2*d_prot_bind_rate) * expectations[i];
@@ -84,6 +73,8 @@ int main() {
       ofs_exp_diff  << ',' << exp_diff(i);
     ofs_exp_diff << std::endl;
   }
+
+  ofs_exp_diff.close();
 
   auto var_names = *(ae.o1_variable_names());
   for(size_t i=0; i<dim; ++i)

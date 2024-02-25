@@ -10,7 +10,7 @@ using namespace std;
 #define syn_dec_rate 0 //1.2e-5*3600
 #define transcription_rate_multiplier 2
 #define binding_rate_multiplier 10
-#define SYN syn_12_2
+#define SYN syn_1_1
 
 int main() {
 
@@ -48,9 +48,9 @@ int main() {
   arma::mat covariances(dim,dim);
   arma::vec expectations(dim), variances(dim);
 
-  ofstream ofs_expectations("expectations_"+ SYN.get_name() + "_transcription_rate_multiplier_" + std::to_string(transcription_rate_multiplier) + "_bind_r_mult_" + std::to_string(binding_rate_multiplier)),
+  ofstream ofs_expectations("2_genes_expectations_"+ SYN.get_name() + "_transcription_rate_multiplier_" + std::to_string(transcription_rate_multiplier) + "_bind_r_mult_" + std::to_string(binding_rate_multiplier)),
     // ofs_covariances("covariances_"+ SYN.get_name() + "_transcription_rate_multiplier_" + std::to_string(transcription_rate_multiplier) + "_bind_r_mult_" + std::to_string(binding_rate_multiplier)),
-    ofs_variances("variances_"+ SYN.get_name() + "_transcription_rate_multiplier_" + std::to_string(transcription_rate_multiplier) + "_bind_r_mult_" + std::to_string(binding_rate_multiplier));
+    ofs_variances("2_genes_stds_"+ SYN.get_name() + "_transcription_rate_multiplier_" + std::to_string(transcription_rate_multiplier) + "_bind_r_mult_" + std::to_string(binding_rate_multiplier));
     //ofs_correlations("correlations_"+ SYN.get_name() + "_transcription_rate_multiplier_" + std::to_string(transcription_rate_multiplier) + "_bind_r_mult_" + std::to_string(binding_rate_multiplier));
 
 #define t_start 0
