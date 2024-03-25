@@ -52,7 +52,7 @@ step = .01
 n_points = int(7000/step)
 # x_lim = n_points*step
 sim_run_count_1 = 1 # file_count
-sim_run_count_2 = 55 # file_count
+sim_run_count_2 = 500 # file_count
 n_compartments = 16
 #####################################
 
@@ -60,7 +60,7 @@ averages_1 = np.zeros((n_points, n_compartments))
 variances_1 = np.zeros((n_points, n_compartments))
 for file_id in range(sim_run_count_1):
     print("Loading file " + str(file_id))
-    file_name = "../../../data/gillespie/stationary_moments_for_cosyne_2_genes/SM_" + str(file_id)
+    file_name = "../../../data/gillespie/stationary_moments_for_cosyne_2_genes_more_more/SM_" + str(file_id)
     print(file_name)
     data = np.genfromtxt(file_name, delimiter=',')[:, 1:]
     averages_1[:, 1:] += data[:, 1:]/sim_run_count_1
@@ -70,7 +70,7 @@ averages_2 = np.zeros((n_points, n_compartments))
 variances_2 = np.zeros((n_points, n_compartments))
 for file_id in range(sim_run_count_2):
     print("Loading file " + str(file_id))
-    file_name = "../../../data/gillespie/stationary_moments_for_cosyne_2_genes/SM_" + str(file_id)
+    file_name = "../../../data/gillespie/stationary_moments_for_cosyne_2_genes_more_more/SM_" + str(file_id)
     print(file_name)
     data = np.genfromtxt(file_name, delimiter=',')[:, 1:]
     averages_2[:, 1:] += data[:, 1:]/sim_run_count_2
@@ -99,6 +99,8 @@ axs[0,0].axhline(num_exp[11] + num_std[11], linestyle='--', color='#4CA64C', lin
 axs[0,0].axhline(num_exp[11] - num_std[11], linestyle='--', color='#4CA64C', linewidth=3, zorder=10)
 axs[0,0].plot(data[:,0], averages_1[:,8], alpha=.8, color='#4CA64C')
 
+axs[0,0].set_facecolor('white')
+
 
 axs[1,0].axhline(num_exp[2], color='#FF4C4C', linewidth=3, label='Soma', zorder=10) # Soma prot
 axs[1,0].axhline(num_exp[2] + num_std[2], linestyle='--', color='#FF4C4C', linewidth=3, label='Soma $\pm\sigma$', zorder=10)
@@ -119,6 +121,8 @@ axs[1,0].axhline(num_exp[12], color='#4CA64C', linewidth=3, zorder=10, label='D_
 axs[1,0].axhline(num_exp[12] + num_std[12], linestyle='--', color='#4CA64C', linewidth=3, zorder=10, label='D_1-2 $\pm\sigma$')
 axs[1,0].axhline(num_exp[12] - num_std[12], linestyle='--', color='#4CA64C', linewidth=3, zorder=10)
 axs[1,0].plot(data[:,0], averages_1[:,9], alpha=.8, color='#4CA64C')
+
+axs[1,0].set_facecolor('white')
 
 
 axs[2,0].axhline(num_exp[5], color='#4CFFFF', linewidth=3, zorder=10, label='S_1_1') # s_1_1 prot
@@ -151,6 +155,8 @@ axs[2,0].axhline(num_exp[14] + num_std[14], linestyle='--', color='#228B22', lin
 axs[2,0].axhline(num_exp[14] - num_std[14], linestyle='--', color='#228B22', linewidth=3, zorder=10)
 axs[2,0].plot(data[:,0], averages_1[:,15], alpha=.8, color='#228B22')
 
+axs[2,0].set_facecolor('white')
+
 ####################### COL_2 ###########################
 
 axs[0,1].axhline(num_exp[1], color='#FF4C4C', linewidth=3) # Soma mRNAs
@@ -181,6 +187,8 @@ axs[0,1].plot(data[:,0], averages_2[:,8], label='D_1-2', alpha=.8, color='#4CA64
 axs[0,1].plot(data[:,0], averages_2[:,8] + stds_2[:,8], label='D_1-2 $\pm$ SD', alpha=.3, color='#4CA64C')
 axs[0,1].plot(data[:,0], averages_2[:,8] - stds_2[:,8], alpha=.3, color='#4CA64C')
 
+axs[0,1].set_facecolor('white')
+
 
 axs[1,1].axhline(num_exp[2], color='#FF4C4C', linewidth=3) # Soma prot
 axs[1,1].axhline(num_exp[2] + num_std[2], linestyle='--', color='#FF4C4C', linewidth=3)
@@ -209,6 +217,8 @@ axs[1,1].axhline(num_exp[12] - num_std[12], linestyle='--', color='#4CA64C', lin
 axs[1,1].plot(data[:,0], averages_2[:,9], label='D_1-2', alpha=.8, color='#4CA64C')
 axs[1,1].plot(data[:,0], averages_2[:,9] + stds_2[:,9], label='D_1-2 $\pm$ SD', alpha=.3, color='#4CA64C')
 axs[1,1].plot(data[:,0], averages_2[:,9] - stds_2[:,9], alpha=.3, color='#4CA64C')
+
+axs[1,1].set_facecolor('white')
 
 
 axs[2,1].axhline(num_exp[5], color='#4CFFFF', linewidth=3) # s_1_1 prot
@@ -253,6 +263,8 @@ axs[2,1].plot(data[:,0], averages_2[:,15], label='S_1-2_2', alpha=.8, color='#22
 axs[2,1].plot(data[:,0], averages_2[:,15] + stds_2[:,15], label='S_1-2_2 $\pm$ SD', alpha=.5, color='#228B22')
 axs[2,1].plot(data[:,0], averages_2[:,15] - stds_2[:,15], alpha=.5, color='#228B22')
 
+axs[2,1].set_facecolor('white')
+
 
 for i in range(2):
     axs[2,i].set_xlabel(r'Time in hours', fontsize=18)
@@ -271,7 +283,8 @@ axs[2,0].set_ylabel('Protein counts', fontsize=18)
 
 plt.tight_layout()
 
-# plt.savefig('../data/protein_numbers.png', dpi=300)
+fig.patch.set_facecolor('none')
+plt.savefig('../../../../../../../conferences/cosyne2024/poster/img/stationary_num_MC_2_genes.png', dpi=300)
 
 plt.show()
 

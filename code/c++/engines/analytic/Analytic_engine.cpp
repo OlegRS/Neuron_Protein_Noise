@@ -1699,7 +1699,7 @@ void Analytic_engine::sem_initialise_o2() {
   if(!p_o2_var_names)
     p_o2_var_names = new std::vector<std::string>(o2_dim);
 
-  sem_set_expectations(*sem_set_soma());
+  // sem_set_expectations(*sem_set_soma());
 
   std::vector<std::string> &o2_var_names = *p_o2_var_names;
   for(size_t i=0; i<o1_dim; ++i)
@@ -2390,10 +2390,17 @@ Analytic_engine& Analytic_engine::sem_stationary_covariances() {
   covariances = o2_mat.i()*o2_RHS;
 
   std::vector<double> rmss(o1_dim);
-  for(size_t i=0; i<o1_dim; ++i) {  
+  for(size_t i=0; i<o1_dim; ++i) {
     rmss[i] = sqrt(covariances(sem_o2_ind(i,i)) - expectations(i)*(expectations(i)-1));
     std::cerr << o1_var_names[i] + ": " << expectations(i) << ", " << rmss[i]<< ", " << rmss[i]/expectations(i) << std::endl;
   }
+
+  // Writing covariance matrix
+  for(size_t i=0; i<o1_dim; ++i)
+    for(size_t j=i+1; j<o1_dim; ++j)
+      (*p_cov_mat)(j,i) = (*p_cov_mat)(i,j) = covariances(sem_o2_ind(i,j));
+  for(size_t i=0; i<o1_dim; ++i)
+    (*p_cov_mat)(i,i) = covariances(sem_o2_ind(i,i)) + expectations(i);
 
   std::cerr << "--,";
   for(unsigned int i=0; i<o1_dim; ++i)
@@ -2434,6 +2441,85 @@ Analytic_engine& Analytic_engine::sem_stationary_pearson_correlations() {
   }
   std::cerr << std::endl;
   
+  return *this;
+}
+
+Analytic_engine& Analytic_engine::sem_stationary_time_correlations(const std::list<double>& times) {
+  std::cout << "sem_stationary_time_correlations method\n";
+  std::cerr << "Setting o1_matrix...\n";
+  sem_set_o1_matrix(*sem_set_o1_soma());
+  auto& o1_mat = *p_o1_mat;
+  o1_mat = -o1_mat;
+    
+  std::cerr << "Computing eigen decomposition...\n";
+  arma::cx_vec eigval_c;
+  arma::vec eigval(o1_dim);
+  arma::cx_mat eigvec_c;
+  arma::mat tm(o1_dim, o1_dim); // Transition matrix
+  arma::eig_gen(eigval_c, eigvec_c, o1_mat);
+  
+  for(size_t i=0; i<o1_dim; ++i) {
+    eigval(i) = eigval_c(i).real();
+    for(size_t j=0; j<o1_dim; ++j)
+      tm(i,j) = eigvec_c(i,j).real();
+  }
+
+  std::cerr << "Inverting transition matrix...\n";
+  arma::mat inv_tm = tm.i(); // Transition matrix
+  
+  std::cerr << "Eigenvalues:\n"
+            << eigval << std::endl;
+  std::cerr << "Eigenvectors:\n"
+            << tm << std::endl;
+
+  for(auto& o1_var_name : o1_var_names)
+    std::cout << o1_var_name << ',';
+  std::cout << std::endl;
+  
+  // Computing stationary part
+  for(size_t i=0; i<o1_dim; ++i) {
+    double sum = 0;
+    for(size_t k=0; k<o1_dim; ++k)
+      sum += 1/eigval[k]*tm(i,k)*inv_tm(k,0);
+    expectations(i) = p_neuron->p_soma->gene_activation_rate * p_neuron->p_soma->number_of_gene_copies * sum;
+  }
+
+  std::cout << "Stationary expectations from nonstationary covariances algorithm:\n";
+  for(size_t i=0; i<o1_dim; ++i)
+    std::cout << o1_var_names[i] << ": " << expectations(i) << std::endl;
+
+  // Computing covariances
+  sem_stationary_covariances();
+
+  std::vector<double> rmss(o1_dim);
+  for(size_t i=0; i<o1_dim; ++i) {
+    rmss[i] = sqrt((*p_covariances)(sem_o2_ind(i,i)) - expectations(i)*(expectations(i)-1));
+    std::cerr << o1_var_names[i] + ": " << expectations(i) << ", " << rmss[i]<< ", " << rmss[i]/expectations(i) << std::endl;
+  }
+
+  for(auto t : times) {
+    // Computing matrix exponent
+    arma::mat matrix_exp(o1_dim, o1_dim);
+    for(size_t i=0; i<o1_dim; ++i)
+      for(size_t j=0; j<o1_dim; ++j)
+        for(size_t k=0; k<o1_dim; ++k)
+          matrix_exp(i,j) += exp(-eigval(k)*t) * tm(i,k) * inv_tm(k,j);
+
+    arma::mat correlator = matrix_exp * (*p_cov_mat);
+    for(size_t i=0; i<o1_dim; ++i)
+      for(size_t j=0; j<o1_dim; ++j) {
+        arma::vec v = matrix_exp*expectations;
+        correlator(i,j) += - v(i)*expectations(j);
+        correlator(i,j) /= (rmss[i]*rmss[j]); // Pearson correlation coefficient
+        // correlator(i,j) += (expectations(i) - v(i))*expectations(j);
+      }
+    
+    std::cout << "t= " << t << std::endl
+              << "correlator:\n" << correlator << std::endl;
+
+    std::cerr << t << ',' << correlator(6,6) << ',' << correlator(5,6) << ',' << correlator(4,6) << std::endl;
+  }
+                
   return *this;
 }
 

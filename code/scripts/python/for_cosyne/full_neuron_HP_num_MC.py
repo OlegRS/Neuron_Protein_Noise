@@ -19,7 +19,7 @@ import os
 # 13) d_1-1__Prot: 892.124, 568.153
 
 
-fig, axs = plt.subplots(nrows=6, ncols=3, figsize=(10*1.6*1.1, 3.2*1.9*1.7))
+fig, axs = plt.subplots(nrows=6, ncols=3, figsize=(10*1.6*1.1, 3.2*1.9*1.9))
 
 print("Loading 1st expectations and stds...")
 # num_exp_1 = np.genfromtxt("data/expectations_s_1_1_transcription_rate_multiplier_1_bind_r_mult_10", delimiter=',')

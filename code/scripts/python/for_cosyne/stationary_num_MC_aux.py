@@ -18,6 +18,15 @@
 #   14) s_1_2-1__Prot: 83.2206, 53.7035
 #   15) s_1_2-2__Prot: 83.2206, 53.7035
 
+averages_1 = np.zeros((n_points, n_compartments))
+variances_1 = np.zeros((n_points, n_compartments))
+
+file_name = "../../../data/gillespie/stationary_moments_for_cosyne_2_genes_more_more/SM_2"
+print(file_name)
+data = np.genfromtxt(file_name, delimiter=',')[:, 1:]
+averages_1[:, 1:] += data[:, 1:]/sim_run_count_1
+variances_1[:, 1:] += data[:, 1:]**2/sim_run_count_1
+
 
 fig, axs = plt.subplots(nrows=3, ncols=2, figsize=(10*1.6*1.1, 3.2*1.9*1.7))
 

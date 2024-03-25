@@ -180,6 +180,8 @@ public:
   Analytic_engine& sem_nonstationary_expectations_direct_ODE_solver_step(const double& dt, const bool& reset_matrices=false, const bool& internalise=false);
   Analytic_engine& sem_nonstationary_covariances_direct_ODE_solver_step(const double& dt, const bool& reset_matrices=false);
 
+  Analytic_engine& sem_stationary_time_correlations(const std::list<double>& times);
+
   arma::vec* G1() {return &expectations;}
   std::vector<std::string>* o1_variable_names() {return &o1_var_names;}
   arma::vec* G2() {return p_covariances;}
