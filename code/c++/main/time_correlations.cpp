@@ -4,21 +4,27 @@
 #include "../compartments/Dendritic_segment.hpp"
 #include "../compartments/Synapse.hpp"
 #include "../engines/analytic/Analytic_engine.hpp"
-#include "../engines/stochastic/Gillespie_engine.hpp"
+#include "../randomisation/PRNG.hpp"
 
 using namespace std;
 
 #define N_FORKS 1 // Note that it is (2^N_FORKS - 1)*3 compartments (if 2 synapses on each dend seg)!
+
+// #define syn_dec_rate 1.21e-6*3600
+#define syn_dec_rate 1.21e-3*3600
+
+PRNG rnd(1);
+
 void fork_dendrite(Dendritic_segment* ds, size_t depth=0) {
   if (depth < N_FORKS) {
     auto ds1 = new Dendritic_segment(*ds, ds->get_name() + "-1");
-    new Synapse(*ds1, "s_" + ds1->get_name() + "_1");
-    new Synapse(*ds1, "s_" + ds1->get_name() + "_2", .6, 6);
+    new Synapse(*ds1, "s_" + ds1->get_name() + "_1", .6, 6*(1 + rnd()), syn_dec_rate);
+    new Synapse(*ds1, "s_" + ds1->get_name() + "_2", .6, 6*(1 + rnd()), syn_dec_rate);
     fork_dendrite(ds1, depth+1);
 
     auto ds2 = new Dendritic_segment(*ds, ds->get_name() + "-2");
-    new Synapse(*ds2, "s_" + ds2->get_name() + "_1");
-    new Synapse(*ds2, "s_" + ds2->get_name() + "_2", .6, 6);
+    new Synapse(*ds2, "s_" + ds2->get_name() + "_1", .6, 6*(1 + rnd()), syn_dec_rate);
+    new Synapse(*ds2, "s_" + ds2->get_name() + "_2", .6, 6*(1 + rnd()), syn_dec_rate);
     fork_dendrite(ds2, depth+1);
   }
 }
@@ -29,9 +35,9 @@ int main() {
   
   ///// Branching neuron
   Dendritic_segment* p_ds = new Dendritic_segment(soma, "d_1");
-  new Synapse(*p_ds, "s_1_1", .6, 6);
-  new Synapse(*p_ds, "s_1_2", .6, 6);
-  // fork_dendrite(p_ds);
+  new Synapse(*p_ds, "s_1_1", .6, 6 + 6*rnd(), syn_dec_rate);
+  new Synapse(*p_ds, "s_1_2", .6, 6 + 6*rnd(), syn_dec_rate);
+  fork_dendrite(p_ds);
 
   Neuron neuron(soma, "Test_neuron");
 

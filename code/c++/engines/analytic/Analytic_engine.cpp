@@ -2514,10 +2514,12 @@ Analytic_engine& Analytic_engine::sem_stationary_time_correlations(const std::li
         // correlator(i,j) += (expectations(i) - v(i))*expectations(j);
       }
     
-    std::cout << "t= " << t << std::endl
-              << "correlator:\n" << correlator << std::endl;
+    // std::cout << "t= " << t << std::endl
+    //           << "correlator:\n" << correlator << std::endl;
 
-    std::cerr << t << ',' << correlator(6,6) << ',' << correlator(5,6) << ',' << correlator(4,6) << std::endl;
+    // std::cerr << t << ',' << correlator(6,6) << ',' << correlator(5,6) << ',' << correlator(4,6) << std::endl;
+    std::cerr << t << ',' << correlator(14,14) << ',' << correlator(13,14) << ',' << correlator(11,14)  << ',' << correlator(10,14) << ',' << correlator(8,14) << ',' << correlator(7,14) //Syn
+              << ',' << correlator(12,14) << ',' << correlator(9,14)  << ',' << correlator(6,14) << ',' << correlator(5,14) << std::endl; //Dend segments
   }
                 
   return *this;

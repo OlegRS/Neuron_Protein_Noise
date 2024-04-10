@@ -11,6 +11,7 @@ class PRNG {
 
 public:  
   PRNG(const double& MAX_RAND): gen(time(NULL)), dis(0,MAX_RAND) {}
+  PRNG(const double& MAX_RAND, const int seed): gen(seed), dis(0,MAX_RAND) {}
   double rand_max() {return dis.max();}
   double operator()() { return dis(gen); }
 };

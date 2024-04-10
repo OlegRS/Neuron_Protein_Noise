@@ -24,6 +24,6 @@ Synapse::Synapse(Compartment &parent, const std::string& name, const double &pro
 }
 
 std::ostream& operator<<(std::ostream& os, const Synapse& syn) {
-  os << syn.get_name() << ", params: ";
+  os << syn.get_name() << ", params: " << "br=" << syn.protein_binding_rate << "; ubr=" << syn.protein_unbinding_rate;
   return os;
 }
