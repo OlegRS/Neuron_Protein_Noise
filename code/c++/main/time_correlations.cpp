@@ -10,8 +10,8 @@ using namespace std;
 
 #define N_FORKS 1 // Note that it is (2^N_FORKS - 1)*3 compartments (if 2 synapses on each dend seg)!
 
-// #define syn_dec_rate 1.21e-6*3600
-#define syn_dec_rate 1.21e-3*3600
+#define syn_dec_rate 1.21e-6*3600
+// #define syn_dec_rate 1.21e-3*3600
 
 PRNG rnd(1);
 
@@ -31,13 +31,15 @@ void fork_dendrite(Dendritic_segment* ds, size_t depth=0) {
 
 int main() {
 
-  Soma soma("soma" /*,Parameters of the soma*/);
+  Soma soma("soma", 50 /*,Parameters of the soma*/);
   
   ///// Branching neuron
   Dendritic_segment* p_ds = new Dendritic_segment(soma, "d_1");
   new Synapse(*p_ds, "s_1_1", .6, 6 + 6*rnd(), syn_dec_rate);
   new Synapse(*p_ds, "s_1_2", .6, 6 + 6*rnd(), syn_dec_rate);
-  fork_dendrite(p_ds);
+  
+  Dendritic_segment* p_ds_small = new Dendritic_segment(*p_ds, "d_2", 1);
+  fork_dendrite(p_ds_small);
 
   Neuron neuron(soma, "Test_neuron");
 

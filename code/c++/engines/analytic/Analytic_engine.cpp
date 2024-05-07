@@ -2518,8 +2518,10 @@ Analytic_engine& Analytic_engine::sem_stationary_time_correlations(const std::li
     //           << "correlator:\n" << correlator << std::endl;
 
     // std::cerr << t << ',' << correlator(6,6) << ',' << correlator(5,6) << ',' << correlator(4,6) << std::endl;
-    std::cerr << t << ',' << correlator(14,14) << ',' << correlator(13,14) << ',' << correlator(11,14)  << ',' << correlator(10,14) << ',' << correlator(8,14) << ',' << correlator(7,14) //Syn
-              << ',' << correlator(12,14) << ',' << correlator(9,14)  << ',' << correlator(6,14) << ',' << correlator(5,14) << std::endl; //Dend segments
+    // std::cerr << t << ',' << correlator(14,14) << ',' << correlator(13,14) << ',' << correlator(11,14)  << ',' << correlator(10,14) << ',' << correlator(8,14) << ',' << correlator(7,14) //Syn
+    //           << ',' << correlator(12,14) << ',' << correlator(9,14)  << ',' << correlator(6,14) << ',' << correlator(5,14) << std::endl; //Dend segments for 3 ds
+
+    std::cerr << t << ',' << correlator(16,16) << ',' << correlator(15,16) << ',' << correlator(14,16)  << ',' << correlator(13,16) << ',' << correlator(12,16) << ',' << correlator(11,16) << ',' << correlator(10,16) << ',' << correlator(9,16)  << ',' << correlator(8,16) << ',' << correlator(7,16) << ',' << correlator(6,16) << std::endl; //Dend segments for 4 ds
   }
                 
   return *this;

@@ -9,9 +9,9 @@ class Soma : public Compartment {
   friend class Gillespie_engine;
   
   // Parameters
-  unsigned int number_of_gene_copies = 2; //For CaMKIIa it is 2 (Fonkeu)
+  unsigned int number_of_gene_copies = 1; //For CaMKIIa it is 2 (Fonkeu)
   double gene_activation_rate = 1/12.;
-  double gene_deactivation_rate = 1/12.;
+  double gene_deactivation_rate = 0; //1/12.;
 
   // For Monte Carlo engines
   struct Gene_activation : public Event {

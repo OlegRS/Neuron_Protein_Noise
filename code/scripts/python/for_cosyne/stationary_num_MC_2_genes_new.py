@@ -60,22 +60,22 @@ averages_1 = np.zeros((n_points, n_compartments))
 variances_1 = np.zeros((n_points, n_compartments))
 for file_id in range(sim_run_count_1):
     print("Loading file " + str(file_id))
-    file_name = "../../../data/gillespie/stationary_moments_for_cosyne_2_genes_more_more/SM_" + str(file_id)
+    file_name = "./data/SM_" + str(file_id+2)
     print(file_name)
     data = np.genfromtxt(file_name, delimiter=',')[:, 1:]
     averages_1[:, 1:] += data[:, 1:]/sim_run_count_1
     variances_1[:, 1:] += data[:, 1:]**2/sim_run_count_1
 
-averages_2 = np.zeros((n_points, n_compartments))
-variances_2 = np.zeros((n_points, n_compartments))
-for file_id in range(sim_run_count_2):
-    print("Loading file " + str(file_id))
-    file_name = "../../../data/gillespie/stationary_moments_for_cosyne_2_genes_more_more/SM_" + str(file_id)
-    print(file_name)
-    data = np.genfromtxt(file_name, delimiter=',')[:, 1:]
-    averages_2[:, 1:] += data[:, 1:]/sim_run_count_2
-    variances_2[:, 1:] += data[:, 1:]**2/sim_run_count_2
-stds_2 = np.sqrt(variances_2 - averages_2**2)
+averages_2 = np.genfromtxt("data/stationary_averages_500.csv", delimiter=',')
+# variances_2 = np.zeros((n_points, n_compartments))
+# for file_id in range(sim_run_count_2):
+#     print("Loading file " + str(file_id))
+#     file_name = "../../../data/gillespie/stationary_moments_for_cosyne_2_genes_more_more/SM_" + str(file_id)
+#     print(file_name)
+#     data = np.genfromtxt(file_name, delimiter=',')[:, 1:]
+#     averages_2[:, 1:] += data[:, 1:]/sim_run_count_2
+#     variances_2[:, 1:] += data[:, 1:]**2/sim_run_count_2
+stds_2 = np.genfromtxt("data/stationary_stds_500.csv", delimiter=',')
 
 
 ####################### COL_1 ###########################

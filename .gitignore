@@ -16,6 +16,8 @@ _*
 *.idx
 *.lof
 *.pdf
+*.npy
 code/bin*
 code/data*
 code/scripts/python/for_cosyne/data*
+code/scripts/python/data*
