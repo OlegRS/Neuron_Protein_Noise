@@ -2334,10 +2334,10 @@ Analytic_engine& Analytic_engine::protein_protein_stationary_covariances() {
   delete o2_prot_prot_mat; o2_prot_prot_mat=NULL;
   delete o2_prot_prot_RHS; o2_prot_prot_RHS=NULL;
 
-  //////////// COMPUTING VARIANCES //////////
-  std::cout << "Protein-Protein means and standard deviations:\n";
+  //////////// COMPUTING VARIANCES and PCCs //////////
+  std::cout << "Protein means and standard deviations:\n";
   size_t sz = 1 + p_neuron->p_dend_segments.size() + p_neuron->p_synapses.size();
-  std::vector<double> rmss(o1_dim);
+  std::vector<double> rmss(sz);
   for(size_t i=0; i<sz; ++i) {
     rmss[i] = sqrt((*o2_prot_prot)[o2_ind(i, i, sz)] - protein_expectations[i]*(protein_expectations[i]-1));
     if(rmss[i]>=0) {
@@ -2345,6 +2345,37 @@ Analytic_engine& Analytic_engine::protein_protein_stationary_covariances() {
     }
     else
       std::cout << o1_prot_names[i] + ": " << protein_expectations(i) << ", " << rmss[i] << " NEGATIVE!\n";
+  }
+
+  std::cerr << "Protein-Protein PCCs:\n";
+  std::cerr << "--,";
+  for(unsigned int i=0; i<sz; ++i)
+    std::cerr << o1_prot_names[i] << ',';
+  for(unsigned int i=0; i<sz; ++i) {
+    std::cerr << std::endl << o1_prot_names[i] << ',';
+    for(unsigned int j=0; j<sz; ++j)
+      if(i != j)
+        std::cerr << ((*o2_prot_prot)[o2_ind(i, j, sz)] - protein_expectations(i)*protein_expectations(j))/(rmss[i]*rmss[j]) << ',';
+      else
+        std::cerr << "1,";
+  }
+
+  std::cerr << "Synaptic Protein-Protein PCCs:\n";
+  std::cerr << "--,";
+  for(unsigned int i=0; i<sz; ++i)
+    if(o1_prot_names[i][0]=='s' && o1_prot_names[i]!="soma")
+      std::cerr << o1_prot_names[i] << ',';
+  for(unsigned int i=0; i<sz; ++i) {
+    if(o1_prot_names[i][0]=='s' && o1_prot_names[i]!="soma") {
+      std::cerr << std::endl << o1_prot_names[i] << ',';
+      for(unsigned int j=0; j<sz; ++j)
+        if(o1_prot_names[j][0]=='s' && o1_prot_names[j]!="soma") {
+          if(i != j)
+            std::cerr << ((*o2_prot_prot)[o2_ind(i, j, sz)] - protein_expectations(i)*protein_expectations(j))/(rmss[i]*rmss[j]) << ',';
+          else
+            std::cerr << "1,";
+        }
+    }
   }
   //////////////////////////////////////////
 

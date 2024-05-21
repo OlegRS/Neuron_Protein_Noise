@@ -12,9 +12,9 @@ import matplotlib.pyplot as plt
 # time_corr = np.genfromtxt("data/tc_full_different_synapses", delimiter=',')
 # time_corr = np.genfromtxt("data/tc_full_syn_dec", delimiter=',')
 # time_corr = np.genfromtxt("data/tc_single_always_active_gene", delimiter=',')
-# time_corr = np.genfromtxt("data/tc_small_soma__syn_dec", delimiter=',')
+time_corr = np.genfromtxt("data/tc_small_soma__syn_dec", delimiter=',')
 # time_corr = np.genfromtxt("data/tc_small_soma__syn_dec__asymmetric_branching", delimiter=',')
-time_corr = np.genfromtxt("data/tc_small_soma__syn_dec__asymmetric_branching_large_2nd_branch", delimiter=',')
+# time_corr = np.genfromtxt("data/tc_small_soma__syn_dec__asymmetric_branching_large_2nd_branch", delimiter=',')
 
 # s_1_1__Prot: 1481.98
 # s_1_2__Prot: 2254.64

@@ -20,7 +20,7 @@ std::ostream& operator<<(std::ostream &os, const Compartment &comp) {
     exit(1);
   }
 
-  os << "n_mRNAs = " << comp.n_mRNAs << ", n_proteins = " << comp.n_proteins;
+  os << " | n_mRNAs = " << comp.n_mRNAs << ", n_proteins = " << comp.n_proteins;
       
   return os;
 }

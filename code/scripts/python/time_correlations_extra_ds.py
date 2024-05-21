@@ -37,7 +37,7 @@ x_max = 1500
 #           's_1-2_2_prot__s_1-1_2_prot', 's_1-2_2_prot__s_1-1_1_prot',
 #           's_1-2_2_prot__s_1_2_prot', 's_1-2_2_prot__s_1_1_prot',
 #           's_1-2_2_prot__d_1-2_prot', 's_1-2_2_prot__d_1-1_prot','s_1-2_2_prot__d_1_prot',
-#           's_1-2_2_prot__soma_prot'] 
+#           's_1-2_2_prot__soma_prot']
 plt.plot(time_corr[:int(1500/d_tau),0], time_corr[:int(1500/d_tau), 1:])#, label=labels)
 
 # eigenvals = [12.4862,10.2006, 9.6934, 8.2924, 9.3113, 6.7968, 0.0040, 0.0227, 0.0244, 0.0620, 0.1925, 0.1112, 0.0615, 0.0432, 0.1667]
