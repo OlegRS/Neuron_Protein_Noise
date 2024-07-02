@@ -1,6 +1,6 @@
 #include "../compartments/Synapse.hpp"
 
-Synapse::Synapse(Compartment &parent, const std::string& name) : Compartment(name) {
+Synapse::Synapse(Compartment &parent, const std::string& name) : Compartment(2.5, name) {
 
   protein_decay_rate = 0;
 
@@ -12,7 +12,7 @@ Synapse::Synapse(Compartment &parent, const std::string& name) : Compartment(nam
   }
 }
 
-Synapse::Synapse(Compartment &parent, const std::string& name, const double &protein_binding_rate, const double &protein_unbinding_rate, const double &protein_decay_rate, const unsigned int &protein_number) : Compartment(name), protein_binding_rate(protein_binding_rate), protein_unbinding_rate(protein_unbinding_rate) {
+Synapse::Synapse(Compartment &parent, const std::string& name, const double &protein_binding_rate, const double &protein_unbinding_rate, const double &protein_decay_rate, const unsigned int &protein_number) : Compartment(2.5, name), protein_binding_rate(protein_binding_rate), protein_unbinding_rate(protein_unbinding_rate) {
   this->protein_decay_rate = protein_decay_rate;
   
   parent.p_descendants.push_back(this);

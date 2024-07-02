@@ -52,10 +52,10 @@ int main() {
   for(double tau=0; tau<10000; tau+=d_tau)
     times.push_back(tau);
 
-  // std::cout << "----------------- ANALYTIC ENGINE -----------------\n";
-  // Analytic_engine ae(neuron);
+  std::cout << "----------------- ANALYTIC ENGINE -----------------\n";
+  Analytic_engine ae(neuron);
 
-  // ae.sem_stationary_time_correlations(times);
+  ae.sem_stationary_time_correlations(times);
 
 
   //////////// Gillespie simulation /////////////

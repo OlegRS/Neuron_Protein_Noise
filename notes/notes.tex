@@ -1247,7 +1247,7 @@ Similar idea holds for the second-order equations (for covariances), which can b
 Of course, these optimisations do not change the exponent of the problems' computational complexity, but they significantly decrease the constant in computational time and memory consumption.
 
 \appendix \label{app:DDM_correspondence}
-\section{Continuous limit}
+\section{Continuum limit}
 In this section we consider a continuous limit of our discrete model in a neuron consisting of a point-like soma with a single long dendritic branch without branching or synapses. For this, we define a continuous variable $\xi$ measuring the distance from the soma along the dendrite, and assume that the expected numbers of mRNAs and proteins in an infinitesimal dendritic segment of length $d\xi$ can be expressed as
 \begin{align*}
   d\langle m\rangle (\xi,t) = R(\xi,t)d\xi;\\
@@ -1260,7 +1260,7 @@ where $R$ and $P$ are sufficiently smooth\footnote{At least $C^{(2)}$ in $\xi$ a
 
 For simplicity of the limit expression, assume the neuron is a system of compartments of the same size $\delta\xi$ numbered from $0$ to $L-1$ in order of how far they are from the soma. The 0-th compartment is the soma and the remaining $L-2$ are dendritic compartments. Using the rules defined in Section \ref{subsec:rules}, the PDE for the generating function of such model can be written as
 
-\begin{equation}
+\begin{equation}\label{equation_for_differences}
   \begin{split}
     \textcolor{red}{\lambda_1^+x_nN\mathcal G(\mathbf x, t)
     - \left[\lambda_1^+x_n^2 - \lambda_2x_{m_0}x_n + (\lambda_1^++\lambda_1^-)x_n-\lambda_2x_{m_0}\right]\frac{\partial\mathcal G(\mathbf x, t)}{\partial x_n}}\\
@@ -1273,11 +1273,15 @@ For simplicity of the limit expression, assume the neuron is a system of compart
 \end{equation}
 where the red and orange colors correspond to the soma and dendritic compartments respectively, while the blue color corresponds to the junctions between the compartments.
 
-%% As long as we are only interested in expectations\footnote{\textcolor{red}{Interesting to see if we can derive PDEs for the correlations and how would they look!}}, in the PDE for the generating function, we only need to consider the first-order in $\mathbf x$, which for this model can be written as
-%% \begin{multline}
-%%   \frac{\partial\mathcal G(\mathbf x;t)}{\partial t} + x_n\frac{1}{\tau_1}\frac{\partial\mathcal G(\mathbf x;t)}{\partial x_n} + \\
-%%   \sum_\mu\left[\nu_{\mu, \mu+1}(x_\mu - x_{\mu+1})\frac{\partial\mathcal G}{\partial x_\mu} + \nu_{\mu+1,\mu}(x_{\mu+1} - x_\mu)\frac{\partial\mathcal G}{\partial x_{\mu+1}}\right] = x_n\lambda_1^+N\mathcal G(\mathbf x;t)
-%% \end{multline}
+Itroducing the mRNA trafficking velocity and diffusion coefficient as
+\begin{equation*}
+  v_m(\xi_\mu+\frac{1}{2}\Delta\xi_\mu) = 2\nu_{[\mu, \mu+1]}\Delta\xi_\mu; \qquad D_m(\xi_\mu+\frac{1}{2}\Delta\xi_\mu) = \nu_{(\mu, \mu+1)}(\Delta\xi_\mu)^2,
+\end{equation*}
+and similarly for proteins
+\begin{equation*}
+  v_p(\xi_\mu+\frac{1}{2}\Delta\xi_\mu) = 2\theta_{[\mu, \mu+1]}\Delta\xi_\mu; \qquad D_p(\xi_\mu+\frac{1}{2}\Delta\xi_\mu) = \theta_{(\mu, \mu+1)}(\Delta\xi_\mu)^2,
+\end{equation*}
+the equation (\ref{equation_for_differences}) can be written as follows.
 
 \subsection{Gene dynamics}
 Although gene dynamics in this model happens at a single point, we will start by deriving the equation for the average number of active gene copies, since it is important for setting the left boundary condition for the mRNA equation.
@@ -1303,6 +1307,147 @@ meaning that at stationarity the expected number of active gene copies is given 
   \langle n\rangle(t) = \tau_1\lambda_1^+N,
 \end{equation} 
 which is consistent with the results of Section \ref{switching_asymptotic_expansion}.
+
+\subsubsection{mRNA equation}
+\begin{equation}
+  \frac{\partial R(\xi, t)}{\partial t} = \frac{\partial}{\partial\xi} \left[ D_m(\xi, t)\frac{\partial R(\xi,t)}{\partial\xi}\right] - \frac{\partial}{\partial\xi}\left[v_m(\xi,t)R(\xi,t)\right] - \frac{1}{\tau_2}R(\xi,t) %+ \lambda_2(t)\langle n\rangle(t)\delta(\xi),    
+\end{equation}
+with the left boundary condition
+\begin{equation}
+  -D_m(\xi=0,t)\left.\frac{\partial R(\xi,t)}{\partial\xi}\right|_{\xi=0} + v_m(\xi=0,t)R(\xi=0,t) = \lambda_2(t)\langle n\rangle(t)
+\end{equation}
+and the right boundary condition
+\begin{equation}
+  -D_m(\xi=L,t)\left.\frac{\partial R(\xi,t)}{\partial\xi}\right|_{\xi=L} + v_m(\xi=L,t)R(\xi=L,t) = 0
+\end{equation}
+or simply
+\begin{equation}
+  \lim_{\xi\to\infty}R(\xi,t) = 0
+\end{equation}
+for semi-infinite linear dendrite.
+
+{\bf Stationary solution for semi-infinite uniform dendrite}
+\begin{equation}
+  R(\xi) = \frac{2\lambda_2\langle n\rangle}{v_m+\sqrt{v_m^2+4D_m/\tau_2}}\mathrm e^{\lambda_-\xi},
+\end{equation}
+where
+\begin{equation}
+  \lambda_- = \frac{v_m-\sqrt{v_m^2+4D_m/\tau_2}}{2D_m}
+\end{equaton}
+
+\subsubsection{Protein equation}
+\begin{equation}
+  \frac{\partial P(\xi, t)}{\partial t} = \frac{\partial}{\partial\xi} \left[ D_p(\xi, t)\frac{\partial P(\xi,t)}{\partial\xi}\right] - \frac{\partial}{\partial\xi}\left[v_p(\xi,t)P(\xi,t)\right] - \frac{1}{\tau_3}P(\xi,t) + \kappa_3(\xi,t)R(\xi,t)
+\end{equation}
+with the left boundary condition
+\begin{equation}
+  -D_p(\xi=0,t)\left.\frac{\partial P(\xi,t)}{\partial\xi}\right|_{\xi=0} + v_p(\xi=0,t)P(\xi=0,t) = 0
+\end{equation}
+and the right boundary condition
+\begin{equation}
+  -D_p(\xi=L,t)\left.\frac{\partial P(\xi,t)}{\partial\xi}\right|_{\xi=L} + v_p(\xi=L,t)P(\xi=L,t) = 0
+\end{equation}
+or simply
+\begin{equation}
+  \lim_{\xi\to\infty}P(\xi,t) = 0
+\end{equation}
+for semi-infinite linear dendrite.
+
+{\bf Stationary solution for semi-infinite uniform dendrite}
+
+\subsubsection{Gene-Gene}
+\begin{equation}
+  \frac{d\mathcal G^{(2)}_{nn}(t)}{dt} = -(\lambda_1^++\lambda_1^-)\mathcal G^{(2)}_{nn}(t) + \lambda_1^+(N-1)\mathcal G^{(1)}_n(t)
+\end{equation}
+At stationarity
+\begin{equation}
+  \mathcal G^{(2)}_{nn}(t) = \frac{\lambda_1^+(N-1)}{\lambda_1^++\lambda_1^-}\mathcal G^{(1)}_n(t).
+\end{equation}
+
+\subsubsection{Gene-mRNA}
+\begin{multline}
+  \frac{\partial\mathcal G^{(2)}_{nm}(\xi, t)}{\partial t} = \lambda_1^+NR(\xi,t) - \frac{1}{\tau_1}\mathcal G^{(2)}_{nm}(\xi,t) %+ \lambda_2\langle n^2\rangle(t)\delta(\xi)
+  \\ + \frac{\partial}{\partial\xi}\left(D_m(\xi,t)\frac{\partial\mathcal G^{(2)}_{nm}(\xi,t)}{\partial\xi}\right) - \frac{\partial}{\partial\xi}\left(v_m(\xi,t)\mathcal G^{(2)}_{nm}(\xi,t)\right) - \frac{1}{\tau_2}\mathcal G^{(2)}_{nm}(\xi,t)
+\end{multline}
+
+Boundary conditions:
+\begin{align}
+  & -D_m(0,t)\left.\frac{\partial\mathcal \mathcal G^{(2)}_{nm}}{\partial\xi}\right|_{\xi=0} + v_m(0,t)\mathcal G^{(2)}_{nm}(\xi=0) = \lambda_2\langle n^2\rangle(t),\\
+  & -D_m(L,t)\left.\frac{\partial\mathcal \mathcal G^{(2)}_{nm}}{\partial\xi}\right|_{\xi=L} + v_m(L,t)\mathcal G^{(2)}_{nm}(\xi=L)=0.
+\end{align}
+
+{\bf Stationary solution for semi-infinite uniform dendrite}
+\begin{equation}
+  \mathcal G^{(2)}_{nm}(\xi) = \frac{2\lambda_2\langle n\rangle\lambda_1^-\tau_1}{v_m+\sqrt{v_m^2+4D_m(1/\tau_1+1/\tau_2)}}\mathrm e^{\widetilde\lambda_-\xi} + \langle n\rangle R(\xi),
+\end{equation}
+where
+\begin{equation}
+  \widetilde\lambda_- = \frac{v_m-\sqrt{v_m^2+4D_m(1/\tau_1+1/\tau_2)}}{2D_m}.
+\end{equation}
+
+{\it Boundary conditions at the fork can be figured out from the corresponding expansion for the forked dendrite.}
+\subsubsection{mRNA-mRNA}
+{\bf At the same spatial location $\xi$}
+              
+Denote $\mathcal G^{(2)}_{m^2}(\xi,t)$ function arising from the diagonal of $\boldsymbol{\mathcal G^{(2)}}(t)$ in continuum limit
+
+\begin{multline}
+  \frac{\partial\mathcal G^{(2)}_{m^2}(\xi, t)}{\partial t} = \frac{\partial}{\partial\xi}\left(D_m(\xi,t)\frac{\partial\mathcal G^{(2)}_{m^2}(\xi,t)}{\partial\xi}\right) - \frac{\partial}{\partial\xi}\left( v_m(\xi,t)\mathcal G^{(2)}_{m^2}(\xi,t)\right) - \frac{1}{\tau_2}G^{(2)}_{m^2}(\xi,t)
+\end{multline}
+with boundary conditions
+\begin{align}
+  &-D_m(\xi=0,t)\left.\frac{\partial\mathcal G^{(2)}_{m^2}}{\partial\xi}\right|_{\xi=0}(\xi,t) + v_m(\xi=0,t)\mathcal G^{(2)}_{m^2}(\xi=0,t) = \lambda_2\mathcal G^{(2)}_{nm}(0,t),\\
+  &-D_m(\xi=L,t)\left.\frac{\partial\mathcal G^{(2)}_{m^2}}{\partial\xi}\right|_{\xi=L}(\xi,t) + v_m(\xi=L,t)\mathcal G^{(2)}_{m^2}(\xi=L,t) = 0.
+\end{align}
+
+{\bf Stationary solution for semi-infinite uniform dendrite}
+\begin{equation}
+  \mathcal G^{(2)}_{m^2}(\xi) = \frac{2\lambda_2\lambda_1^-\tau_1}{v_m+\sqrt{v_m^2+4D_m\left(\frac{1}{\tau_1}+\frac{1}{\tau_2}\right)}}R(\xi) + R^2(\xi)
+\end{equation}
+
+{\bf At different spatial locations $\xi_1$ and $\xi_2$}
+
+Denote $\mathcal G^{(2)}_{mm}(\xi_1, \xi_2,t)$ function away from the diagonal of $\boldsymbol{\mathcal G^{(2)}}(t)$ in continuum limit
+
+\begin{multline}
+  \frac{\partial\mathcal G^{(2)}_{mm}(\xi_1,\xi_2, t)}{\partial t} = \\
+  \frac{\partial}{\partial\xi_1}\left(D_m(\xi_1,t)\frac{\partial\mathcal G^{(2)}_{mm}(\xi_1,\xi_2,t)}{\partial\xi_1}\right) - \frac{\partial}{\partial\xi_1}\left( v_m(\xi_1,t)\mathcal G^{(2)}_{mm}(\xi_1,\xi_2,t)\right) - \frac{1}{\tau_2(\xi_1,t)}G^{(2)}_{mm}(\xi_1,\xi_2,t)\\
+  + \frac{\partial}{\partial\xi_2}\left(D_m(\xi_2,t)\frac{\partial\mathcal G^{(2)}_{mm}(\xi_1,\xi_2,t)}{\partial\xi_2}\right) - \frac{\partial}{\partial\xi_2}\left( v_m(\xi_2,t)\mathcal G^{(2)}_{mm}(\xi_1,\xi_2,t)\right) - \frac{1}{\tau_2(\xi_2,t)}G^{(2)}_{mm}(\xi_1,\xi_2,t)
+\end{multline}
+%% \begin{equation}
+%%   \mathcal G^{(2)}_{mm}(\xi_1,\xi_2, t) = \mathcal G^{(2)}_{mm}(\xi_2,\xi_1, t)
+%% \end{equation}
+Since $\mathcal G^{(2)}_{mm}(\xi_1,\xi_2, t) = \mathcal G^{(2)}_{mm}(\xi_2,\xi_1, t)$, it is sufficient to solve the problem on the upper triangle, where $\xi_2>\xi_1$.
+
+Boundary conditions:
+\begin{align}
+  &-D_m(0,t)\left.\frac{\partial\mathcal G^{(2)}_{mm}}{\partial\xi_1}\right|_{\xi_1=0}(\xi_2,t) + v_m(0,t)\mathcal G^{(2)}_{mm}(\xi_1=0,\xi_2,t) = \lambda_2\mathcal G^{(2)}_{nm}(\xi_2,t),\\
+  &-D_m(L,t)\left.\frac{\partial\mathcal G^{(2)}_{mm}}{\partial\xi_2}\right|_{\xi_1=L}(\xi_1,t) + v_m(L,t)\mathcal G^{(2)}_{mm}(\xi_1=0,\xi_2=L,t) = 0,%\\
+  %& \mathcal G^{(2)}_{mm}(\xi,\xi,t) = \mathcal G^{(2)}_{m^2}(\xi,t) - \mathcal G^{(1)}(\xi,t).
+\end{align}
+
+
+\subsubsection{mRNA-Protein}
+
+\begin{multline}
+  \frac{\partial\mathcal G^{(2)}_{ml}(\xi_1,\xi_2, t)}{\partial t} \\ =\frac{\partial}{\partial\xi_1}\left(D_m(\xi_1,t)\frac{\partial\mathcal G^{(2)}_{ml}(\xi_1,\xi_2,t)}{\partial\xi_1}\right) - \frac{\partial}{\partial\xi_1}\left( v_m(\xi_1,t)\mathcal G^{(2)}_{ml}(\xi_1,\xi_2,t)\right) - \frac{1}{\tau_2}G^{(2)}_{ml}(\xi_1,\xi_2,t)\\
+  + \frac{\partial}{\partial\xi_2}\left(D_p(\xi_2,t)\frac{\partial\mathcal G^{(2)}_{ml}(\xi_1,\xi_2,t)}{\partial\xi_2}\right) - \frac{\partial}{\partial\xi_2}\left( v_p(\xi_2,t)\mathcal G^{(2)}_{ml}(\xi_1,\xi_2,t)\right) - \frac{1}{\tau_3}G^{(2)}_{ml}(\xi_1,\xi_2,t)\\
+  + \kappa(\xi_1,t) \mathcal G^{(1)}_m(\xi_1)\delta(\xi_1-\xi_2)
+\end{multline}
+
+Boundary conditions:
+
+\subsubsection{Gene-Protein}
+\subsubsection{Protein-Protein}
+
+
+  
+
+%% As long as we are only interested in expectations\footnote{\textcolor{red}{Interesting to see if we can derive PDEs for the correlations and how would they look!}}, in the PDE for the generating function, we only need to consider the first-order in $\mathbf x$, which for this model can be written as
+%% \begin{multline}
+%%   \frac{\partial\mathcal G(\mathbf x;t)}{\partial t} + x_n\frac{1}{\tau_1}\frac{\partial\mathcal G(\mathbf x;t)}{\partial x_n} + \\
+%%   \sum_\mu\left[\nu_{\mu, \mu+1}(x_\mu - x_{\mu+1})\frac{\partial\mathcal G}{\partial x_\mu} + \nu_{\mu+1,\mu}(x_{\mu+1} - x_\mu)\frac{\partial\mathcal G}{\partial x_{\mu+1}}\right] = x_n\lambda_1^+N\mathcal G(\mathbf x;t)
+%% \end{multline}
 
 \subsection{mRNA dynamics}
 
@@ -1341,7 +1486,7 @@ are related to diffusion coefficient and active trafficking velocity respectivel
 \end{equation}
 which in the limit ...
 
-\section{Stationary temporal correlations}
+\section{Stationary time correlations}
 This section is concerned with correlations of the observables $\mathbf s $ shifted in time by $\tau$ at stationarity, i.e. $\lim_{t\to\infty}\langle\mathbf{ s }(t)\otimes\mathbf{ s }(t-\tau)\rangle$.
 
 It can be shown that
