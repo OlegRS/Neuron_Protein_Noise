@@ -251,8 +251,8 @@ axs[3,1].set_ylim([0, 5.6e3])
 plt.tight_layout()
 
 fig.patch.set_facecolor('none')
-plt.savefig('../../../../../../../conferences/cosyne2024/poster/img/stationary_num_MC_2_genes_new.png', dpi=300)
-plt.savefig('../../../../../../../../../oleg_windows/olegr/Desktop/COSYNE/stationary_num_MC_2_genes_new.png', dpi=300)
+# plt.savefig('../../../../../../../conferences/cosyne2024/poster/img/stationary_num_MC_2_genes_new.png', dpi=300)
+# plt.savefig('../../../../../../../../../oleg_windows/olegr/Desktop/COSYNE/stationary_num_MC_2_genes_new.png', dpi=300)
 
 plt.show()
 

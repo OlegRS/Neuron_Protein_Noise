@@ -1,4 +1,5 @@
 #include "../compartments/Dendritic_segment.hpp"
+#include "../compartments/Soma.hpp"
 
 Dendritic_segment::Dendritic_segment(Compartment &parent, const std::string& name, const double& length) : Compartment(length, name) {
   
@@ -6,6 +7,8 @@ Dendritic_segment::Dendritic_segment(Compartment &parent, const std::string& nam
 
   if(parent.type() == BASAL_DENDRITE || parent.type() == APICAL_DENDRITE)
     ++static_cast<Dendritic_segment&>(parent).n_descending_DS;
+  else if(parent.type() == SOMA)
+    ++static_cast<Soma&>(parent).n_descending_DS;
   
   if(parent.p_neuron) {
     p_neuron = parent.p_neuron;

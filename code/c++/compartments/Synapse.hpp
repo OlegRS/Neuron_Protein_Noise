@@ -11,7 +11,7 @@ class Synapse : public Compartment {
   double protein_binding_rate = .6; // per hour
   double protein_unbinding_rate = 6;
 
-  double length = 2.5, //um
+  double length = 200/60,//2.5, //um
     protein_diffusion_constant = .24, //0.24 um2/s for CaMKII
     protein_forward_trafficking_velocity = 0, 
     protein_backward_trafficking_velocity = 0;

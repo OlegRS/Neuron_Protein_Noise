@@ -2169,8 +2169,21 @@ Analytic_engine& Analytic_engine::mRNA_mRNA_stationary_covariances() {
     else
       std::cout << o1_mRNA_names[i] + ": " << mRNA_expectations(i) << ", " << rmss[i] << " NEGATIVE!\n";
   }
-  //////////////////////////////////////////
 
+  std::cerr << "mRNA-mRNA PCCs:\n";
+  std::cerr << "--,";
+  for(unsigned int i=0; i<sz; ++i)
+    std::cerr << o1_prot_names[i] << ',';
+  for(unsigned int i=0; i<sz; ++i) {
+    std::cerr << std::endl << o1_prot_names[i] << ',';
+    for(unsigned int j=0; j<sz; ++j)
+      if(i != j)
+        std::cerr << ((*o2_mRNA_mRNA)[o2_ind(i, j, sz)] - mRNA_expectations(i)*mRNA_expectations(j))/(rmss[i]*rmss[j]) << ',';
+      else
+        std::cerr << "1,";
+  }
+  std::cerr << "mRNA-mRNA PCCs END\n";
+  //////////////////////////////////////////
 
   return *this;
 }
@@ -2378,6 +2391,45 @@ Analytic_engine& Analytic_engine::protein_protein_stationary_covariances() {
     }
   }
   //////////////////////////////////////////
+
+  return *this;
+}
+
+Analytic_engine& Analytic_engine::protein_protein_stationary_covariances(std::ofstream &ofs) {
+  std::cout << "Computing protein_protein_stationary_covariances...\n";
+  set_o2_prot_prot_matrix(*set_o2_prot_prot_soma());
+  
+  o2_prot_prot = new arma::vec((*o2_prot_prot_mat).i()*(*o2_prot_prot_RHS));
+
+  std::cerr << "protein_protein_covariances:\n" << *o2_prot_prot << std::endl;
+
+  delete o2_prot_prot_mat; o2_prot_prot_mat=NULL;
+  delete o2_prot_prot_RHS; o2_prot_prot_RHS=NULL;
+
+  //////////// COMPUTING VARIANCES and PCCs //////////
+  std::cout << "Protein means and standard deviations:\n";
+  size_t sz = 1 + p_neuron->p_dend_segments.size() + p_neuron->p_synapses.size();
+  std::vector<double> rmss(sz);
+  for(size_t i=0; i<sz; ++i) {
+    rmss[i] = sqrt((*o2_prot_prot)[o2_ind(i, i, sz)] - protein_expectations[i]*(protein_expectations[i]-1));
+    if(rmss[i]>=0) {
+      std::cout << o1_prot_names[i] + ": " << protein_expectations(i) << ", " << rmss[i] << std::endl;
+    }
+    else
+      std::cout << o1_prot_names[i] + ": " << protein_expectations(i) << ", " << rmss[i] << " NEGATIVE!\n";
+  }
+
+  // Writing to file
+  for(unsigned int i=0; i<sz; ++i)
+    ofs << o1_prot_names[i] << ',';
+  for(unsigned int i=0; i<sz; ++i) {
+    ofs << std::endl << o1_prot_names[i] << ',';
+    for(unsigned int j=0; j<sz; ++j)
+      if(i != j)
+        ofs << ((*o2_prot_prot)[o2_ind(i, j, sz)] - protein_expectations(i)*protein_expectations(j))/(rmss[i]*rmss[j]) << ',';
+      else
+        ofs << "1,";
+  }
 
   return *this;
 }
