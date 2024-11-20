@@ -28,22 +28,20 @@ class Soma : public Compartment {
   } gene_deactivation;
 
   double n_active_genes_expectation = gene_activation_rate/(gene_activation_rate + gene_deactivation_rate)*number_of_gene_copies;
-  size_t n_active_genes = 2;
+  size_t n_active_genes = 0;
   size_t n_descending_DS = 0;
+
+  double transcription_rate = (3.*200/*dend_length*//10000)*.001*3600; // /hour; mRNA transcription rate (0.001/s CaMKII Fonkeu) // THE FACTOR IN () ACCOUNTS FOR THE REDUCED LENGTH OF THE SIMPLE MODEL DENDRITE COMPARED TO THE REAL NEURONS
   
 public:
-  Soma(const std::string& name="no_name", const double& length=20) : Compartment(length, name), gene_activation(this), gene_deactivation(this) {
-    transcription_rate = .001 * (3.*200/*dend_length*//10000)*0.001*3600; // /hour; mRNA transcription rate (0.001/s CaMKII Fonkeu) // THE FACTOR IN () ACCOUNTS FOR THE REDUCED LENGTH OF THE SIMPLE MODEL DENDRITE COMPARED TO THE REAL NEURONS
-    mRNA_decay_rate = 1.2e-5*3600;
-    translation_rate = 0.021*3600;
-    protein_decay_rate = 1.21e-6*3600;
-  }
+  Soma(const std::string& name="no_name", const double& length=20) : Compartment(length, name), gene_activation(this), gene_deactivation(this) {}
 
   Soma(unsigned int &number_of_gene_copies, double &gene_activation_rate, double &gene_deactivation_rate, double &transcription_rate, double &mRNA_decay_rate, double &translation_rate, double &protein_decay_rate, unsigned int active_genes_number = 0, unsigned int protein_number = 0, unsigned int mRNA_number = 0);
 
   Soma& set_gene_activation_rate(const double& rate) {gene_activation_rate=rate; return *this;}
   Soma& set_gene_deactivation_rate(const double& rate) {gene_deactivation_rate = rate; return *this;}
   Soma& set_number_of_gene_copies(const unsigned int& N) {number_of_gene_copies = N; return *this;}
+  Compartment& set_transcription_rate(const double& rate) {transcription_rate=rate; return *this;}
 
   double get_transcription_rate() {return transcription_rate;}
   
