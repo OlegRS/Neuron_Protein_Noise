@@ -7,7 +7,7 @@
 
 using namespace std;
 
-#define N_DS 10000
+#define N_DS 5000
 #define LENGTH 5000.
 
 int main() {

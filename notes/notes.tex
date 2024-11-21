@@ -1353,18 +1353,25 @@ or simply
 \end{equation}
 for semi-infinite linear dendrite.
 
+{\bf Stationary solution for semi-infinite uniform dendrite}
+
 The solution for a semi-infinite uniform dendrite is given by
-\begin{equation}
-  P(\xi) = \frac{2\lambda_2\langle n\rangle\kappa}{v_m+\sqrt{v_m^2+\frac{4D_m}{\tau_2}}}\frac{1}{(\lambda_--\Lambda_-)(\Lambda_+-\lambda_-)}\left(\mathrm e^{\lambda_-\xi} + \frac{1}{\Lambda_+}\left[\lambda_--\frac{v_p}{D_p}\right]\mathrm e^{\Lambda_-\xi} \right),
+\begin{equation} \label{prot_concentration}
+  P(\xi) = \frac{2\lambda_2\langle n\rangle\kappa}{v_m+\sqrt{v_m^2+\frac{4D_m}{\tau_2}}}\frac{1}{D_p(\lambda_--\Lambda_-)(\Lambda_+-\lambda_-)}\left(\mathrm e^{\lambda_-\xi} + \frac{1}{\Lambda_+}\left[\lambda_--\frac{v_p}{D_p}\right]\mathrm e^{\Lambda_-\xi} \right),
 \end{equation}
 where
 \begin{equation}
   \Lambda_{\pm} = \frac{v_p\pm\sqrt{v_p^2+\frac{4D_p}{\tau_3}}}{2D_p}.
 \end{equation}
 
-\textcolor{red}{Why the second exponent comes with the opposite sign? This gives negative results with our parameters! Must be a mistake!}
-
-{\bf Stationary solution for semi-infinite uniform dendrite}
+The expression (\ref{prot_concentration}) can also be written as
+\begin{equation}
+  P(\xi) = \frac{\lambda_2\langle n\rangle\kappa}{\lambda_+(\lambda_--\Lambda_-)(\Lambda_+-\lambda_-)}\frac{D_m}{D_p}\left(\mathrm e^{\lambda_-\xi} + \frac{1}{\Lambda_+}\left[\lambda_--\frac{v_p}{D_p}\right]\mathrm e^{\Lambda_-\xi} \right),
+\end{equation}
+where
+\begin{equation*}
+  \lambda_{\pm} = \frac{v_m\pm\sqrt{v_m^2+\frac{4D_m}{\tau_2}}}{2D_m}.
+\end{equation*}
 
 \subsubsection{Gene-Gene}
 \begin{equation}
