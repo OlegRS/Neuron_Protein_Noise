@@ -7,7 +7,7 @@
 
 using namespace std;
 
-#define N_DS 5000
+#define N_DS 250
 #define LENGTH 5000.
 
 int main() {
@@ -32,7 +32,7 @@ int main() {
 
   ae.mRNA_stationary_expectations().protein_stationary_expectations();
 
-  // ae.gene_mRNA_stationary_covariances().gene_protein_stationary_covariances().mRNA_mRNA_stationary_covariances().mRNA_protein_stationary_covariances().protein_protein_stationary_covariances();
+  ae.gene_mRNA_stationary_covariances().mRNA_mRNA_stationary_covariances();//.gene_protein_stationary_covariances().mRNA_protein_stationary_covariances().protein_protein_stationary_covariances();
 
   
   return 0;

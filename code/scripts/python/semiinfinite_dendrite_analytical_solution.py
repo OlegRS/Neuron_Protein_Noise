@@ -6,6 +6,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
+gene_activation_rate = 1/12/3600
+gene_deactivation_rate = 1/12/3600
+
+tau_1 = 1/(gene_activation_rate+gene_deactivation_rate)
+
 lambda_2 = transcription_rate = (3.*200/10000) * .001#*3600
 
 mRNA_decay_rate = 1.2e-5#*3600
@@ -36,23 +41,27 @@ n_exp = .5
 
 
 
-fig, axs = plt.subplots(nrows=2, ncols=1, figsize=(10*1.6*1.1, 3.2*1.9*1.7))
+fig, axs = plt.subplots(nrows=2, ncols=2, figsize=(10*1.6*1.1, 3.2*1.9*1.7))
 
 ### mRNA concentrations
 # xi_max = 10000
 # n_comps = 200+1
 # xi = np.linspace(0,xi_max, n_comps)
 
-xi = np.linspace(0,x_lim, 1000)
+xi = np.linspace(0,x_lim, 100000)
 
 R = (2*lambda_2*n_exp)/(v_m + np.sqrt(v_m**2+4*D_m/tau_2)) * np.exp(lambda_m * xi)
 
 # R_discrete = 2*np.genfromtxt("../../data/5000um_10000_comp.csv", delimiter=',')
 # R_discrete = 2*np.genfromtxt("../../data/5000um_10000_comp_mRNA_double_mRNA_fwd_traf.csv", delimiter=',')
-R_discrete = np.genfromtxt("../../data/5000um_5000_comp_mRNA.csv", delimiter=',')
+# R_discrete = np.genfromtxt("../../data/5000um_5000_comp_mRNA.csv", delimiter=',')
+# R_discrete = np.genfromtxt("../../data/5000um_50_comp_mRNA.csv", delimiter=',')
+# R_discrete = np.genfromtxt("../../data/5000um_100_comp_mRNA.csv", delimiter=',')
+# R_discrete = np.genfromtxt("../../data/5000um_150_comp_mRNA.csv", delimiter=',')
+R_discrete = np.genfromtxt("../../data/5000um_250_comp_mRNA.csv", delimiter=',')
 
-axs[0].plot(xi, R)
-axs[0].plot(R_discrete, label="R_discrete") # np.arange(0,len(R_discrete)/2, .5), 
+axs[0,0].plot(xi, R, label="R_analytic")
+axs[0,0].plot(np.arange(0,len(R_discrete)*5000/251-.001,5000/251), R_discrete*251/5000, label="R_discrete") # np.arange(0,len(R_discrete)/2, .5), 
 
 
 ### Protein concentrations
@@ -64,19 +73,54 @@ P = (2*lambda_2*n_exp)/(v_m + np.sqrt(v_m**2+4*D_m/tau_2))*kappa/((lambda_m-Lamb
 # P_discrete = 2*np.genfromtxt("../../data/5000um_10000_comp_prot.csv", delimiter=',')
 # P_discrete = 2*np.genfromtxt("../../data/5000um_10000_comp_prot_fwd_traf.csv", delimiter=',')
 # P_discrete = 2*np.genfromtxt("../../data/5000um_10000_comp_prot_double_mRNA_fwd_traf.csv", delimiter=',')
-P_discrete = np.genfromtxt("../../data/5000um_5000_comp_prot.csv", delimiter=',')
+# P_discrete = np.genfromtxt("../../data/5000um_5000_comp_prot.csv", delimiter=',')
+# P_discrete = np.genfromtxt("../../data/5000um_50_comp_prot.csv", delimiter=',')
+# P_discrete = np.genfromtxt("../../data/5000um_100_comp_prot.csv", delimiter=',')
+P_discrete = np.genfromtxt("../../data/5000um_250_comp_prot.csv", delimiter=',')
 
-axs[1].plot(xi, P)
-axs[1].plot(P_discrete, label="P_discrete") # /4.16 np.arange(0,len(P_discrete)/2, .5),
+axs[1,0].plot(xi, P, label="P_analytic")
+axs[1,0].plot(np.arange(0,len(P_discrete)*5000/251-.001,5000/251), P_discrete*251/5000, label="P_discrete") # /4.16 np.arange(0,len(P_discrete)/2, .5),
 
-for ax in axs:
+for ax in axs[:,0]:
     ax.set_xlim([0,x_lim])
     ax.axhline(0, color='black')
     ax.legend()
 
-axs[1].set_xlabel("Distance from the soma, " + r'$\mu m$', fontsize=20)
-axs[0].set_ylabel("mRNA concentration, " + r'$\mu m^{-3}$', fontsize=20)
-axs[1].set_ylabel("Protein concentration, " + r'$\mu m^{-3}$', fontsize=20)
+axs[1,0].set_xlabel("Distance from the soma, " + r'$\mu m$', fontsize=20)
+axs[0,0].set_ylabel("mRNA concentration, " + r'$\mu m^{-3}$', fontsize=20)
+axs[1,0].set_ylabel("Protein concentration, " + r'$\mu m^{-3}$', fontsize=20)
+
+
+### gene-mRNA correlations
+lambda_m_tilde = (v_m - np.sqrt(v_m**2+4*D_m*(1/tau_1+1/tau_2)))/(2*D_m)
+G2_nm = 2*lambda_2*n_exp*gene_deactivation_rate*tau_1/(v_m + np.sqrt(v_m**2+4*D_m*(1/tau_1+1/tau_2)))*np.exp(lambda_m_tilde*xi) + n_exp*R
+
+G2_nm_discrete = np.genfromtxt("../../data/5000um_250_comp_gene_mRNA_cov.csv", delimiter=',')
+G2_nm_discrete_150 = np.genfromtxt("../../data/5000um_150_comp_gene_mRNA_cov.csv", delimiter=',')
+
+axs[0,1].plot(xi, G2_nm, label="G2_nm")
+axs[0,1].plot(np.arange(0,len(G2_nm_discrete)*5000/251-.001,5000/251), G2_nm_discrete*251/5000, label="G2_nm_discrete_250")
+axs[0,1].plot(np.arange(0,len(G2_nm_discrete_150)*5000/151-.001,5000/151), G2_nm_discrete_150*151/5000, label="G2_nm_discrete_150")
+
+axs[0,1].set_ylabel(r"$G^{(2)}_{nm}$ density, " + r'$\mu m^{-3}$', fontsize=20)
+
+### mRNA noise
+G2_m2 = 2*lambda_2*gene_deactivation_rate*tau_1/(v_m + np.sqrt(v_m**2+4*D_m*(1/tau_1+1/tau_2)))*R + R**2
+
+axs[1,1].plot(xi, G2_m2, label=r"$G^{(2)}_{m^2}$")
+
+mRNA_STD = np.genfromtxt("../../data/5000um_250_comp_mRNA_mRNA_STD.csv", delimiter=',')
+G2_m2_discrete = mRNA_STD**2 + R_discrete**2 - R_discrete
+axs[1,1].plot(np.arange(0,len(G2_m2_discrete)*5000/251-.001,5000/251), G2_m2_discrete*251/5000, label="G2_discrete_250")
+
+axs[1,1].set_ylabel(r"$G^{(2)}_{m^2}$ density, " + r'$\mu m^{-3}$', fontsize=20)
+axs[1,1].set_xlabel("Distance from the soma, " + r'$\mu m$', fontsize=20)
+
+for ax in axs[:,1]:
+    ax.set_xlim([0,x_lim])
+    ax.axhline(0, color='black')
+    ax.legend()
+
 
 plt.tight_layout()
 plt.show()
