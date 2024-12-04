@@ -16,6 +16,7 @@ class Analytic_engine {
   Neuron* p_neuron = NULL;
   unsigned int o1_dim, o2_dim;
   arma::mat *p_Ap, *p_Am, *p_H,
+    *p_mRNA_Ap, *p_mRNA_Am, *p_mRNA_H,
     *p_o1_mat, *p_o2_mat,
     o1_mRNA_matrix, o1_prot_matrix,
     *o2_gene_mRNA_mat, *o2_gene_prot_mat,
@@ -42,13 +43,21 @@ class Analytic_engine {
   // unsigned int desc_start_ind = 3;
 
   Analytic_engine& initialise_As_and_bs();
+  Analytic_engine& initialise_mRNA_As();
   Analytic_engine& initialise_o1_mat_and_RHS();
   // Sets 1st order matrix starting from the given compartment
   const Compartment* set_As_and_bs_soma();
   void set_As(const Compartment&);
 
+  const Compartment* set_mRNA_As_soma();
+  void set_mRNA_As(const Compartment&);
+
+
   Analytic_engine& initialise_hopping_rate_matrix();
   void set_hopping_rate_matrix(const Compartment&);
+
+  Analytic_engine& initialise_mRNA_hopping_rate_matrix();
+  void set_mRNA_hopping_rate_matrix(const Compartment&);
 
   const Compartment* set_o1_soma();
   void set_o1_matrix(const Compartment&);
@@ -96,7 +105,9 @@ class Analytic_engine {
   void sem_set_o2_RHS();
   Analytic_engine& clear_o1_mat_and_RHS();
   Analytic_engine& clear_As_and_bs();
+  Analytic_engine& clear_mRNA_As();
   Analytic_engine& clear_hopping_rate_matrix();
+  Analytic_engine& clear_mRNA_hopping_rate_matrix();
   Analytic_engine& clear_o1();
   Analytic_engine& clear_o2_mat_and_RHS();
   Analytic_engine& clear_o2();
@@ -114,6 +125,7 @@ public:
     o1_dim(3 + 2*neuron.p_dend_segments.size() + neuron.p_synapses.size()),
     o2_dim(o1_dim*(o1_dim+1)/2),
     p_Ap(NULL), p_Am(NULL), p_H(NULL), p_b(NULL),
+    p_mRNA_Ap(NULL), p_mRNA_Am(NULL), p_mRNA_H(NULL),
     p_o1_mat(NULL), p_o1_RHS(NULL),
     o1_mRNA_matrix(1+neuron.p_dend_segments.size(), 1+neuron.p_dend_segments.size()),
     o1_prot_matrix(1+neuron.p_dend_segments.size()+neuron.p_synapses.size(), 1+neuron.p_dend_segments.size()+neuron.p_synapses.size()),
@@ -176,10 +188,19 @@ public:
   Analytic_engine& sem_nonstationary_covariances_direct_ODE_solver(const std::list<double>& times, arma::vec* initial_G1, arma::vec* initial_G2);
   Analytic_engine& sem_nonstationary_covariances_direct_ODE_solver_no_D_matrix(const std::list<double>& times, arma::vec* initial_G1, arma::vec* initial_G2);
 
+
+  Analytic_engine& nonstationary_active_genes_expectations_direct_ODE_solver_step(const double& dt);
+  Analytic_engine& nonstationary_mRNA_expectations_direct_ODE_solver_step(const double& dt, const bool& reset_matrices=false, const bool& internalise=false);
+
+  Analytic_engine& gene_mRNA_nonstationary_covariances_direct_ODE_solver_step(const double& dt, const bool& reset_matrices=false);
+  Analytic_engine& mRNA_mRNA_nonstationary_covariances_direct_ODE_solver_step(const double& dt, const bool& reset_matrices=false);
+
+
   Analytic_engine& nonstationary_expectations_direct_ODE_solver_step(const double& dt, const bool& reset_matrices=false, const bool& internalise=false);
   Analytic_engine& nonstationary_covariances_direct_ODE_solver_step(const double& dt, const bool& reset_matrices=false);
   Analytic_engine& sem_nonstationary_expectations_direct_ODE_solver_step(const double& dt, const bool& reset_matrices=false, const bool& internalise=false);
   Analytic_engine& sem_nonstationary_covariances_direct_ODE_solver_step(const double& dt, const bool& reset_matrices=false);
+  
 
   Analytic_engine& sem_stationary_time_correlations(const std::list<double>& times);
 
@@ -191,6 +212,8 @@ public:
 
   const arma::vec& get_expectations() {return expectations;}
   const arma::mat& get_covariances() {return *p_cov_mat;}
+  const arma::vec& get_mRNA_expectations() {return mRNA_expectations;}
+
   const arma::mat& get_o1_matrix() {return *p_o1_mat;}
 
   Analytic_engine& set_neuron(Neuron *p_n) {p_neuron=p_n; return *this;}

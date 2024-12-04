@@ -33,7 +33,7 @@ protein_backward_trafficking_velocity = 0
 v_p = protein_forward_trafficking_velocity - protein_backward_trafficking_velocity
 
 
-x_lim = 3000
+x_lim = 5000
 
 lambda_m = (v_m - np.sqrt(v_m**2+4*D_m/tau_2))/(2*D_m)
 
@@ -59,9 +59,10 @@ R = (2*lambda_2*n_exp)/(v_m + np.sqrt(v_m**2+4*D_m/tau_2)) * np.exp(lambda_m * x
 # R_discrete = np.genfromtxt("../../data/5000um_100_comp_mRNA.csv", delimiter=',')
 # R_discrete = np.genfromtxt("../../data/5000um_150_comp_mRNA.csv", delimiter=',')
 R_discrete = np.genfromtxt("../../data/5000um_250_comp_mRNA.csv", delimiter=',')
+R_discrete = np.genfromtxt("../../bin/exe/mRNA_expectations", delimiter=',')
 
 axs[0,0].plot(xi, R, label="R_analytic")
-axs[0,0].plot(np.arange(0,len(R_discrete)*5000/251-.001,5000/251), R_discrete*251/5000, label="R_discrete") # np.arange(0,len(R_discrete)/2, .5), 
+axs[0,0].plot(np.arange(0,len(R_discrete)*5000/251-.001,5000/251), R_discrete*251/5000, label="R_discrete") # np.arange(0,len(R_discrete)/2, .5),
 
 
 ### Protein concentrations
@@ -84,6 +85,7 @@ axs[1,0].plot(np.arange(0,len(P_discrete)*5000/251-.001,5000/251), P_discrete*25
 for ax in axs[:,0]:
     ax.set_xlim([0,x_lim])
     ax.axhline(0, color='black')
+    ax.set_yscale('log')
     ax.legend()
 
 axs[1,0].set_xlabel("Distance from the soma, " + r'$\mu m$', fontsize=20)
@@ -93,6 +95,7 @@ axs[1,0].set_ylabel("Protein concentration, " + r'$\mu m^{-3}$', fontsize=20)
 
 ### gene-mRNA correlations
 lambda_m_tilde = (v_m - np.sqrt(v_m**2+4*D_m*(1/tau_1+1/tau_2)))/(2*D_m)
+
 G2_nm = 2*lambda_2*n_exp*gene_deactivation_rate*tau_1/(v_m + np.sqrt(v_m**2+4*D_m*(1/tau_1+1/tau_2)))*np.exp(lambda_m_tilde*xi) + n_exp*R
 
 G2_nm_discrete = np.genfromtxt("../../data/5000um_250_comp_gene_mRNA_cov.csv", delimiter=',')
@@ -109,6 +112,9 @@ G2_m2 = 2*lambda_2*gene_deactivation_rate*tau_1/(v_m + np.sqrt(v_m**2+4*D_m*(1/t
 
 axs[1,1].plot(xi, G2_m2, label=r"$G^{(2)}_{m^2}$")
 
+# axs[1,1].plot(xi, lambda_m*xi, label=r"$\lambda_m\xi$")
+# axs[1,1].plot(xi, lambda_m_tilde*xi, label=r"$\tilde\lambda_m\xi$")
+
 mRNA_STD = np.genfromtxt("../../data/5000um_250_comp_mRNA_mRNA_STD.csv", delimiter=',')
 G2_m2_discrete = mRNA_STD**2 + R_discrete**2 - R_discrete
 axs[1,1].plot(np.arange(0,len(G2_m2_discrete)*5000/251-.001,5000/251), G2_m2_discrete*251/5000, label="G2_discrete_250")
@@ -119,6 +125,7 @@ axs[1,1].set_xlabel("Distance from the soma, " + r'$\mu m$', fontsize=20)
 for ax in axs[:,1]:
     ax.set_xlim([0,x_lim])
     ax.axhline(0, color='black')
+    ax.set_yscale('log')
     ax.legend()
 
 
