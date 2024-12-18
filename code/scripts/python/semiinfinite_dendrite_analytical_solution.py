@@ -59,10 +59,11 @@ R = (2*lambda_2*n_exp)/(v_m + np.sqrt(v_m**2+4*D_m/tau_2)) * np.exp(lambda_m * x
 # R_discrete = np.genfromtxt("../../data/5000um_100_comp_mRNA.csv", delimiter=',')
 # R_discrete = np.genfromtxt("../../data/5000um_150_comp_mRNA.csv", delimiter=',')
 R_discrete = np.genfromtxt("../../data/5000um_250_comp_mRNA.csv", delimiter=',')
-R_discrete = np.genfromtxt("../../bin/exe/mRNA_expectations", delimiter=',')
+R_discrete_ = np.genfromtxt("../../bin/exe/mRNA_expectations", delimiter=',')
 
 axs[0,0].plot(xi, R, label="R_analytic")
 axs[0,0].plot(np.arange(0,len(R_discrete)*5000/251-.001,5000/251), R_discrete*251/5000, label="R_discrete") # np.arange(0,len(R_discrete)/2, .5),
+axs[0,0].plot(np.arange(0,len(R_discrete_)*5000/251-.001,5000/251), R_discrete_*251/5000, label="R_discrete_") # np.arange(0,len(R_discrete_)/2, .5),
 
 
 ### Protein concentrations

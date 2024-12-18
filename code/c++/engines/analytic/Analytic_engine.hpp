@@ -22,7 +22,7 @@ class Analytic_engine {
     *o2_gene_mRNA_mat, *o2_gene_prot_mat,
     *o2_mRNA_mRNA_mat, *o2_mRNA_prot_mat, *o2_prot_prot_mat,
     *o2_nonstationary_RHS_mat,
-    *p_cov_mat;
+    *p_cov_mat, *p_mRNA_mRNA_cov_mat;
   arma::vec *p_b,
     *p_o1_RHS, *p_o2_RHS,
     expectations, *p_covariances,
@@ -43,6 +43,7 @@ class Analytic_engine {
   // unsigned int desc_start_ind = 3;
 
   Analytic_engine& initialise_As_and_bs();
+  Analytic_engine& initialise_mRNA_mRNA_cov_mat();
   Analytic_engine& initialise_mRNA_As();
   Analytic_engine& initialise_o1_mat_and_RHS();
   // Sets 1st order matrix starting from the given compartment
@@ -126,6 +127,7 @@ public:
     o2_dim(o1_dim*(o1_dim+1)/2),
     p_Ap(NULL), p_Am(NULL), p_H(NULL), p_b(NULL),
     p_mRNA_Ap(NULL), p_mRNA_Am(NULL), p_mRNA_H(NULL),
+    p_mRNA_mRNA_cov_mat(NULL),
     p_o1_mat(NULL), p_o1_RHS(NULL),
     o1_mRNA_matrix(1+neuron.p_dend_segments.size(), 1+neuron.p_dend_segments.size()),
     o1_prot_matrix(1+neuron.p_dend_segments.size()+neuron.p_synapses.size(), 1+neuron.p_dend_segments.size()+neuron.p_synapses.size()),
@@ -192,8 +194,9 @@ public:
   Analytic_engine& nonstationary_active_genes_expectations_direct_ODE_solver_step(const double& dt);
   Analytic_engine& nonstationary_mRNA_expectations_direct_ODE_solver_step(const double& dt, const bool& reset_matrices=false, const bool& internalise=false);
 
-  Analytic_engine& gene_mRNA_nonstationary_covariances_direct_ODE_solver_step(const double& dt, const bool& reset_matrices=false);
-  Analytic_engine& mRNA_mRNA_nonstationary_covariances_direct_ODE_solver_step(const double& dt, const bool& reset_matrices=false);
+  Analytic_engine& nonstationary_gene_gene_covariances_direct_ODE_solver_step(const double& dt, const bool& reset_matrices=false);
+  Analytic_engine& nonstationary_gene_mRNA_covariances_direct_ODE_solver_step(const double& dt, const bool& reset_matrices=false);
+  Analytic_engine& nonstationary_mRNA_mRNA_covariances_direct_ODE_solver_step(const double& dt, const bool& reset_matrices=false);
 
 
   Analytic_engine& nonstationary_expectations_direct_ODE_solver_step(const double& dt, const bool& reset_matrices=false, const bool& internalise=false);

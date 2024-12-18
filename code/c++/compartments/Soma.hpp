@@ -28,6 +28,7 @@ class Soma : public Compartment {
   } gene_deactivation;
 
   double n_active_genes_expectation = gene_activation_rate/(gene_activation_rate + gene_deactivation_rate)*number_of_gene_copies;
+  double n_active_genes_variance = 0;//n_active_genes_expectation*(1+gene_activation_rate/(gene_activation_rate + gene_deactivation_rate)*(number_of_gene_copies-1));
   size_t n_active_genes = 0;
   size_t n_descending_DS = 0;
 

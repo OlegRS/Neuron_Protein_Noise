@@ -43,6 +43,7 @@ int main() {
   arma::vec mRNA_expectations(dim), mRNA_variances(dim);
 
   ofstream ofs_mRNA_expectations("mRNA_expectations"),
+    // ofs_gene_gene_covariances("gene_gene_covariances"),
     ofs_mRNA_covariances("mRNA_covariances"),
     ofs_mRNA_variances("mRNA_variances"),
     ofs_mRNA_correlations("mRNA_correlations");
@@ -56,9 +57,9 @@ int main() {
     // ofs_expectations << endl;
     
     if(t==0)
-      ae.nonstationary_active_genes_expectations_direct_ODE_solver_step(dt).nonstationary_mRNA_expectations_direct_ODE_solver_step(dt, true);
+      ae.nonstationary_active_genes_expectations_direct_ODE_solver_step(dt).nonstationary_mRNA_expectations_direct_ODE_solver_step(dt, true).nonstationary_gene_gene_covariances_direct_ODE_solver_step(dt);
     else
-      ae.nonstationary_active_genes_expectations_direct_ODE_solver_step(dt).nonstationary_mRNA_expectations_direct_ODE_solver_step(dt);
+      ae.nonstationary_active_genes_expectations_direct_ODE_solver_step(dt).nonstationary_mRNA_expectations_direct_ODE_solver_step(dt).nonstationary_gene_gene_covariances_direct_ODE_solver_step(dt);
 
     // ofs_covariances << "t=" << t << endl
     //                 << "covariances:\n" << (covariances = ae.get_covariances()) << endl;

@@ -192,6 +192,11 @@ Analytic_engine& Analytic_engine::initialise_As_and_bs() {
   return *this;
 }
 
+Analytic_engine& Analytic_engine::initialise_mRNA_mRNA_cov_mat() {
+  p_mRNA_mRNA_cov_mat = new arma::mat(o1_dim, o1_dim);
+  return *this;
+}
+
 Analytic_engine& Analytic_engine::initialise_mRNA_As() {
   clear_mRNA_As();
 
@@ -962,7 +967,6 @@ Analytic_engine& Analytic_engine::nonstationary_mRNA_expectations_direct_ODE_sol
     set_mRNA_As(*set_mRNA_As_soma());
     initialise_mRNA_hopping_rate_matrix();
     set_mRNA_hopping_rate_matrix(soma);
-    
     std::cerr << "mRNA_Ap:\n" << *p_mRNA_Ap << std::endl
               << "mRNA_Am:\n" << *p_mRNA_Am << std::endl
               << "mRNA_H:\n" << (*p_mRNA_H) << std::endl
@@ -994,6 +998,88 @@ Analytic_engine& Analytic_engine::nonstationary_expectations_direct_ODE_solver_s
   // std::cerr << (((*p_Am)*expectations + (*p_b))*dt).t() << '\n';
   
   return internalise ? internalise_expectations() : *this;
+}
+
+Analytic_engine& Analytic_engine::nonstationary_gene_gene_covariances_direct_ODE_solver_step(const double& dt, const bool& reset_matrices) {
+  auto& soma = *p_neuron->p_soma;
+
+  if(reset_matrices) {// Setting matrices
+    set_mRNA_As(*set_mRNA_As_soma());
+    initialise_mRNA_hopping_rate_matrix();
+    set_mRNA_hopping_rate_matrix(soma);
+    std::cerr << "mRNA_Ap:\n" << *p_mRNA_Ap << std::endl
+              << "mRNA_Am:\n" << *p_mRNA_Am << std::endl
+              << "mRNA_H:\n" << (*p_mRNA_H) << std::endl
+              << "mRNA_expectations:\n" << mRNA_expectations << std::endl;
+  }
+
+  soma.n_active_genes_variance += (-2*(soma.gene_activation_rate + soma.gene_deactivation_rate)*soma.n_active_genes_variance + ((2*soma.number_of_gene_copies-1)*soma.gene_activation_rate + soma.gene_deactivation_rate)*soma.n_active_genes_expectation + soma.number_of_gene_copies*soma.gene_activation_rate)*dt;
+
+  std::cerr << soma.n_active_genes_variance << std::endl;
+    
+  return *this;
+}
+
+Analytic_engine& Analytic_engine::nonstationary_gene_mRNA_covariances_direct_ODE_solver_step(const double& dt, const bool& reset_matrices) {
+  auto& soma = *p_neuron->p_soma;
+
+  if(reset_matrices) {// Setting matrices
+    set_mRNA_As(*set_mRNA_As_soma());
+    initialise_mRNA_hopping_rate_matrix();
+    set_mRNA_hopping_rate_matrix(soma);
+    std::cerr << "mRNA_Ap:\n" << *p_mRNA_Ap << std::endl
+              << "mRNA_Am:\n" << *p_mRNA_Am << std::endl
+              << "mRNA_H:\n" << (*p_mRNA_H) << std::endl
+              << "mRNA_expectations:\n" << mRNA_expectations << std::endl;
+  }
+
+  
+  arma::mat M = (*p_mRNA_Am)*(*p_cov_mat);
+  (*p_cov_mat) += (M + M.t())*dt;
+
+  // Computing diffusion matrix
+  arma::vec Aps = (*p_mRNA_Ap)*mRNA_expectations;  
+  (*p_cov_mat)(0,0) += ( 2*(*p_b)[0]*mRNA_expectations[0] +  Aps[0] + (*p_b)[0] )*dt;
+  for(size_t i=1; i<o1_dim; ++i) {
+    (*p_cov_mat)(i,0) = ((*p_cov_mat)(0,i) += (*p_b)[0]*mRNA_expectations[i]*dt);
+    (*p_cov_mat)(i,i) += Aps[i]*dt;
+  }
+  for(size_t i=1; i<o1_dim; ++i)
+    for(size_t j=1; j<i; ++j)
+      (*p_cov_mat)(j,i) = ((*p_cov_mat)(i,j) -= ((*p_H)(i,j)*mRNA_expectations[i] + (*p_H)(j,i)*mRNA_expectations[j])*dt);
+
+  return *this;
+}
+
+Analytic_engine& Analytic_engine::nonstationary_mRNA_mRNA_covariances_direct_ODE_solver_step(const double& dt, const bool& reset_matrices) {
+  auto& soma = *p_neuron->p_soma;  
+
+  if(reset_matrices) {// Setting matrices
+    set_mRNA_As(*set_mRNA_As_soma());
+    initialise_mRNA_hopping_rate_matrix();
+    set_mRNA_hopping_rate_matrix(soma);
+    std::cerr << "mRNA_Ap:\n" << *p_mRNA_Ap << std::endl
+              << "mRNA_Am:\n" << *p_mRNA_Am << std::endl
+              << "mRNA_H:\n" << (*p_mRNA_H) << std::endl
+              << "mRNA_expectations:\n" << mRNA_expectations << std::endl;
+  }
+
+  
+  arma::mat M = (*p_mRNA_Am)*(*p_cov_mat);
+  (*p_cov_mat) += (M + M.t())*dt;
+
+  // Computing diffusion matrix
+  arma::vec Aps = (*p_mRNA_Ap)*mRNA_expectations;  
+  (*p_cov_mat)(0,0) += ( 2*(*p_b)[0]*mRNA_expectations[0] +  Aps[0] + (*p_b)[0] )*dt;
+  for(size_t i=1; i<o1_dim; ++i) {
+    (*p_cov_mat)(i,0) = ((*p_cov_mat)(0,i) += (*p_b)[0]*mRNA_expectations[i]*dt);
+    (*p_cov_mat)(i,i) += Aps[i]*dt;
+  }
+  for(size_t i=1; i<o1_dim; ++i)
+    for(size_t j=1; j<i; ++j)
+      (*p_cov_mat)(j,i) = ((*p_cov_mat)(i,j) -= ((*p_H)(i,j)*mRNA_expectations[i] + (*p_H)(j,i)*mRNA_expectations[j])*dt);
+
+  return *this;
 }
 
 Analytic_engine& Analytic_engine::nonstationary_covariances_direct_ODE_solver_step(const double& dt, const bool& reset_matrices) {
@@ -2807,6 +2893,8 @@ Analytic_engine& Analytic_engine::clear_o2() {
   clear_o2_mat_and_RHS();
   if(p_o2_var_names) { delete p_o2_var_names; p_o2_var_names = NULL;}
   if(p_covariances) {delete p_covariances; p_covariances=NULL;}
+  if(p_cov_mat) {delete p_cov_mat; p_cov_mat=NULL;}
+  if(p_mRNA_mRNA_cov_mat) {delete p_mRNA_mRNA_cov_mat; p_mRNA_mRNA_cov_mat=NULL;}
   if(o2_gene_mRNA) {delete o2_gene_mRNA; o2_gene_mRNA=NULL;}
   if(o2_gene_mRNA_RHS) {delete o2_gene_mRNA_RHS; o2_gene_mRNA_RHS=NULL;}
   if(o2_gene_mRNA_mat) {delete o2_gene_mRNA_mat; o2_gene_mRNA_mat=NULL;}
