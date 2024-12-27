@@ -260,7 +260,7 @@ where $\tau := (\nu^++\nu^-)^{-1}$ and $P_{on} = \nu^+\tau$.
 \subsection{Asymptotic expansion of the stationary solution}
 In this section we will provide a simple example of finding the first two moments of a probability distribution satisfying a master equation by asymptotic expansion of $\mathcal G(\mathbf x; t)$ in the vicinity of $\mathbf x = \mathbf 0$ in multidimensional case.
 \begin{equation}\label{eqn:basic_expansion}
-  \mathcal G(\mathbf x; t)\underl{x\to 0}{=} 1 + \boldsymbol{\mathcal G}^{(1)}(t)\mathbf x + \frac{1}{2}\mathbf x^T\boldsymbol{\mathcal G}^{(2)}(t)\mathbf x + \mathcal O(|\mathbf x|^3),
+  \mathcal G(\mathbf x; t)\underl{\mathbf x\to \mathbf 0}{=} 1 + \boldsymbol{\mathcal G}^{(1)}(t)\mathbf x + \frac{1}{2}\mathbf x^T\boldsymbol{\mathcal G}^{(2)}(t)\mathbf x + \mathcal O(|\mathbf x|^3),
 \end{equation}
 where
 \begin{equation}\label{eqn:G1_through_expectations}
@@ -1167,9 +1167,9 @@ In the above expression different terms can be computed as
 where in the evaluation of $\langle\epsilon_i\epsilon_j\rangle$ we used the fact that the probability of it being nonzero is $\mathcal O(dt^2)$ whenever $i\neq j$.
 
 Finally, we arrive to the following ODE for the covariance matrix
-\begin{equation}\label{eqn:o2_ODEs_}
-  \dot{\langle s_is_j\rangle} = \sum_kA^-_{ik}\langle s_ks_j\rangle + \sum_k\langle s_is_k\rangle A^-_{kj} + b^-_i\langle s_j\rangle + \langle s_i\rangle b^-_j + \delta_{ij}\left[\sum_kA^+_{ik}\langle s_k\rangle + b^+_i\right].
-\end{equation}
+\begin{multline}\label{eqn:o2_ODEs_}
+  \dot{\langle s_is_j\rangle} = \sum_kA^-_{ik}\langle s_ks_j\rangle + \sum_k A^-_{jk}\langle s_ks_i\rangle + b^-_i\langle s_j\rangle + \langle s_i\rangle b^-_j + \delta_{ij}\left[\sum_kA^+_{ik}\langle s_k\rangle + b^+_i\right]\\ - H_{ij}(t)\langle s_i\rangle - H_{ji}(t)\langle s_j\rangle.
+\end{multline}
 This linear system of ODEs should be equivalent to the one from Section \ref{subsec:NSC_second_order}, but it is written in an implicit form where the independent elements of the covariance matrix are not arranged into a vector and the explicit matrix of the system is not constructed. For this reason, integrating the above system of ODEs numerically may be much simpler than computing its exact solution which requires constructing the second-order matrix of size $d(d+1)/2\times d(d+1)/2$, where $d=\text{dim}(\mathbf s)$.
 
 
@@ -1375,16 +1375,16 @@ where
 
 \subsubsection{Gene-Gene}
 \begin{equation}
-  \frac{d\mathcal G^{(2)}_{nn}(t)}{dt} = -(\lambda_1^++\lambda_1^-)\mathcal G^{(2)}_{nn}(t) + \lambda_1^+(N-1)\mathcal G^{(1)}_n(t)
+  \frac{1}{2}\frac{d\mathcal G^{(2)}_{nn}(t)}{dt} = -(\lambda_1^++\lambda_1^-)\mathcal G^{(2)}_{nn}(t) + \lambda_1^+(N-1)\mathcal G^{(1)}_n(t)
 \end{equation}
 At stationarity
 \begin{equation}
-  \mathcal G^{(2)}_{nn}(t) = \frac{\lambda_1^+(N-1)}{\lambda_1^++\lambda_1^-}\mathcal G^{(1)}_n(t).
+  \mathcal G^{(2)}_{nn} = \frac{\lambda_1^+(N-1)}{\lambda_1^++\lambda_1^-}\mathcal G^{(1)}_n.
 \end{equation}
 
 \subsubsection{Gene-mRNA}
 \begin{multline}
-  \frac{\partial\mathcal G^{(2)}_{nm}(\xi, t)}{\partial t} = \lambda_1^+NR(\xi,t) - \frac{1}{\tau_1}\mathcal G^{(2)}_{nm}(\xi,t) %+ \lambda_2\langle n^2\rangle(t)\delta(\xi)
+  \frac{1}{2}\frac{\partial\mathcal G^{(2)}_{nm}(\xi, t)}{\partial t} = \lambda_1^+NR(\xi,t) - \frac{1}{\tau_1}\mathcal G^{(2)}_{nm}(\xi,t) %+ \lambda_2\langle n^2\rangle(t)\delta(\xi)
   \\ + \frac{\partial}{\partial\xi}\left(D_m(\xi,t)\frac{\partial\mathcal G^{(2)}_{nm}(\xi,t)}{\partial\xi}\right) - \frac{\partial}{\partial\xi}\left(v_m(\xi,t)\mathcal G^{(2)}_{nm}(\xi,t)\right) - \frac{1}{\tau_2}\mathcal G^{(2)}_{nm}(\xi,t)
 \end{multline}
 
@@ -1410,17 +1410,20 @@ where
 Denote $\mathcal G^{(2)}_{m^2}(\xi,t)$ function arising from the diagonal of $\boldsymbol{\mathcal G^{(2)}}(t)$ in continuum limit
 
 \begin{multline}
-  \frac{\partial\mathcal G^{(2)}_{m^2}(\xi, t)}{\partial t} = \frac{\partial}{\partial\xi}\left(D_m(\xi,t)\frac{\partial\mathcal G^{(2)}_{m^2}(\xi,t)}{\partial\xi}\right) - \frac{\partial}{\partial\xi}\left( v_m(\xi,t)\mathcal G^{(2)}_{m^2}(\xi,t)\right) - \frac{1}{\tau_2}G^{(2)}_{m^2}(\xi,t)
+  \frac{1}{2}\frac{\partial\mathcal G^{(2)}_{m^2}(\xi, t)}{\partial t} = \frac{\partial}{\partial\xi}\left(D_m(\xi,t)\frac{\partial\mathcal G^{(2)}_{m^2}(\xi,t)}{\partial\xi}\right) - \frac{\partial}{\partial\xi}\left( v_m(\xi,t)\mathcal G^{(2)}_{m^2}(\xi,t)\right) - \frac{1}{\tau_2}G^{(2)}_{m^2}(\xi,t)
 \end{multline}
 with boundary conditions
 \begin{align}
-  &-D_m(\xi=0,t)\left.\frac{\partial\mathcal G^{(2)}_{m^2}}{\partial\xi}\right|_{\xi=0}(\xi,t) + v_m(\xi=0,t)\mathcal G^{(2)}_{m^2}(\xi=0,t) = \lambda_2\mathcal G^{(2)}_{nm}(0,t),\\
-  &-D_m(\xi=L,t)\left.\frac{\partial\mathcal G^{(2)}_{m^2}}{\partial\xi}\right|_{\xi=L}(\xi,t) + v_m(\xi=L,t)\mathcal G^{(2)}_{m^2}(\xi=L,t) = 0.
+  &-D_m(\xi=0,t)\left.\frac{\partial\mathcal G^{(2)}_{m^2}}{\partial\xi}\right|_{\xi=0}(t) + v_m(\xi=0,t)\mathcal G^{(2)}_{m^2}(\xi=0,t) = \lambda_2\mathcal G^{(2)}_{nm}(0,t),\\
+  &-D_m(\xi=L,t)\left.\frac{\partial\mathcal G^{(2)}_{m^2}}{\partial\xi}\right|_{\xi=L}(t) + v_m(\xi=L,t)\mathcal G^{(2)}_{m^2}(\xi=L,t) = 0.
 \end{align}
 
 {\bf Stationary solution for semi-infinite uniform dendrite}
+%% \begin{equation}
+%%   \mathcal G^{(2)}_{m^2}(\xi) = \frac{2\lambda_2\lambda_1^-\tau_1}{v_m+\sqrt{v_m^2+4D_m\left(\frac{1}{\tau_1}+\frac{1}{\tau_2}\right)}}R(\xi) + R^2(\xi)
+%% \end{equation}
 \begin{equation}
-  \mathcal G^{(2)}_{m^2}(\xi) = \frac{2\lambda_2\lambda_1^-\tau_1}{v_m+\sqrt{v_m^2+4D_m\left(\frac{1}{\tau_1}+\frac{1}{\tau_2}\right)}}R(\xi) + R^2(\xi)
+  \mathcal G^{(2)}_{m^2}(\xi) = \left[\frac{2\lambda_2\lambda_1^-\tau_1}{v_m+\sqrt{v_m^2+4D_m\left(\frac{1}{\tau_1}+\frac{1}{\tau_2}\right)}} + R(0)\right]R(\xi)
 \end{equation}
 
 {\bf At different spatial locations $\xi_1$ and $\xi_2$}
@@ -1428,7 +1431,7 @@ with boundary conditions
 Denote $\mathcal G^{(2)}_{mm}(\xi_1, \xi_2,t)$ function away from the diagonal of $\boldsymbol{\mathcal G^{(2)}}(t)$ in continuum limit
 
 \begin{multline}
-  \frac{\partial\mathcal G^{(2)}_{mm}(\xi_1,\xi_2, t)}{\partial t} = \\
+  \frac{1}{2}\frac{\partial\mathcal G^{(2)}_{mm}(\xi_1,\xi_2, t)}{\partial t} = \\
   \frac{\partial}{\partial\xi_1}\left(D_m(\xi_1,t)\frac{\partial\mathcal G^{(2)}_{mm}(\xi_1,\xi_2,t)}{\partial\xi_1}\right) - \frac{\partial}{\partial\xi_1}\left( v_m(\xi_1,t)\mathcal G^{(2)}_{mm}(\xi_1,\xi_2,t)\right) - \frac{1}{\tau_2(\xi_1,t)}G^{(2)}_{mm}(\xi_1,\xi_2,t)\\
   + \frac{\partial}{\partial\xi_2}\left(D_m(\xi_2,t)\frac{\partial\mathcal G^{(2)}_{mm}(\xi_1,\xi_2,t)}{\partial\xi_2}\right) - \frac{\partial}{\partial\xi_2}\left( v_m(\xi_2,t)\mathcal G^{(2)}_{mm}(\xi_1,\xi_2,t)\right) - \frac{1}{\tau_2(\xi_2,t)}G^{(2)}_{mm}(\xi_1,\xi_2,t)
 \end{multline}
@@ -1448,7 +1451,7 @@ Boundary conditions:
 \subsubsection{mRNA-Protein}
 
 \begin{multline}
-  \frac{\partial\mathcal G^{(2)}_{ml}(\xi_1,\xi_2, t)}{\partial t} \\ =\frac{\partial}{\partial\xi_1}\left(D_m(\xi_1,t)\frac{\partial\mathcal G^{(2)}_{ml}(\xi_1,\xi_2,t)}{\partial\xi_1}\right) - \frac{\partial}{\partial\xi_1}\left( v_m(\xi_1,t)\mathcal G^{(2)}_{ml}(\xi_1,\xi_2,t)\right) - \frac{1}{\tau_2}G^{(2)}_{ml}(\xi_1,\xi_2,t)\\
+  \frac{1}{2}\frac{\partial\mathcal G^{(2)}_{ml}(\xi_1,\xi_2, t)}{\partial t} \\ =\frac{\partial}{\partial\xi_1}\left(D_m(\xi_1,t)\frac{\partial\mathcal G^{(2)}_{ml}(\xi_1,\xi_2,t)}{\partial\xi_1}\right) - \frac{\partial}{\partial\xi_1}\left( v_m(\xi_1,t)\mathcal G^{(2)}_{ml}(\xi_1,\xi_2,t)\right) - \frac{1}{\tau_2}G^{(2)}_{ml}(\xi_1,\xi_2,t)\\
   + \frac{\partial}{\partial\xi_2}\left(D_p(\xi_2,t)\frac{\partial\mathcal G^{(2)}_{ml}(\xi_1,\xi_2,t)}{\partial\xi_2}\right) - \frac{\partial}{\partial\xi_2}\left( v_p(\xi_2,t)\mathcal G^{(2)}_{ml}(\xi_1,\xi_2,t)\right) - \frac{1}{\tau_3}G^{(2)}_{ml}(\xi_1,\xi_2,t)\\
   + \kappa(\xi_1,t) \mathcal G^{(1)}_m(\xi_1)\delta(\xi_1-\xi_2)
 \end{multline}

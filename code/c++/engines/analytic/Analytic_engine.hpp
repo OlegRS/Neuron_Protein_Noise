@@ -50,12 +50,17 @@ class Analytic_engine {
   const Compartment* set_As_and_bs_soma();
   void set_As(const Compartment&);
 
+  const Compartment* sem_set_As_and_bs_soma();
+  void sem_set_As(const Compartment&);
+
+
   const Compartment* set_mRNA_As_soma();
   void set_mRNA_As(const Compartment&);
 
 
   Analytic_engine& initialise_hopping_rate_matrix();
   void set_hopping_rate_matrix(const Compartment&);
+  void sem_set_hopping_rate_matrix(const Compartment&);
 
   Analytic_engine& initialise_mRNA_hopping_rate_matrix();
   void set_mRNA_hopping_rate_matrix(const Compartment&);
@@ -216,6 +221,9 @@ public:
   const arma::vec& get_expectations() {return expectations;}
   const arma::mat& get_covariances() {return *p_cov_mat;}
   const arma::vec& get_mRNA_expectations() {return mRNA_expectations;}
+
+  const arma::vec& get_gene_mRNA_covariances() {return *o2_gene_mRNA;}
+  const arma::mat& get_mRNA_mRNA_covariances() {return *p_mRNA_mRNA_cov_mat;}
 
   const arma::mat& get_o1_matrix() {return *p_o1_mat;}
 

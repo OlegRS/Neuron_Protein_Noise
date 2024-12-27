@@ -12,7 +12,7 @@ class Soma : public Compartment {
   // Parameters
   unsigned int number_of_gene_copies = 1; //For CaMKIIa it is 2 (Fonkeu)
   double gene_activation_rate = 1/12.;
-  double gene_deactivation_rate = 1/12.;
+  double gene_deactivation_rate = 0;//1/12.;
 
   // For Monte Carlo engines
   struct Gene_activation : public Event {
@@ -28,7 +28,7 @@ class Soma : public Compartment {
   } gene_deactivation;
 
   double n_active_genes_expectation = gene_activation_rate/(gene_activation_rate + gene_deactivation_rate)*number_of_gene_copies;
-  double n_active_genes_variance = 0;//n_active_genes_expectation*(1+gene_activation_rate/(gene_activation_rate + gene_deactivation_rate)*(number_of_gene_copies-1));
+  double n_active_genes_variance = n_active_genes_expectation*(1+gene_activation_rate/(gene_activation_rate + gene_deactivation_rate)*(number_of_gene_copies-1));
   size_t n_active_genes = 0;
   size_t n_descending_DS = 0;
 
