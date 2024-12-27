@@ -521,12 +521,12 @@ void Analytic_engine::set_mRNA_As(const Compartment& parent) {
       p_o1_mRNA_expectations[desc_start_ind] = &p_junc->p_to->n_mRNA_expectation;
 
       (*p_mRNA_Am)(desc_start_ind, desc_start_ind) -= p_junc->p_to->mRNA_decay_rate;
-
       (*p_mRNA_Am)(parent_start_ind, parent_start_ind) -= p_junc->fwd_mRNA_hop_rate;
       (*p_mRNA_Am)(parent_start_ind, desc_start_ind) += p_junc->bkwd_mRNA_hop_rate;
       (*p_mRNA_Am)(desc_start_ind, parent_start_ind) += p_junc->fwd_mRNA_hop_rate;
       (*p_mRNA_Am)(desc_start_ind, desc_start_ind) -= p_junc->bkwd_mRNA_hop_rate;
 
+      (*p_mRNA_Ap)(desc_start_ind, desc_start_ind) += p_junc->p_to->mRNA_decay_rate;
       (*p_mRNA_Ap)(parent_start_ind, parent_start_ind) += p_junc->fwd_mRNA_hop_rate;
       (*p_mRNA_Ap)(parent_start_ind, desc_start_ind) += p_junc->bkwd_mRNA_hop_rate;
       (*p_mRNA_Ap)(desc_start_ind, parent_start_ind) += p_junc->fwd_mRNA_hop_rate;
@@ -1210,7 +1210,7 @@ Analytic_engine& Analytic_engine::nonstationary_mRNA_mRNA_covariances_direct_ODE
   size_t mRNA_dim = 1+p_neuron->p_dend_segments.size();
     
   if(reset) {
-    // p_mRNA_mRNA_cov_mat = new arma::mat(mRNA_dim, mRNA_dim);
+    p_mRNA_mRNA_cov_mat = new arma::mat(mRNA_dim, mRNA_dim);
     std::cerr << "p_mRNA_mRNA_cov_mat INITIALISATION:\n" << *p_mRNA_mRNA_cov_mat << std::endl;
     initialise_mRNA_hopping_rate_matrix();
     set_mRNA_hopping_rate_matrix(soma);
@@ -1264,14 +1264,9 @@ Analytic_engine& Analytic_engine::nonstationary_covariances_direct_ODE_solver_st
 
 Analytic_engine& Analytic_engine::sem_nonstationary_expectations_direct_ODE_solver_step(const double& dt, const bool& reset_matrices, const bool& internalise) {
   if(reset_matrices) {// Setting matrices
-    std::cerr << "HERE1\n";
     sem_set_As(*sem_set_As_and_bs_soma());
-    std::cerr << "HERE2\n";
     initialise_hopping_rate_matrix();
-    std::cerr << "HERE3\n";
     sem_set_hopping_rate_matrix(*p_neuron->p_soma);
-    std::cerr << "HERE4\n";
-    
     std::cerr << "Ap:\n" << *p_Ap << std::endl
               << "Am:\n" << *p_Am << std::endl
               << "b:\n" << (*p_b).t() << std::endl

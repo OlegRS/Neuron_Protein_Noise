@@ -7,7 +7,7 @@
 
 using namespace std;
 
-#define N_DS 10
+#define N_DS 1000
 #define LENGTH 5000.
 
 int main() {
@@ -28,13 +28,13 @@ int main() {
   Analytic_engine ae(neuron);
 
   // Computing stationary moments by matrix inversion
-  ae.mRNA_stationary_expectations().protein_stationary_expectations();
-  ae.gene_mRNA_stationary_covariances().mRNA_mRNA_stationary_covariances().gene_protein_stationary_covariances().mRNA_protein_stationary_covariances().protein_protein_stationary_covariances();
+  // ae.mRNA_stationary_expectations().protein_stationary_expectations();
+  // ae.gene_mRNA_stationary_covariances().mRNA_mRNA_stationary_covariances().gene_protein_stationary_covariances().mRNA_protein_stationary_covariances().protein_protein_stationary_covariances();
 
 
 #define t_start 0
 #define t1 500
-  double dt = .1;
+  double dt = .05;
 
 
 #define dim N_DS + 1 //((N_DS + 1)*2 + 1)
@@ -64,7 +64,6 @@ int main() {
       ae.nonstationary_active_genes_expectations_direct_ODE_solver_step(dt).nonstationary_mRNA_expectations_direct_ODE_solver_step(dt).nonstationary_gene_gene_covariances_direct_ODE_solver_step(dt).nonstationary_gene_mRNA_covariances_direct_ODE_solver_step(dt).nonstationary_mRNA_mRNA_covariances_direct_ODE_solver_step(dt);
   }
 
-
   // Writing output
   mRNA_expectations = ae.get_mRNA_expectations();
   ofs_mRNA_expectations << mRNA_expectations(0);
@@ -83,7 +82,6 @@ int main() {
   for(size_t i=1; i<1+N_DS; ++i)
     ofs_mRNA_covariances  << ',' << mRNA_covariances(i,i) - mRNA_expectations(i);
   ofs_mRNA_covariances << endl;
-
 
     
   // ofs_mRNA_correlations << "t=" << t1 << std::endl;
