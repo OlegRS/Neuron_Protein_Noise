@@ -39,9 +39,9 @@ lambda_m = (v_m - np.sqrt(v_m**2+4*D_m/tau_2))/(2*D_m)
 
 n_exp = .5
 
-n_comps = 1000
+n_comps = 10
 
-fig, axs = plt.subplots(nrows=2, ncols=2, figsize=(10*1.6*1.1, 3.2*1.9*1.7))
+fig, axs = plt.subplots(nrows=2, ncols=3, figsize=(10*1.6*1.1, 3.2*1.9*1.7))
 
 ### mRNA concentrations
 # xi_max = 10000
@@ -83,9 +83,10 @@ P = (2*lambda_2*n_exp)/(v_m + np.sqrt(v_m**2+4*D_m/tau_2))*kappa/((lambda_m-Lamb
 # P_discrete = np.genfromtxt("../../data/5000um_250_comp_prot.csv", delimiter=',')
 P_discrete = np.genfromtxt("../../data/10_comp_prot_means.csv", delimiter=',')
 # P_discrete_ = np.genfromtxt("../../bin/exe/sem_protein_expectations", delimiter=',')
+P_discrete_ = np.genfromtxt("../../bin/exe/protein_expectations", delimiter=',')
 
 axs[1,0].plot(xi, P, label="P_analytic")
-axs[1,0].plot(np.arange(0,len(P_discrete)*5000/n_comps-.001,5000/n_comps), P_discrete*n_comps/5000, label="P_discrete") # /4.16 np.arange(0,len(P_discrete)/2, .5),
+# axs[1,0].plot(np.arange(0,len(P_discrete)*5000/n_comps-.001,5000/n_comps), P_discrete*n_comps/5000, label="P_discrete") # /4.16 np.arange(0,len(P_discrete)/2, .5),
 axs[1,0].plot(np.arange(0,len(P_discrete_)*5000/n_comps-.001,5000/n_comps), P_discrete_*n_comps/5000, label="P_discrete_") # /4.16 np.arange(0,len(P_discrete)/2, .5),
 
 for ax in axs[:,0]:
@@ -145,6 +146,31 @@ for ax in axs[:,1]:
     ax.set_yscale('log')
     ax.legend()
 
+### gene-prot correlations
+G2_np_discrete = np.genfromtxt("../../data/10_comp_gene_prot.csv", delimiter=',')
+G2_np_discrete_ = np.genfromtxt("../../bin/exe/gene_prot_covariances", delimiter=',')
+
+axs[0,2].plot(np.arange(0,len(G2_np_discrete)*5000/n_comps-.001,5000/n_comps), G2_np_discrete*n_comps/5000, label="G2_np_discrete_10")
+axs[0,2].plot(np.arange(0,len(G2_np_discrete_)*5000/n_comps-.001,5000/n_comps), G2_np_discrete_*n_comps/5000, label="G2_np_discrete_10_")
+# axs[0,1].plot(np.arange(0,len(G2_np_discrete_150)*5000/151-.001,5000/151), G2_np_discrete_150*151/5000, label="G2_np_discrete_150")
+
+axs[0,2].set_ylabel(r"$G^{(2)}_{np}$ density, " + r'$\mu m^{-3}$', fontsize=20)
+
+for ax in axs[:,2]:
+    ax.set_xlim([0,x_lim])
+    ax.axhline(0, color='black')
+    ax.set_yscale('log')
+    ax.legend()
 
 plt.tight_layout()
+plt.show()
+
+#######################
+correlations = np.genfromtxt("../../bin/exe/mRNA_correlations", delimiter='   ')
+
+for i in range(correlations.shape[0]):
+    correlations[i,i] = 0
+
+plt.imshow(correlations)
+
 plt.show()
