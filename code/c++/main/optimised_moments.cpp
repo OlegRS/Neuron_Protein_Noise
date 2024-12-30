@@ -1,9 +1,9 @@
 #include <vector>
-#include "../Neuron.hpp"
-#include "../compartments/Soma.hpp"
-#include "../compartments/Dendritic_segment.hpp"
-#include "../compartments/Synapse.hpp"
-#include "../engines/analytic/Analytic_engine.hpp"
+#include "../include/Neuron.hpp"
+#include "../include/compartments/Soma.hpp"
+#include "../include/compartments/Dendritic_segment.hpp"
+#include "../include/compartments/Synapse.hpp"
+#include "../include/engines/analytic/Analytic_engine.hpp"
 
 using namespace std;
 

@@ -21,3 +21,24 @@ code/bin*
 code/data*
 code/scripts/python/for_cosyne/data*
 code/scripts/python/data*
+
+# Build artifacts
+code/c++/build*
+*.o
+*.a
+*.so
+*.dll
+*.dylib
+*.exe
+
+# IDE files
+*.iml
+
+# Temporary files
+*.tmp
+*.swp
+*.bak
+*.log
+*.pid
+*.seed
+*.stackdump
