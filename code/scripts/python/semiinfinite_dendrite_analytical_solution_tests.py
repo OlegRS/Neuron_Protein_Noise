@@ -39,7 +39,7 @@ lambda_m = (v_m - np.sqrt(v_m**2+4*D_m/tau_2))/(2*D_m)
 
 n_exp = .5
 
-n_comps = 10
+n_comps = 250
 
 fig, axs = plt.subplots(nrows=2, ncols=3, figsize=(10*1.6*1.1, 3.2*1.9*1.7))
 
@@ -166,11 +166,48 @@ plt.tight_layout()
 plt.show()
 
 #######################
-correlations = np.genfromtxt("../../bin/exe/mRNA_correlations", delimiter='   ')
+# correlations = np.genfromtxt("../../bin/exe/mRNA_correlations", delimiter='   ')
 
-for i in range(correlations.shape[0]):
-    correlations[i,i] = 0
+# for i in range(correlations.shape[0]):
+#     correlations[i,i] = 0
 
-plt.imshow(correlations)
+# plt.imshow(correlations)
+
+prot_expectations = np.genfromtxt("../../bin/exe/protein_expectations", delimiter='\n')
+prot_correlations = np.genfromtxt("../../bin/exe/prot_prot_covariances", delimiter='   ')
+
+prot_stds = np.zeros(prot_correlations.shape[0])
+for i in range(prot_correlations.shape[0]):
+    prot_stds[i] = np.sqrt(prot_correlations[i,i] - prot_expectations[i]*prot_expectations[i])
+
+PCCs = np.zeros(prot_correlations.shape)
+for i in range(PCCs.shape[0]):
+    for j in range(i):
+        PCCs[i,j] = PCCs[j,i] = (prot_correlations[i,j] - prot_expectations[i]*prot_expectations[j])/(prot_stds[i]*prot_stds[j])
+
+# mRNA_expectations = np.genfromtxt("../../bin/exe/mRNA_expectations", delimiter='\n')
+# prot_expectations = np.genfromtxt("../../bin/exe/protein_expectations", delimiter='\n')
+# mRNA_correlations = np.genfromtxt("../../bin/exe/mRNA_covariances", delimiter='   ')
+# mRNA_prot_correlations = np.genfromtxt("../../bin/exe/mRNA_prot_covariances", delimiter='   ')
+# prot_correlations = np.genfromtxt("../../bin/exe/prot_prot_covariances", delimiter='   ')
+
+# mRNA_stds = np.zeros(mRNA_correlations.shape[0])
+# for i in range(mRNA_correlations.shape[0]):
+#     mRNA_stds[i] = np.sqrt(mRNA_correlations[i,i] - mRNA_expectations[i]*mRNA_expectations[i])
+
+# prot_stds = np.zeros(prot_correlations.shape[0])
+# for i in range(prot_correlations.shape[0]):
+#     prot_stds[i] = np.sqrt(prot_correlations[i,i] - prot_expectations[i]*prot_expectations[i])
+
+# PCCs = np.zeros(mRNA_prot_correlations.shape)
+# for i in range(PCCs.shape[0]):
+#     for j in range(i):
+#         PCCs[i,j] = PCCs[j,i] = (mRNA_prot_correlations[i,j] - mRNA_expectations[i]*prot_expectations[j])/(mRNA_stds[i]*prot_stds[j])
+
+
+# for i in range(correlations.shape[0]):
+#     correlations[i,i] = 0
+
+plt.imshow(PCCs)
 
 plt.show()

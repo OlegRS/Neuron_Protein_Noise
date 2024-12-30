@@ -1265,7 +1265,6 @@ Analytic_engine& Analytic_engine::nonstationary_mRNA_expectations_direct_ODE_sol
     set_mRNA_As(*set_mRNA_As_soma());
     std::cerr << "mRNA_Ap:\n" << *p_mRNA_Ap << std::endl
               << "mRNA_Am:\n" << *p_mRNA_Am << std::endl
-      // << "mRNA_H:\n" << (*p_mRNA_H) << std::endl
               << "mRNA_expectations:\n" << expectations << std::endl;
   }
 
@@ -1354,6 +1353,10 @@ Analytic_engine& Analytic_engine::nonstationary_mRNA_mRNA_covariances_direct_ODE
     if(p_mRNA_mRNA_cov_mat) delete p_mRNA_mRNA_cov_mat;
     p_mRNA_mRNA_cov_mat = new arma::mat(mRNA_dim, mRNA_dim);
     std::cerr << "p_mRNA_mRNA_cov_mat INITIALISATION:\n" << *p_mRNA_mRNA_cov_mat << std::endl;
+    set_mRNA_As(*set_mRNA_As_soma());
+    std::cerr << "mRNA_Ap:\n" << *p_mRNA_Ap << std::endl
+              << "mRNA_Am:\n" << *p_mRNA_Am << std::endl
+              << "mRNA_expectations:\n" << expectations << std::endl;
     initialise_mRNA_hopping_rate_matrix();
     set_mRNA_hopping_rate_matrix(soma);
     std::cerr << "mRNA_H:" << *p_mRNA_H << std::endl;
@@ -1411,6 +1414,163 @@ Analytic_engine& Analytic_engine::nonstationary_prot_prot_covariances_direct_ODE
   return *this;
 }
 
+Analytic_engine& Analytic_engine::stationary_expectations_and_correlations() {
+  std::ofstream
+    ofs_active_gene_expectations("active_gene_expectation"),
+    ofs_active_gene_variance("active_gene_variance"),
+    ofs_mRNA_expectations("mRNA_expectations"),
+    ofs_protein_expectations("protein_expectations"),
+    ofs_gene_mRNA_covariances("gene_mRNA_covariances"),
+    ofs_gene_prot_covariances("gene_prot_covariances"),
+    ofs_mRNA_covariances("mRNA_covariances"),
+    ofs_mRNA_prot_covariances("mRNA_prot_covariances"),
+    ofs_prot_prot_covariances("prot_prot_covariances");
+
+  auto& soma = *p_neuron->p_soma;
+  size_t mRNA_dim = 1+p_neuron->p_dend_segments.size(),
+    prot_dim = mRNA_dim+p_neuron->p_synapses.size();
+
+  ofs_active_gene_expectations << soma.n_active_genes_expectation;
+  ofs_active_gene_expectations.close();
+  ofs_active_gene_variance << soma.n_active_genes_variance;
+  ofs_active_gene_variance.close();
+
+  // Computing stationary expectations using matrix inversion
+  mRNA_stationary_expectations().protein_stationary_expectations();
+
+  ofs_mRNA_expectations << mRNA_expectations;
+  ofs_mRNA_expectations.close();
+  ofs_protein_expectations << protein_expectations;
+  ofs_protein_expectations.close();
+
+  // Computing gene-mRNA and gene-Protein covariances using matrix inversion
+  gene_mRNA_stationary_covariances().gene_protein_stationary_covariances();
+  ofs_gene_mRNA_covariances << *o2_gene_mRNA;
+  ofs_gene_mRNA_covariances.close();
+  ofs_gene_prot_covariances << *o2_gene_prot;
+  ofs_gene_prot_covariances.close();
+
+  // Computing the rest by solving the ODEs to convergence
+  //// Determining timescales through eigen decomposition
+  if(p_mRNA_mRNA_cov_mat) delete p_mRNA_mRNA_cov_mat;
+  p_mRNA_mRNA_cov_mat = new arma::mat(mRNA_dim, mRNA_dim);
+  std::cerr << "p_mRNA_mRNA_cov_mat INITIALISATION:\n" << *p_mRNA_mRNA_cov_mat << std::endl;
+  set_mRNA_As(*set_mRNA_As_soma());
+  std::cerr << "mRNA_Ap:\n" << *p_mRNA_Ap << std::endl
+            << "mRNA_Am:\n" << *p_mRNA_Am << std::endl
+            << "mRNA_expectations:\n" << expectations << std::endl;
+  initialise_mRNA_hopping_rate_matrix();
+  set_mRNA_hopping_rate_matrix(soma);
+  std::cerr << "mRNA_H:" << *p_mRNA_H << std::endl;
+
+  arma::cx_vec eigval_c;
+  arma::cx_mat eigvec_c;
+  arma::vec eigval(mRNA_dim);
+  arma::vec eigval_min(2);
+  arma::vec eigval_max(2);
+  arma::eig_gen(eigval_c, eigvec_c, *p_mRNA_Am);
+  for(size_t i=0; i<mRNA_dim; ++i)
+    eigval(i) = abs(eigval_c(i).real());
+  eigval_min(0) = arma::min(eigval);
+  eigval_max(0) = arma::max(eigval);
+  
+  arma::eig_gen(eigval_c, eigvec_c, *p_mRNA_Ap);
+  for(size_t i=0; i<mRNA_dim; ++i)
+    eigval(i) = abs(eigval_c(i).real());
+  eigval_min(1) = arma::min(eigval);
+  eigval_max(1) = arma::max(eigval);
+
+  // arma::eig_gen(eigval_c, eigvec_c, *p_mRNA_H);
+  // for(size_t i=0; i<mRNA_dim; ++i)
+  //   eigval(i) = abs(eigval_c(i).real());
+  // eigval_min(2) = arma::min(eigval);
+  // eigval_max(2) = arma::max(eigval);
+
+  double t_start=0,
+    t_fin= 3/arma::min(eigval_min),// 3 x (slowest timescale)
+    dt = 1/(5*arma::max(eigval_max)); // 1/5 x (fastest timescale)
+  
+  std::cout << "Computing mRNA-mRNA covariances...\n";
+  std::cout << "mRNA_Am_min_eig = " << eigval_min(0)
+            << ";  mRNA_Am_max_eig = " << eigval_max(0) << std::endl
+            << "mRNA_Ap_min_eig = " << eigval_min(1)
+            << ";  mRNA_Ap_max_eig = " << eigval_max(1) << std::endl;
+            // << "mRNA_H_min_eig = " << eigval_min(2)
+            // << ";  mRNA_H_max_eig = " << eigval_max(2) << std::endl;
+  std::cout << "t_fin = " << t_fin << ";  dt = " << dt << std::endl;
+
+  for(double t=t_start; t<t_fin; t+=dt)
+      nonstationary_mRNA_mRNA_covariances_direct_ODE_solver_step(dt);
+
+  ofs_mRNA_covariances << *p_mRNA_mRNA_cov_mat;
+  ofs_mRNA_covariances.close();
+
+  //// Determining timescales through eigen decomposition
+  set_prot_As(*set_prot_As_soma());
+  std::cerr << "prot_Ap:\n" << *p_prot_Ap << std::endl
+            << "prot_Am:\n" << *p_prot_Am << std::endl;
+  initialise_prot_hopping_rate_matrix();
+  set_prot_hopping_rate_matrix(soma);
+  std::cerr << "prot_H:" << *p_prot_H << std::endl;
+  set_PM(*set_PM_soma());
+  std::cerr << "PM:\n" << *p_PM << std::endl;
+  
+  arma::cx_vec eigval_c_prot;
+  arma::cx_mat eigvec_c_prot;
+  arma::vec eigval_prot(prot_dim);
+  arma::vec eigval_min_prot(2);
+  arma::vec eigval_max_prot(2);
+  arma::eig_gen(eigval_c_prot, eigvec_c_prot, *p_prot_Am);
+  for(size_t i=0; i<prot_dim; ++i)
+    eigval_prot(i) = abs(eigval_c_prot(i).real());
+  eigval_min_prot(0) = arma::min(eigval_prot);
+  eigval_max_prot(0) = arma::max(eigval_prot);
+  
+  arma::eig_gen(eigval_c_prot, eigvec_c_prot, *p_prot_Ap);
+  for(size_t i=0; i<prot_dim; ++i)
+    eigval_prot(i) = abs(eigval_c_prot(i).real());
+  eigval_min_prot(1) = arma::min(eigval_prot);
+  eigval_max_prot(1) = arma::max(eigval_prot);
+
+  double t_fin_prot= 3/arma::min(eigval_min_prot),// 3 x (slowest timescale)
+    dt_prot = 1/(5*arma::max(eigval_max_prot)); // 1/5 x (fastest timescale)
+
+  t_fin = std::max(t_fin, t_fin_prot);
+  dt = std::min(dt, dt_prot);
+  
+  std::cout << "Computing mRNA-Protein covariances...\n";
+  std::cout << "prot_Am_min_eig = " << eigval_min_prot(0)
+            << ";  prot_Am_max_eig = " << eigval_max_prot(0) << std::endl
+            << "prot_Ap_min_eig = " << eigval_min_prot(1)
+            << ";  prot_Ap_max_eig = " << eigval_max_prot(1) << std::endl;
+  // << "prot_H_min_eig = " << eigval_min(2)
+  // << ";  prot_H_max_eig = " << eigval_max(2) << std::endl;
+  std::cout << "t_fin = " << t_fin << ";  dt = " << dt << std::endl;
+
+  if(o2_mRNA_prot) delete o2_mRNA_prot;
+  p_mRNA_prot_cov_mat = new arma::mat(mRNA_dim, prot_dim);
+  
+  for(double t=t_start; t<t_fin; t+=dt)
+    nonstationary_mRNA_prot_covariances_direct_ODE_solver_step(dt);
+  
+  ofs_mRNA_prot_covariances << *p_mRNA_prot_cov_mat;
+  ofs_mRNA_prot_covariances.close();
+  
+  std::cout << "Computing Protein-Protein covariances...\n";
+  std::cout << "t_fin = " << t_fin_prot << ";  dt = " << dt << std::endl;
+  if(p_prot_prot_cov_mat) delete p_prot_prot_cov_mat;
+  p_prot_prot_cov_mat = new arma::mat(prot_dim, prot_dim);
+  std::cerr << "p_prot_prot_cov_mat INITIALISATION:\n" << *p_prot_prot_cov_mat << std::endl;
+
+  for(double t=t_start; t<t_fin_prot; t+=dt)
+    nonstationary_prot_prot_covariances_direct_ODE_solver_step(dt);
+
+  ofs_prot_prot_covariances << *p_prot_prot_cov_mat;
+  ofs_prot_prot_covariances.close();
+  
+  return *this;
+}
+
 
 Analytic_engine& Analytic_engine::nonstationary_gene_prot_covariances_direct_ODE_solver_step(const double& dt, const bool& reset) {
 
@@ -1443,6 +1603,11 @@ Analytic_engine& Analytic_engine::nonstationary_mRNA_prot_covariances_direct_ODE
   if(reset) {
     if(o2_mRNA_prot) delete o2_mRNA_prot;
     p_mRNA_prot_cov_mat = new arma::mat(mRNA_dim, prot_dim);
+    set_prot_As(*set_prot_As_soma());
+    std::cerr << "prot_Ap:\n" << *p_prot_Ap << std::endl
+              << "prot_Am:\n" << *p_prot_Am << std::endl;
+    set_PM(*set_PM_soma());
+    std::cerr << "PM:\n" << *p_PM << std::endl;
   }
   
   (*p_mRNA_prot_cov_mat) += ( (*p_mRNA_Am)*(*p_mRNA_prot_cov_mat)
