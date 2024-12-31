@@ -18,6 +18,6 @@ PYBIND11_MODULE(SGEN_Py, m) {
     bind_Soma(m);
     bind_Dendritic_segment(m);
     bind_Synapse(m);
-    // bind_Neuron(m);
+    bind_Neuron(m);
     bind_Analytic_engine(m);
 }

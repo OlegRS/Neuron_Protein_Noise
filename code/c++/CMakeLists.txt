@@ -44,7 +44,7 @@ set(BINDING_SOURCES
   bindings/compartments/Soma_binding.cpp
   bindings/compartments/Synapse_binding.cpp
   bindings/compartments/Dendritic_segment_binding.cpp
-  # bindings/Neuron_binding.cpp
+  bindings/Neuron_binding.cpp
   bindings/engines/Analytic_engine_binding.cpp
 )
 

@@ -1,5 +1,6 @@
 #include <pybind11/pybind11.h>
 #include "../include/Neuron.hpp"
+#include "../include/compartments/Soma.hpp"
 
 namespace py = pybind11;
 
