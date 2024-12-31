@@ -42,3 +42,5 @@ code/c++/build*
 *.pid
 *.seed
 *.stackdump
+
+code/extern/*
