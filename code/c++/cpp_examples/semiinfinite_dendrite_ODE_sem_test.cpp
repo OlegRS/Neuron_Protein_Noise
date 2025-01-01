@@ -24,7 +24,6 @@ int main() {
   
   cout << neuron << endl;
 
-
   Analytic_engine ae(neuron);
 
   // Computing stationary moments by matrix inversion
