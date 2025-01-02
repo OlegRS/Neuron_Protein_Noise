@@ -139,7 +139,7 @@ public:
   inline size_t sem_o2_ind(const size_t &i, const size_t &j) const; // semantic o2 index conversion
 
   
-  Analytic_engine(Neuron& neuron, bool cov_mat_init=true) :
+  Analytic_engine(Neuron& neuron, bool cov_mat_init=false) :
     p_neuron(&neuron),
     o1_dim(3 + 2*neuron.p_dend_segments.size() + neuron.p_synapses.size()),
     o2_dim(o1_dim*(o1_dim+1)/2),

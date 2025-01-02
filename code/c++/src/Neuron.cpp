@@ -145,7 +145,7 @@ Neuron::Neuron(const std::string& file_name, const std::string& name) : name(nam
     }
     associate(*p_soma);
     delete[] p_comps;
-    std::cerr << *this;
+    // std::cerr << *this;
   }
   else {
     std::cerr << "----------------------\n"
