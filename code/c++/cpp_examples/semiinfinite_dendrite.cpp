@@ -17,7 +17,7 @@ int main() {
   // Constructing a neuron
   Dendritic_segment* p_ds = new Dendritic_segment(soma, "d_1-1", LENGTH/N_DS);
   
-  for(unsigned int i=0; i<N_DS-1; ++i)
+  for(size_t i=0; i<N_DS-1; ++i)
     p_ds = new Dendritic_segment(*p_ds, "d_1-" + to_string(i+2), LENGTH/N_DS);
 
   Neuron neuron(soma, "Test_neuron");

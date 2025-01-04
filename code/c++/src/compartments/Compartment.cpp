@@ -25,7 +25,6 @@ std::ostream& operator<<(std::ostream &os, const Compartment &comp) {
   return os;
 }
 
-
 // Compartment::Compartment(Compartment *parent, const std::string& name) : name(name), p_neuron(parent.p_neuron) {
 //   // Construct the compartment and link it to its parent in the tree
 //   p_attached_compartments.push_back(parent);

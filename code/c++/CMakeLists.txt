@@ -46,6 +46,7 @@ set(BINDING_SOURCES
   bindings/compartments/Dendritic_segment_binding.cpp
   bindings/Neuron_binding.cpp
   bindings/engines/Analytic_engine_binding.cpp
+  bindings/engines/Morphologic_engine_binding.cpp
 )
 
 # Add Python bindings module

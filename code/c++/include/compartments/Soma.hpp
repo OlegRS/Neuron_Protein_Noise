@@ -35,7 +35,12 @@ class Soma : public Compartment {
   double transcription_rate = (3.*200/*dend_length*//10000)*.001*3600; // /hour; mRNA transcription rate (0.001/s CaMKII Fonkeu) // THE FACTOR IN () ACCOUNTS FOR THE REDUCED LENGTH OF THE SIMPLE MODEL DENDRITE COMPARED TO THE REAL NEURONS
   
 public:
-  Soma(const std::string& name="no_name", const double& length=20) : Compartment(length, name), gene_activation(this), gene_deactivation(this) {}
+  Soma(const std::string& name="no_name", const double& length=20, const double& x=0, const double& y=0, const double& z=0, const double& r=10) : Compartment(length, name), gene_activation(this), gene_deactivation(this) {
+    Compartment::x = x;
+    Compartment::y = y;
+    Compartment::z = z;
+    Compartment::r = r;
+  }
 
   Soma(unsigned int &number_of_gene_copies, double &gene_activation_rate, double &gene_deactivation_rate, double &transcription_rate, double &mRNA_decay_rate, double &translation_rate, double &protein_decay_rate, unsigned int active_genes_number = 0, unsigned int protein_number = 0, unsigned int mRNA_number = 0);
 

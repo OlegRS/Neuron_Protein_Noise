@@ -14,7 +14,7 @@ class Synapse;
 
 class Analytic_engine;
 class Gillespie_engine;
-class Downsampling_engine;
+class Morphologic_engine;
 
 class Neuron {
   friend class Compartment;
@@ -23,7 +23,7 @@ class Neuron {
   friend class Synapse;
   friend class Analytic_engine;
   friend class Gillespie_engine;
-  friend class Downsampling_engine;
+  friend class Morphologic_engine;
 
 protected:
 

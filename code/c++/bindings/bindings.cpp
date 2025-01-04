@@ -9,6 +9,7 @@ void bind_Soma(py::module&);
 void bind_Dendritic_segment(py::module&);
 void bind_Synapse(py::module&);
 void bind_Analytic_engine(py::module&);
+void bind_Morphologic_engine(py::module&);
 
 PYBIND11_MODULE(SGEN_Py, m) {
     m.doc() = "Python bindings for the Stochastic Gene Expression in Neurons (SGEN) library";
@@ -20,4 +21,5 @@ PYBIND11_MODULE(SGEN_Py, m) {
     bind_Synapse(m);
     bind_Neuron(m);
     bind_Analytic_engine(m);
+    bind_Morphologic_engine(m);
 }

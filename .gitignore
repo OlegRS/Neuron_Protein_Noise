@@ -44,3 +44,5 @@ code/c++/build*
 *.stackdump
 
 code/extern/*
+
+*.dat

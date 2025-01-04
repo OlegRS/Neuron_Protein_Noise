@@ -11,6 +11,7 @@ class Junction {// Abstract class
   friend class Compartment;
   friend class Analytic_engine;
   friend class Gillespie_engine;
+  friend class Morphologic_engine;
 protected:
 
   struct Type {

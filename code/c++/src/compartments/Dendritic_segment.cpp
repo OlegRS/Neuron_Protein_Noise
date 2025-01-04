@@ -1,7 +1,7 @@
 #include "../../include/compartments/Dendritic_segment.hpp"
 #include "../../include/compartments/Soma.hpp"
 
-Dendritic_segment::Dendritic_segment(Compartment &parent, const std::string& name, const double& length) : Compartment(length, name) {
+Dendritic_segment::Dendritic_segment(Compartment& parent, const std::string& name, const double& length, const double& radius, const double& theta, const double& phi) : Compartment(parent, name, length, radius, theta, phi)  {
   
   parent.p_descendants.push_back(this);
 
@@ -12,7 +12,7 @@ Dendritic_segment::Dendritic_segment(Compartment &parent, const std::string& nam
   
   if(parent.p_neuron) {
     p_neuron = parent.p_neuron;
-    p_neuron -> p_synapses.push_back(this);
+    p_neuron -> p_dend_segments.push_back(this);
   }
 }
 

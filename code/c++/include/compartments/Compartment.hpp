@@ -4,6 +4,7 @@
 #include <iostream>
 #include <list>
 #include "../engines/stochastic/events/Event.hpp"
+#include <math.h>
 
 class Neuron;
 class Synapse;
@@ -11,14 +12,16 @@ class Dendritic_segment;
 class Junction;
 class Analytic_engine;
 class Gillespie_engine;
+class Morphologic_engine;
 
 class Compartment {// Abstract class
   friend class Neuron;
   friend class Synapse;
   friend class Dendritic_segment;
+  friend class Junction;
   friend class Analytic_engine;
   friend class Gillespie_engine;
-  friend class Junction;
+  friend class Morphologic_engine;
 protected:
   
   struct Type {
@@ -51,8 +54,10 @@ protected:
     protein_forward_trafficking_velocity = 0,
     protein_backward_trafficking_velocity = 0;
 
-  double x, y, z, r,
-    length = 200; //micrometers
+  double x, y, z, // Coordinates of the first end of the compartment
+    r=10, length = 200, //micrometers
+    theta=0, phi=0; // Orientaiton in radians
+    
 
   std::list<Compartment*> p_descendants; // Descendants of the compartment in the tree
 
@@ -110,9 +115,11 @@ public:
                                                                            mRNA_creation(this),
                                                                            mRNA_decay(this) {}
 
+  Compartment(const Compartment& parent, const std::string& name = "no_name", const double& length=200, const double& radius=10, const double& d_theta=0, const double& d_phi=0) : name(name),length(length),protein_creation(this),protein_decay(this),mRNA_creation(this),mRNA_decay(this), x(parent.x + parent.length*sin(parent.theta)*cos(parent.phi)), y(parent.y + parent.length*sin(parent.theta)*sin(parent.phi)), z(parent.z + parent.length*cos(parent.theta)), theta(parent.theta+d_theta), phi(parent.phi+d_phi), r(radius) {}
 
   // Compartment(Compartment *parent, const std::string& name = "no_name") = 0; //This only needs to be implemented in actual compartments
-  Compartment(const Compartment&);
+  // Compartment(const Compartment&);
+
 
   virtual Type type() const = 0;
   std::string get_name() const {return name;}
