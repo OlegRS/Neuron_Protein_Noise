@@ -72,7 +72,7 @@ for file_id in range(sim_run_count):
     data = np.genfromtxt(file_name, delimiter=',')[1:x_lim+1, 1:]
     averages[:, 1:] += data[:, 1:]/mult_sim_run_count
     variances[:, 1:] += data[:, 1:]**2/mult_sim_run_count
-#   axs[2].plot(data[:,0], data[:,15], label="Synapse_1-2_2", alpha=.5, color='pink')
+#   axs[2].plot(data[:,0], data[:,15], label="Spine_1-2_2", alpha=.5, color='pink')
 
 # for file_id in range(sim_run_count):
 #     file_name = "../../data/gillespie/test/1/g_" + str(file_id)
@@ -217,16 +217,16 @@ axs[2].plot(num[:,0], averages[:,3] + variances[:,3], linestyle='--', color='mar
 axs[2].plot(num[:,0], averages[:,3] - variances[:,3], linestyle='--', color='maroon')
 
 
-# axs[2].plot(averages[:,0], averages[:,10], label="Synapse_1_1", color='maroon', alpha=.7)
+# axs[2].plot(averages[:,0], averages[:,10], label="Spine_1_1", color='maroon', alpha=.7)
 # axs[2].plot(num[:,0], averages[:,10] + variances[:,10], linestyle='--', color='maroon')
 # axs[2].plot(num[:,0], averages[:,10] - variances[:,10], linestyle='--', color='maroon')
-# axs[2].plot(averages[:,0], averages[:,11], label="Synapse_1_2", alpha=.7)
-# axs[2].plot(averages[:,0], averages[:,12], label="Synapse_1-1_1", alpha=.7)
-# axs[2].plot(averages[:,0], averages[:,13], label="Synapse_1-1_2", alpha=.7)
-# axs[2].plot(averages[:,0], averages[:,14], label="Synapse_1-2_1", alpha=.5, color='red')
+# axs[2].plot(averages[:,0], averages[:,11], label="Spine_1_2", alpha=.7)
+# axs[2].plot(averages[:,0], averages[:,12], label="Spine_1-1_1", alpha=.7)
+# axs[2].plot(averages[:,0], averages[:,13], label="Spine_1-1_2", alpha=.7)
+# axs[2].plot(averages[:,0], averages[:,14], label="Spine_1-2_1", alpha=.5, color='red')
 # axs[2].plot(num[:,0], averages[:,14] + variances[:,14], linestyle='--', color='red')
 # axs[2].plot(num[:,0], averages[:,14] - variances[:,14], linestyle='--', color='red')
-# axs[2].plot(averages[:,0], averages[:,15], label="Synapse_1-2_2", alpha=.5, color='pink')
+# axs[2].plot(averages[:,0], averages[:,15], label="Spine_1-2_2", alpha=.5, color='pink')
 # axs[2].plot(num[:,0], averages[:,15] + variances[:,15], linestyle='--', color='pink')
 # axs[2].plot(num[:,0], averages[:,15] - variances[:,15], linestyle='--', color='pink')
 

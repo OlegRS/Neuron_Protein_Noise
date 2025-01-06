@@ -2455,7 +2455,7 @@ void Analytic_engine::sem_set_expectations(const Compartment& parent) {
   for(auto& it_p_junc : parent.it_p_out_junctions) {
     auto& desc = *(*it_p_junc)->p_to;
         
-    if(desc.type() == SYNAPSE) {
+    if(desc.type() == SPINE) {
       o1_var_names[desc.prot_ind] = desc.name + "__Prot";
 
       expectations(desc.prot_ind) = desc.n_prot_expectation;

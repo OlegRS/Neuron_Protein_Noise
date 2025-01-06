@@ -52,7 +52,7 @@ for file_id in range(mult_sim_run_count):#range(len(os.listdir(main_dir))-1):
     averages[:, 1:] += data[:, 1:]/mult_sim_run_count
     variances[:, 1:] += data[:, 1:]**2/mult_sim_run_count
     
-#   axs[2].plot(data[:,0], data[:,15], label="Synapse_1-2_2", alpha=.5, color='pink')
+#   axs[2].plot(data[:,0], data[:,15], label="Spine_1-2_2", alpha=.5, color='pink')
 
 # for i in range(1,6):
 #     for file_id in range(len(os.listdir("../../data/gillespie/single_Y_fork_aux" + str(i)))):
@@ -173,17 +173,17 @@ axs[3].set_ylabel(r'Synaptic proteins', fontsize=18)
 
 
 
-# axs[3].plot(averages[:,0], averages[:,10], label="Synapse_1_1", color='maroon', alpha=.7)
+# axs[3].plot(averages[:,0], averages[:,10], label="Spine_1_1", color='maroon', alpha=.7)
 # # axs[3].plot(num[:,0], averages[:,10] + variances[:,10], linestyle='--', color='maroon')
 # # axs[3].plot(num[:,0], averages[:,10] - variances[:,10], linestyle='--', color='maroon')
 
-# # axs[3].plot(averages[:,0], averages[:,12], label="Synapse_1_2", alpha=.7)
+# # axs[3].plot(averages[:,0], averages[:,12], label="Spine_1_2", alpha=.7)
 
-# axs[3].plot(averages[:,0], averages[:,12], label="Synapse_1-2_1", alpha=.5, color='red')
+# axs[3].plot(averages[:,0], averages[:,12], label="Spine_1-2_1", alpha=.5, color='red')
 # # axs[3].plot(num[:,0], averages[:,12] + variances[:,12], linestyle='--', color='red')
 # # axs[3].plot(num[:,0], averages[:,12] - variances[:,12], linestyle='--', color='red')
 
-# axs[3].plot(averages[:,0], averages[:,14], label="Synapse_1-2_2", alpha=.5, color='pink')
+# axs[3].plot(averages[:,0], averages[:,14], label="Spine_1-2_2", alpha=.5, color='pink')
 # # axs[3].plot(num[:,0], averages[:,14] + variances[:,14], linestyle='--', color='pink')
 # # axs[3].plot(num[:,0], averages[:,14] - variances[:,14], linestyle='--', color='pink')
 

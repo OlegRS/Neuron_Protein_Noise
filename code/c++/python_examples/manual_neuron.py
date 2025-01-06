@@ -6,38 +6,77 @@ import SGEN_Py as sg
 import pyvista as pv
 import numpy as np
 
-Dendrie_length = 5000 #um
-N_dendritic_segments = 10
+Dendrie_length = 200 #um
+N_dendritic_segments = 50
 
-soma = sg.Soma("soma", Dendrie_length/N_dendritic_segments, x=0, y=0, z=0, radius=50)
+soma = sg.Soma("soma", 20, x=0, y=0, z=0, radius=20)
 
-main_branch = [sg.Dendritic_segment(attached_to=soma,
-                                    name = "d_1-1",
-                                    length = Dendrie_length/N_dendritic_segments)]
+primary_branch = [sg.Dendritic_segment(parent=soma,
+                                       name = "d_1-1",
+                                       length = Dendrie_length/N_dendritic_segments)]
+
 for i in np.arange(1,N_dendritic_segments):
-    main_branch.append(sg.Dendritic_segment(attached_to=main_branch[i-1],
-                                            name="d_1-" + str(i+1),
-                                            length=Dendrie_length/N_dendritic_segments))
+    primary_branch.append(sg.Dendritic_segment(parent=primary_branch[i-1],
+                                               name="d_1-" + str(i+1),
+                                               length=Dendrie_length/N_dendritic_segments))
 
-secondary_branch = [sg.Dendritic_segment(attached_to=main_branch[5],#soma
-                                         name="d_1_1-0",
-                                         length=Dendrie_length/N_dendritic_segments,
-                                         radius=5,
-                                         d_theta=30*np.pi/360,
-                                         d_phi=0)]
+secondary_branch_1 = [sg.Dendritic_segment(parent=primary_branch[N_dendritic_segments-1],
+                                           name="d_1_1-0",
+                                           length=Dendrie_length/N_dendritic_segments,
+                                           d_theta=30*np.pi/360,
+                                           d_phi=0)]
 for i in np.arange(1,N_dendritic_segments):
-    secondary_branch.append(sg.Dendritic_segment(attached_to=secondary_branch[i-1],
-                                                 name="d_1_1-" + str(i+1),
-                                                 length=Dendrie_length/N_dendritic_segments))
+    secondary_branch_1.append(sg.Dendritic_segment(parent=secondary_branch_1[i-1],
+                                                   name="d_1_1-" + str(i+1),
+                                                   length=Dendrie_length/N_dendritic_segments))
+
+secondary_branch_2 = [sg.Dendritic_segment(parent=primary_branch[N_dendritic_segments-1],
+                                           name="d_1_q1-0",
+                                           length=Dendrie_length/N_dendritic_segments,
+                                           d_theta=-30*np.pi/360,
+                                           d_phi=0)]
+for i in np.arange(1,N_dendritic_segments):
+    secondary_branch_2.append(sg.Dendritic_segment(parent=secondary_branch_2[i-1],
+                                                   name="d_1_1-" + str(i+1),
+                                                   length=Dendrie_length/N_dendritic_segments,
+                                                   radius=5*np.exp(-1/50*i)))
+
+
+# Creating dendritic spines
+s_1_1 = sg.Spine(parent=primary_branch[int(N_dendritic_segments/3)],
+                   name="s_1_1",
+                   length=10,
+                   radius=1)
+s_1_2 = sg.Spine(parent=primary_branch[int(2*N_dendritic_segments/3)],
+                   name="s_1_2",
+                   length=10,
+                   radius=1)
+s_11_1 = sg.Spine(parent=secondary_branch_1[int(N_dendritic_segments/3)],
+                    name = "s_11_1",
+                    length=10,
+                    radius=1)
+s_11_2 = sg.Spine(parent=secondary_branch_1[int(2*N_dendritic_segments/3)],
+                    name = "s_11_2",
+                    length=10,
+                    radius=1)
+s_12_1 = sg.Spine(parent=secondary_branch_2[int(N_dendritic_segments/3)],
+                    name="s_12_1",
+                    length=10,
+                    radius=1)
+s_12_2 = sg.Spine(parent=secondary_branch_2[int(2*N_dendritic_segments/3)],
+                    name="s_12_2",
+                    length=10,
+                    radius=1)
 
 neuron = sg.Neuron(soma, "Test_neuron")
 
 me = sg.Morphologic_engine(neuron)
 
 segments = me.segments()
+volumes = me.volumes()
 
-ae = sg.Analytic_engine(neuron)
-ae.stationary_expectations_and_correlations()
+# ae = sg.Analytic_engine(neuron)
+# ae.stationary_expectations_and_correlations()
 
 # Extract the neuron segments and nodes
 start_points = [segments[i][0][:3] for i in range(len(segments))]
@@ -46,7 +85,10 @@ radii = [segments[i][0][3] for i in range(len(segments))]
 
 # prot_expectations = np.genfromtxt("protein_expectations", delimiter='\n')
 prot_expectations = np.genfromtxt("protein_expectations.dat", delimiter='\n')
-segment_values = np.flip(np.log(prot_expectations))
+protein_concentrations = prot_expectations/volumes
+# protein_concentrations = [prot_expectations[i]/volumes[i] for i in range(len(volumes))]
+segment_values = np.flip(protein_concentrations)
+# segment_values = np.log(prot_expectations)
 
 # Convert the neuron morphology into a mesh for visualization in PyVista
 
@@ -54,11 +96,11 @@ segment_values = np.flip(np.log(prot_expectations))
 # Make a tube for each segment to represent dendrites
 tubes = []
 all_scalars = [] # Collect scalars for the final mesh
-for i in range(len(segments)):
+for i in range(0,len(segments)):
     start, end = start_points[i], end_points[i]
     radius = radii[i]  # Radius of the current segment
-    print("segment_values[i]=", segment_values[i])
     print("radius=", radius)
+    print("segment_values[i]=", segment_values[i])
 
     # Create a tube (cylinder) between two coordinates
     tube = pv.Line(start, end).tube(radius=radius)

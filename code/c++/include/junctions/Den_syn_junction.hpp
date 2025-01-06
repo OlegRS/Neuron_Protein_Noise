@@ -2,7 +2,7 @@
 #define __DEN_SYN_JUNCTION_HPP__
 
 #include "../Neuron.hpp"
-#include "../compartments/Synapse.hpp"
+#include "../compartments/Spine.hpp"
 
 class Neuron::Den_syn_junction : public Junction {
   friend class Analytic_engine;

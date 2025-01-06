@@ -2,7 +2,7 @@
 #include "../Neuron.hpp"
 #include "../compartments/Soma.hpp"
 #include "../compartments/Dendritic_segment.hpp"
-#include "../compartments/Synapse.hpp"
+#include "../compartments/Spine.hpp"
 #include "../engines/analytic/Analytic_engine.hpp"
 
 using namespace std;

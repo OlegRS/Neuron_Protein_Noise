@@ -95,17 +95,17 @@ axs[3].set_ylabel(r'Synaptic proteins', fontsize=18)
 
 
 
-axs[3].plot(averages[:,0], averages[:,10], label="Synapse_1_1", color='maroon', alpha=.7)
+axs[3].plot(averages[:,0], averages[:,10], label="Spine_1_1", color='maroon', alpha=.7)
 axs[3].plot(num[:,0], averages[:,10] + variances[:,10], linestyle='--', color='maroon')
 axs[3].plot(num[:,0], averages[:,10] - variances[:,10], linestyle='--', color='maroon')
 
-# axs[3].plot(averages[:,0], averages[:,12], label="Synapse_1_2", alpha=.7)
+# axs[3].plot(averages[:,0], averages[:,12], label="Spine_1_2", alpha=.7)
 
-axs[3].plot(averages[:,0], averages[:,12], label="Synapse_1-2_1", alpha=.5, color='red')
+axs[3].plot(averages[:,0], averages[:,12], label="Spine_1-2_1", alpha=.5, color='red')
 axs[3].plot(num[:,0], averages[:,12] + variances[:,12], linestyle='--', color='red')
 axs[3].plot(num[:,0], averages[:,12] - variances[:,12], linestyle='--', color='red')
 
-axs[3].plot(averages[:,0], averages[:,14], label="Synapse_1-2_1", alpha=.5, color='pink')
+axs[3].plot(averages[:,0], averages[:,14], label="Spine_1-2_1", alpha=.5, color='pink')
 axs[3].plot(num[:,0], averages[:,14] + variances[:,14], linestyle='--', color='pink')
 axs[3].plot(num[:,0], averages[:,14] - variances[:,14], linestyle='--', color='pink')
 

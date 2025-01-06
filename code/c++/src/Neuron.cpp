@@ -1,7 +1,7 @@
 #include "../include/Neuron.hpp"
 #include "../include/compartments/Soma.hpp"
 #include "../include/compartments/Dendritic_segment.hpp"
-#include "../include/compartments/Synapse.hpp"
+#include "../include/compartments/Spine.hpp"
 #include "../include/junctions/Som_den_junction.hpp"
 #include "../include/junctions/Den_den_junction.hpp"
 #include "../include/junctions/Den_syn_junction.hpp"
@@ -13,7 +13,7 @@ void Neuron::associate(Compartment& compartment) {
   Compartment::Type p_type = compartment.type();
   compartment.id = comp_id++;
   
-  if(p_type == SYNAPSE) {
+  if(p_type == SPINE) {
     p_synapses.push_back(&compartment);
     compartment.iterator = p_synapses.end();
     compartment.o1_index = o1_index;
@@ -43,7 +43,7 @@ void Neuron::associate(Compartment& compartment) {
       p_d_comp->it_p_in_junctions.push_back(--p_junctions.end());
       ++n_SDJ;
     }
-    else if(p_dend && d_type==SYNAPSE) {
+    else if(p_dend && d_type==SPINE) {
       p_junctions.push_back(new Den_syn_junction(&compartment, p_d_comp));
       compartment.it_p_out_junctions.push_back(--p_junctions.end());
       p_d_comp->it_p_in_junctions.push_back(--p_junctions.end());
@@ -71,7 +71,7 @@ void Neuron::associate(Compartment& compartment) {
 
 //   Compartment::Type type = compartment.type();
 
-//   if(type.id == SYNAPSE) 
+//   if(type.id == SPINE) 
 //     p_synapses.erase(compartment.iterator);
 //   else if(type.id == APICAL_DENDRITE || type.id == BASAL_DENDRITE)
 //     p_dend_segments.erase(compartment.iterator);
@@ -165,7 +165,7 @@ std::ostream& operator<<(std::ostream &os , const Neuron &neur) {
   for(auto& p_ds : neur.p_dend_segments)
     os << "** " << *p_ds << "\n";
   os << '\n';
-  os << "* Synapses:\n";
+  os << "* Spines:\n";
   for(auto& p_syn : neur.p_synapses)
     os << "** " << *p_syn << "\n";
   os << '\n';

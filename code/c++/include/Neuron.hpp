@@ -10,7 +10,7 @@
 
 class Soma;
 class Dendritic_segment;
-class Synapse;
+class Spine;
 
 class Analytic_engine;
 class Gillespie_engine;
@@ -20,7 +20,7 @@ class Neuron {
   friend class Compartment;
   friend class Soma;
   friend class Dendritic_segment;
-  friend class Synapse;
+  friend class Spine;
   friend class Analytic_engine;
   friend class Gillespie_engine;
   friend class Morphologic_engine;

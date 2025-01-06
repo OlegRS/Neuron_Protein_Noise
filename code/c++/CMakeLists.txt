@@ -42,7 +42,7 @@ set(BINDING_SOURCES
   bindings/bindings.cpp
   bindings/compartments/Compartment_binding.cpp
   bindings/compartments/Soma_binding.cpp
-  bindings/compartments/Synapse_binding.cpp
+  bindings/compartments/Spine_binding.cpp
   bindings/compartments/Dendritic_segment_binding.cpp
   bindings/Neuron_binding.cpp
   bindings/engines/Analytic_engine_binding.cpp
@@ -123,7 +123,7 @@ target_include_directories(SGEN_Py PRIVATE ${CMAKE_SOURCE_DIR}/include)
 #   bindings/bindings.cpp
 #   bindings/compartments/Compartment_binding.cpp
 #   bindings/compartments/Soma_binding.cpp
-#   bindings/compartments/Synapse_binding.cpp
+#   bindings/compartments/Spine_binding.cpp
 #   bindings/compartments/Dendritic_segment_binding.cpp
 #   bindings/Neuron_binding.cpp
 #   bindings/engines/Analytic_engine_binding.cpp
@@ -193,7 +193,7 @@ target_include_directories(SGEN_Py PRIVATE ${CMAKE_SOURCE_DIR}/include)
 #   bindings/bindings.cpp
 #   bindings/compartments/Compartment_binding.cpp
 #   bindings/compartments/Soma_binding.cpp
-#   bindings/compartments/Synapse_binding.cpp
+#   bindings/compartments/Spine_binding.cpp
 #   bindings/compartments/Dendritic_segment_binding.cpp
 #   bindings/Neuron_binding.cpp
 #   bindings/engines/Analytic_engine_binding.cpp

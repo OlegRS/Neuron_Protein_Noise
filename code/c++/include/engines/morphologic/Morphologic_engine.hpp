@@ -4,7 +4,7 @@
 #include "../../Neuron.hpp"
 #include "../../compartments/Soma.hpp"
 #include "../../compartments/Dendritic_segment.hpp"
-#include "../../compartments/Synapse.hpp"
+#include "../../compartments/Spine.hpp"
 #include "../../junctions/Som_den_junction.hpp"
 #include "../../junctions/Den_syn_junction.hpp"
 #include "../../junctions/Den_den_junction.hpp"
@@ -20,6 +20,8 @@ public:
   Morphologic_engine& rediscretise();
 
   std::vector<std::vector<std::vector<double>>> segments();
+
+  std::vector<double> volumes();
     
   ~Morphologic_engine() {}
 };

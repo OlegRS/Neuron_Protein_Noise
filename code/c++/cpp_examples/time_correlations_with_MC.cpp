@@ -2,7 +2,7 @@
 #include "../Neuron.hpp"
 #include "../compartments/Soma.hpp"
 #include "../compartments/Dendritic_segment.hpp"
-#include "../compartments/Synapse.hpp"
+#include "../compartments/Spine.hpp"
 #include "../engines/analytic/Analytic_engine.hpp"
 #include "../engines/stochastic/Gillespie_engine.hpp"
 
@@ -19,13 +19,13 @@ std::string file_name = "../../data/gillespie/all_stationary_time_correlations/s
 void fork_dendrite(Dendritic_segment* ds, size_t depth=0) {
   if (depth < N_FORKS) {
     auto ds1 = new Dendritic_segment(*ds, ds->get_name() + "-1");
-    new Synapse(*ds1, "s_" + ds1->get_name() + "_1", .6, 6 + 6*(.5-rnd()));
-    new Synapse(*ds1, "s_" + ds1->get_name() + "_2", .6, 6 + 6*(.5-rnd()));
+    new Spine(*ds1, "s_" + ds1->get_name() + "_1", .6, 6 + 6*(.5-rnd()));
+    new Spine(*ds1, "s_" + ds1->get_name() + "_2", .6, 6 + 6*(.5-rnd()));
     fork_dendrite(ds1, depth+1);
 
     auto ds2 = new Dendritic_segment(*ds, ds->get_name() + "-2");
-    new Synapse(*ds2, "s_" + ds2->get_name() + "_1", .6, 6 + 6*(.5-rnd()));
-    new Synapse(*ds2, "s_" + ds2->get_name() + "_2", .6, 6 + 6*(.5-rnd()));
+    new Spine(*ds2, "s_" + ds2->get_name() + "_1", .6, 6 + 6*(.5-rnd()));
+    new Spine(*ds2, "s_" + ds2->get_name() + "_2", .6, 6 + 6*(.5-rnd()));
     fork_dendrite(ds2, depth+1);
   }
 }
@@ -38,8 +38,8 @@ int main() {
   
   ///// Branching neuron
   Dendritic_segment* p_ds = new Dendritic_segment(soma, "d_1");
-  new Synapse(*p_ds, "s_1_1", .6, 6 + 6*(.5-rnd()));
-  new Synapse(*p_ds, "s_1_2", .6, 6 + 6*(.5-rnd()));
+  new Spine(*p_ds, "s_1_1", .6, 6 + 6*(.5-rnd()));
+  new Spine(*p_ds, "s_1_2", .6, 6 + 6*(.5-rnd()));
   fork_dendrite(p_ds);
 
   Neuron neuron(soma, "Test_neuron");

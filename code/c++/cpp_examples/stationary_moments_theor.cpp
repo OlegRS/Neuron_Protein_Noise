@@ -2,7 +2,7 @@
 #include "../Neuron.hpp"
 #include "../compartments/Soma.hpp"
 #include "../compartments/Dendritic_segment.hpp"
-#include "../compartments/Synapse.hpp"
+#include "../compartments/Spine.hpp"
 #include "../engines/analytic/Analytic_engine.hpp"
 
 #define N_AVRG      10000
@@ -15,21 +15,21 @@ void stationary_moments() {
 
   ///// Branching neuron
   Soma soma("soma", 40);
-  std::list<Synapse*> p_synapses;
+  std::list<Spine*> p_synapses;
   Dendritic_segment ds(soma, "d_1");
-  Synapse syn_1_1(ds, "s_1_1", .6, 6);
+  Spine syn_1_1(ds, "s_1_1", .6, 6);
   p_synapses.push_back(&syn_1_1);
-  Synapse syn_1_2(ds, "s_1_2", .6, 6);
+  Spine syn_1_2(ds, "s_1_2", .6, 6);
   p_synapses.push_back(&syn_1_2);
   Dendritic_segment ds_1(ds, "d_1_1");
-  Synapse syn_11_1(ds_1, "s_1_1-1", .6, 6);
+  Spine syn_11_1(ds_1, "s_1_1-1", .6, 6);
   p_synapses.push_back(&syn_11_1);
-  Synapse syn_11_2(ds_1, "s_1_1-2", .6, 6);
+  Spine syn_11_2(ds_1, "s_1_1-2", .6, 6);
   p_synapses.push_back(&syn_11_2);
   Dendritic_segment ds_2(ds, "d_1_2");
-  Synapse syn_12_1(ds_2, "s_1_2-1", .6, 6);
+  Spine syn_12_1(ds_2, "s_1_2-1", .6, 6);
   p_synapses.push_back(&syn_12_1);
-  Synapse syn_12_2(ds_2, "s_1_2-2", .6, 6);
+  Spine syn_12_2(ds_2, "s_1_2-2", .6, 6);
   p_synapses.push_back(&syn_12_2);
 
   Neuron neuron(soma, "Y_neuron");

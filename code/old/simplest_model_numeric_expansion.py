@@ -653,7 +653,7 @@ G44_num, G45_num, G46_num, G55_num, G56_num, G66_num = G_protein_protein[0,0], G
 print("Protein variances:")
 print("Soma: var(l_0)=<l_0^2> - <l_0>^2 = G44 - G4*(G4-1)", G44_num - G4_num*(G4_num-1))
 print("Dendrite: var(l_1)=<l_1^2> - <l_1>^2 = G55 - G5*(G5-1)", G55_num - G5_num*(G5_num-1))
-print("Synapse: var(q_11)=<q_11^2> - <q_11>^2 = G66 - G6*(G6-1)", G66_num - G6_num*(G6_num-1))
+print("Spine: var(q_11)=<q_11^2> - <q_11>^2 = G66 - G6*(G6-1)", G66_num - G6_num*(G6_num-1))
 
 print("\n**************** SUMMARY ****************\n")
 print("\n========== MEANS: ==========")

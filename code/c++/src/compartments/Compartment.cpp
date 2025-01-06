@@ -1,7 +1,7 @@
 #include "../../include/compartments/Compartment.hpp"
 #include "../../include/compartments/Soma.hpp"
 #include "../../include/compartments/Dendritic_segment.hpp"
-#include "../../include/compartments/Synapse.hpp"
+#include "../../include/compartments/Spine.hpp"
 
 // Compartment::Compartment(const Compartment &comp) : name(comp.name),
 //                                                     p_descendants(comp.p_descendants),
@@ -9,8 +9,8 @@
 //                                                     iterator(comp.iterator) {}
 
 std::ostream& operator<<(std::ostream &os, const Compartment &comp) {
-  if(comp.type() == SYNAPSE)
-    os << static_cast<const Synapse&>(comp);
+  if(comp.type() == SPINE)
+    os << static_cast<const Spine&>(comp);
   else if(comp.type() == APICAL_DENDRITE || comp.type() == BASAL_DENDRITE)
     os << static_cast<const Dendritic_segment&>(comp);
   else if(comp.type() == SOMA)

@@ -1,8 +1,8 @@
 #include "../../include/junctions/Den_syn_junction.hpp"
 
 Junction& Neuron::Den_syn_junction::set_hopping_rate_constants() {
-  // fwd_prot_hop_rate = static_cast<Synapse*>(p_to)->protein_binding_rate;
-  // bkwd_prot_hop_rate = static_cast<Synapse*>(p_to)->protein_unbinding_rate;
+  // fwd_prot_hop_rate = static_cast<Spine*>(p_to)->protein_binding_rate;
+  // bkwd_prot_hop_rate = static_cast<Spine*>(p_to)->protein_unbinding_rate;
 
   double prot_fwd_diff_rate = p_from->protein_diffusion_constant*3600/((p_from->length)*(p_from->length));
   double prot_bkwd_diff_rate = p_to->protein_diffusion_constant*3600/((p_to->length)*(p_to->length));

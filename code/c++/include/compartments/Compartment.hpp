@@ -7,7 +7,7 @@
 #include <math.h>
 
 class Neuron;
-class Synapse;
+class Spine;
 class Dendritic_segment;
 class Junction;
 class Analytic_engine;
@@ -16,7 +16,7 @@ class Morphologic_engine;
 
 class Compartment {// Abstract class
   friend class Neuron;
-  friend class Synapse;
+  friend class Spine;
   friend class Dendritic_segment;
   friend class Junction;
   friend class Analytic_engine;
@@ -28,7 +28,7 @@ protected:
 #define SOMA 1 // Better replace these macros with enum
 #define BASAL_DENDRITE 3
 #define APICAL_DENDRITE 4
-#define SYNAPSE 7
+#define SPINE 7
 
     short id; // Type id consistent with .swc neuron morphology format
   

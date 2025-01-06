@@ -6,6 +6,6 @@ namespace py = pybind11;
 void bind_Dendritic_segment(py::module& m) {
   py::class_<Dendritic_segment, Compartment>(m, "Dendritic_segment")
     .def(py::init<Compartment&, const std::string&, const double&,  const double&, const double&, const double&>(),
-         py::arg("attached_to"), py::arg("name")="no_name_Dendritic_segment", py::arg("length")=10, py::arg("radius")=5, py::arg("d_theta")=0, py::arg("d_phi")=0,
+         py::arg("parent"), py::arg("name")="no_name_Dendritic_segment", py::arg("length")=10, py::arg("radius")=5, py::arg("d_theta")=0, py::arg("d_phi")=0,
          "Create dendritic segment with specified parameters");
 }
