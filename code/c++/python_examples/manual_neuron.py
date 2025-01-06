@@ -75,7 +75,13 @@ me = sg.Morphologic_engine(neuron)
 segments = me.segments()
 volumes = me.volumes()
 
-# ae = sg.Analytic_engine(neuron)
+ae = sg.Analytic_engine(neuron)
+mRNA_expectations = np.array(ae.stationary_mRNA_expectations())
+prot_expectations = np.array(ae.stationary_protein_expectations())
+gene_mRNA_covariances = np.array(ae.stationary_gene_mRNA_covariances())
+mRNA_mRNA_covariances = np.array(ae.stationary_mRNA_mRNA_covariances())
+gene_prot_covariances = np.array(ae.stationary_gene_protein_covariances())
+
 # ae.stationary_expectations_and_correlations()
 
 # Extract the neuron segments and nodes
@@ -84,8 +90,8 @@ end_points = [segments[i][1][:3] for i in range(len(segments))]
 radii = [segments[i][0][3] for i in range(len(segments))]
 
 # prot_expectations = np.genfromtxt("protein_expectations", delimiter='\n')
-prot_expectations = np.genfromtxt("protein_expectations.dat", delimiter='\n')
-prot_concentrations = prot_expectations/volumes
+# prot_expectations = np.genfromtxt("protein_expectations.dat", delimiter='\n')
+prot_concentrations = prot_expectations/volumes 
 # prot_concentrations = [prot_expectations[i]/volumes[i] for i in range(len(volumes))]
 segment_values = np.flip(prot_concentrations)
 # segment_values = np.log(prot_expectations)
@@ -99,8 +105,8 @@ all_scalars = [] # Collect scalars for the final mesh
 for i in range(0,len(segments)):
     start, end = start_points[i], end_points[i]
     radius = radii[i]  # Radius of the current segment
-    print("radius=", radius)
-    print("segment_values[i]=", segment_values[i])
+    # print("radius=", radius)
+    # print("segment_values[i]=", segment_values[i])
 
     # Create a tube (cylinder) between two coordinates
     tube = pv.Line(start, end).tube(radius=radius)

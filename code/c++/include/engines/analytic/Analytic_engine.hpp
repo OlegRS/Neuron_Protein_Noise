@@ -186,8 +186,10 @@ public:
   Analytic_engine& stationary_expectations();//const Neuron& neur = *p_neuron);
   Analytic_engine& sem_stationary_expectations();//const Neuron& neur = *p_neuron);
   Analytic_engine& mRNA_stationary_expectations();
+  std::vector<double> stationary_mRNA_expectations(); // For Python bindings
   Analytic_engine& mRNA_o1_eigen_decomposition();
   Analytic_engine& protein_stationary_expectations();
+  std::vector<double> stationary_protein_expectations(); // For Python bindings
   Analytic_engine& protein_o1_eigen_decomposition();
   Analytic_engine& nonstationary_expectations(const std::list<double>& times);//const Neuron& neur = *p_neuron);
   Analytic_engine& nonstationary_expectations(const double& time, const bool& reset_matrices = false, const bool& internalise=false);
@@ -199,8 +201,11 @@ public:
   Analytic_engine& sem_stationary_pearson_correlations();
 
   Analytic_engine& gene_mRNA_stationary_covariances();
+  std::vector<double> stationary_gene_mRNA_covariances();  // For Python bindings
   Analytic_engine& gene_protein_stationary_covariances();
+  std::vector<double> stationary_gene_protein_covariances();  // For Python bindings
   Analytic_engine& mRNA_mRNA_stationary_covariances();
+  std::vector<std::vector<double>> stationary_mRNA_mRNA_covariances();
   Analytic_engine& mRNA_protein_stationary_covariances();
   Analytic_engine& protein_protein_stationary_covariances();
   Analytic_engine& protein_protein_stationary_covariances(std::ofstream &ofs);
