@@ -28,7 +28,7 @@ std::vector<double> Morphologic_engine::volumes() {
 
     // Handling the ends of the tree
     if(p_junc->p_to->p_descendants.empty())
-      vols[p_junc->p_to->id] = PI*p_junc->p_from->r*p_junc->p_from->r*p_junc->p_to->length;
+      vols[p_junc->p_to->id] = PI*p_junc->p_to->r*p_junc->p_to->r*p_junc->p_to->length;
   }
 
   return vols;

@@ -85,9 +85,9 @@ radii = [segments[i][0][3] for i in range(len(segments))]
 
 # prot_expectations = np.genfromtxt("protein_expectations", delimiter='\n')
 prot_expectations = np.genfromtxt("protein_expectations.dat", delimiter='\n')
-protein_concentrations = prot_expectations/volumes
-# protein_concentrations = [prot_expectations[i]/volumes[i] for i in range(len(volumes))]
-segment_values = np.flip(protein_concentrations)
+prot_concentrations = prot_expectations/volumes
+# prot_concentrations = [prot_expectations[i]/volumes[i] for i in range(len(volumes))]
+segment_values = np.flip(prot_concentrations)
 # segment_values = np.log(prot_expectations)
 
 # Convert the neuron morphology into a mesh for visualization in PyVista
