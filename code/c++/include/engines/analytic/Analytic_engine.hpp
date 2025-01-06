@@ -57,7 +57,6 @@ class Analytic_engine {
   const Compartment* sem_set_As_and_bs_soma();
   void sem_set_As(const Compartment&);
 
-
   const Compartment* set_mRNA_As_soma();
   void set_mRNA_As(const Compartment&);
   const Compartment* set_prot_As_soma();
@@ -65,11 +64,9 @@ class Analytic_engine {
   const Compartment* set_PM_soma();
   void set_PM(const Compartment&);
 
-  
   const Compartment* update_prot_source_soma();
   void update_prot_source(const Compartment&);
   
-
   Analytic_engine& initialise_hopping_rate_matrix();
   void set_hopping_rate_matrix(const Compartment&);
   void sem_set_hopping_rate_matrix(const Compartment&);
@@ -207,14 +204,15 @@ public:
   Analytic_engine& mRNA_mRNA_stationary_covariances();
   std::vector<std::vector<double>> stationary_mRNA_mRNA_covariances();
   Analytic_engine& mRNA_protein_stationary_covariances();
+  std::vector<std::vector<double>> stationary_mRNA_protein_covariances();
   Analytic_engine& protein_protein_stationary_covariances();
+  std::vector<std::vector<double>> stationary_protein_protein_covariances();
   Analytic_engine& protein_protein_stationary_covariances(std::ofstream &ofs);
   Analytic_engine& nonstationary_covariances(const std::list<double>& times, arma::vec* initial_G1, arma::vec* initial_G2);
   Analytic_engine& sem_nonstationary_covariances(const std::list<double>& times, arma::vec* initial_G1, arma::vec* initial_G2);
   Analytic_engine& sem_nonstationary_covariances_using_integral(const std::list<double>& times, arma::vec* initial_G1, arma::vec* initial_G2);
   Analytic_engine& sem_nonstationary_covariances_direct_ODE_solver(const std::list<double>& times, arma::vec* initial_G1, arma::vec* initial_G2);
   Analytic_engine& sem_nonstationary_covariances_direct_ODE_solver_no_D_matrix(const std::list<double>& times, arma::vec* initial_G1, arma::vec* initial_G2);
-
 
   Analytic_engine& nonstationary_active_genes_expectations_direct_ODE_solver_step(const double& dt);
   Analytic_engine& nonstationary_mRNA_expectations_direct_ODE_solver_step(const double& dt, const bool& reset_matrices=false, const bool& internalise=false);
@@ -239,6 +237,15 @@ public:
   Analytic_engine& internalise_prot_expectations();
 
   Analytic_engine& sem_stationary_time_correlations(const std::list<double>& times);
+
+  double active_genes_expectation();
+  double mRNA_expectation(const Compartment&);
+  double protein_expectation(const Compartment&);
+  double gene_mRNA_correlation(const Compartment&);
+  double mRNA_mRNA_correlation(const Compartment&, const Compartment&);
+  double gene_protein_correlation(const Compartment&);
+  double mRNA_protein_correlation(const Compartment&, const Compartment&);
+  double protein_protein_correlation(const Compartment&, const Compartment&);
 
   arma::vec* G1() {return &expectations;}
   std::vector<std::string>* o1_variable_names() {return &o1_var_names;}

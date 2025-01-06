@@ -7,7 +7,7 @@ import pyvista as pv
 import numpy as np
 
 Dendrie_length = 200 #um
-N_dendritic_segments = 50
+N_dendritic_segments = 10
 
 soma = sg.Soma("soma", 20, x=0, y=0, z=0, radius=20)
 
@@ -31,7 +31,7 @@ for i in np.arange(1,N_dendritic_segments):
                                                    length=Dendrie_length/N_dendritic_segments))
 
 secondary_branch_2 = [sg.Dendritic_segment(parent=primary_branch[N_dendritic_segments-1],
-                                           name="d_1_q1-0",
+                                           name="d_1_1-0",
                                            length=Dendrie_length/N_dendritic_segments,
                                            d_theta=-30*np.pi/360,
                                            d_phi=0)]
@@ -60,13 +60,15 @@ s_11_2 = sg.Spine(parent=secondary_branch_1[int(2*N_dendritic_segments/3)],
                     length=10,
                     radius=1)
 s_12_1 = sg.Spine(parent=secondary_branch_2[int(N_dendritic_segments/3)],
-                    name="s_12_1",
-                    length=10,
-                    radius=1)
+                  name="s_12_1",
+                  length=10,
+                  radius=1,
+                  d_theta=-np.pi/2)
 s_12_2 = sg.Spine(parent=secondary_branch_2[int(2*N_dendritic_segments/3)],
-                    name="s_12_2",
-                    length=10,
-                    radius=1)
+                  name="s_12_2",
+                  length=10,
+                  radius=1,
+                  d_theta=-np.pi/2)
 
 neuron = sg.Neuron(soma, "Test_neuron")
 
@@ -76,11 +78,20 @@ segments = me.segments()
 volumes = me.volumes()
 
 ae = sg.Analytic_engine(neuron)
+print("Computing mRNA expectations...")
 mRNA_expectations = np.array(ae.stationary_mRNA_expectations())
+print("Computing protein expectations...")
 prot_expectations = np.array(ae.stationary_protein_expectations())
+print("Computing gene-mRNA correlations...")
 gene_mRNA_covariances = np.array(ae.stationary_gene_mRNA_covariances())
+print("Computing mRNA-mRNA correlations...")
 mRNA_mRNA_covariances = np.array(ae.stationary_mRNA_mRNA_covariances())
+print("Computing gene-protein correlations...")
 gene_prot_covariances = np.array(ae.stationary_gene_protein_covariances())
+print("Computing mRNA-protein correlations...")
+mRNA_prot_covariances = np.array(ae.stationary_mRNA_protein_covariances())
+print("Computing protein-protein correlations...")
+prot_prot_covariances = np.array(ae.stationary_protein_protein_covariances())
 
 # ae.stationary_expectations_and_correlations()
 
@@ -132,11 +143,5 @@ plotter.add_mesh(neuron_mesh, scalars="Protein Levels", cmap="coolwarm", show_ed
 plotter.show_axes()
 plotter.show()
 
-    
-# # Visualize the neuron
-# plotter = pv.Plotter()
-# plotter.add_mesh(neuron_mesh, scalars=all_scalars, show_edges=False, cmap="coolwarm")
-
-# plotter.show_axes()
-
-# plotter.show()
+# Pearson correlation coefficient
+# (ae.protein_protein_correlation(s_1_1, s_12_1) - ae.protein_expectation(s_1_1)*ae.protein_expectation(s_12_1))/(np.sqrt(ae.protein_protein_correlation(s_1_1, s_1_1)-ae.protein_expectation(s_1_1)**2)*np.sqrt(ae.protein_protein_correlation(s_12_1, s_12_1)-ae.protein_expectation(s_12_1)**2))
