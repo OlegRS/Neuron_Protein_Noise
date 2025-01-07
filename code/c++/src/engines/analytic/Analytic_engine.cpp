@@ -3231,7 +3231,7 @@ Analytic_engine& Analytic_engine::protein_protein_stationary_covariances() {
 }
 
 std::vector<std::vector<double>> Analytic_engine::stationary_protein_protein_covariances() {
-  if(!(mRNA_expectations[0] && protein_expectations[0] && o2_gene_mRNA && o2_gene_prot && o2_mRNA_mRNA && o2_mRNA_prot)) {
+  if(!(o2_gene_mRNA && o2_gene_prot && o2_mRNA_mRNA && o2_mRNA_prot)) {
     std::cerr << "-----------------------------------------------------------------------\n"
               << "*** ERROR in Analytic_engine::stationary_protein_protein_covariances():\n"
               << "* Prior to calling stationary_protein_protein_covariances() call\n"
