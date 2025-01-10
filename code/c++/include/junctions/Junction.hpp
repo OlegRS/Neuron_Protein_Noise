@@ -31,8 +31,7 @@ protected:
     }
   };
 
-  Compartment* p_from = NULL;
-  Compartment* p_to = NULL;
+  Compartment *p_from = NULL, *p_to = NULL;
 
   // For stochastic engines
   struct MRNA_hop_forward : public Event {

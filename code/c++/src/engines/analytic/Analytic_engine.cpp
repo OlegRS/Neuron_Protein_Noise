@@ -56,11 +56,12 @@ std::vector<double> Analytic_engine::stationary_mRNA_expectations() {
 
   internalise_mRNA_expectations();
 
-  size_t dim = p_neuron->p_dend_segments.size() + 1;
-  
+  size_t dim = p_neuron->p_dend_segments.size() + p_neuron->p_synapses.size() + 1;
   std::vector<double> expectations(dim);
-  for(size_t i=0; i<dim; ++i)
-    expectations[i] = mRNA_expectations(i);
+
+  expectations[0] = mRNA_expectations(0);
+  for(auto& p_junc : p_neuron -> p_junctions)
+    expectations[p_junc->p_to->id] = p_junc->p_to->n_mRNA_expectation;
   
   return expectations;
 }
@@ -2649,8 +2650,7 @@ void Analytic_engine::set_o2_matrix() {
       exit(1);
     }
   }
-}  
-
+}
 
 void Analytic_engine::sem_set_o2_matrix() {
   sem_set_o2_soma();

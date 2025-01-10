@@ -4,30 +4,51 @@ sys.path.append('../build')
 import SGEN_Py as sg
 
 import pyvista as pv
-import neurom
+# import neurom
 import numpy as np
 
 # Load the neuron morphology from the SWC file
 # neuron = neurom.load_morphology("10_2REDO-850-GM18-Ctl-Ctl-Chow-BNL16A-CA1_Finished2e.swc")
 # neuron = neurom.load_morphology("../../data/morphologies/10_2REDO-850-GM18-Ctl-Ctl-Chow-BNL16A-CA1_Finished2e.swc") # DD13-10-c5-1.CNG_.swc
 
-neuron = neurom.load_morphology("../../data/morphologies/DD13-10-c6-2.CNG_.swc")
+# neuron = neurom.load_morphology("../../data/morphologies/DD13-10-c6-2.CNG_.swc")
 
 # sg_neuron = sg.Neuron("../../data/morphologies/DD13-10-c5-1.CNG_.swc")
 
-sg_neuron = sg.Neuron("../../data/morphologies/DD13-10-c6-2.CNG_.swc")
+neuron = sg.Neuron("../../data/morphologies/10_2REDO-850-GM18-Ctl-Ctl-Chow-BNL16A-CA1_Finished2e.swc")
 
-# ae = sg.Analytic_engine(sg_neuron)
+
+ae = sg.Analytic_engine(neuron)
+print("Computing mRNA expectations...")
+mRNA_expectations = np.array(ae.stationary_mRNA_expectations())
+print("Computing protein expectations...")
+prot_expectations = np.array(ae.stationary_protein_expectations())
+# print("Computing gene-mRNA correlations...")
+# gene_mRNA_covariances = np.array(ae.stationary_gene_mRNA_covariances())
+# print("Computing mRNA-mRNA correlations...")
+# mRNA_mRNA_covariances = np.array(ae.stationary_mRNA_mRNA_covariances())
+# print("Computing gene-protein correlations...")
+# gene_prot_covariances = np.array(ae.stationary_gene_protein_covariances())
+# print("Computing mRNA-protein correlations...")
+# mRNA_prot_covariances = np.array(ae.stationary_mRNA_protein_covariances())
+# print("Computing protein-protein correlations...")
+# prot_prot_covariances = np.array(ae.stationary_protein_protein_covariances())
+
 # ae.stationary_expectations_and_correlations()
 
 # Extract the neuron segments and nodes
-start_points = [neuron.segments[i][0][:3] for i in range(len(neuron.segments))]
-end_points = [neuron.segments[i][1][:3] for i in range(len(neuron.segments))]
-radii = [neuron.segments[i][1][3] for i in range(len(neuron.segments))]
+
+me = sg.Morphologic_engine(neuron)
+segments = me.segments()
+
+start_points = [segments[i][0][:3] for i in range(len(segments))]
+end_points = [segments[i][1][:3] for i in range(len(segments))]
+radii = [segments[i][1][3] for i in range(len(segments))]
 
 # prot_expectations = np.genfromtxt("protein_expectations", delimiter='\n')
-prot_expectations = np.genfromtxt("mRNA_expectations.dat", delimiter='\n')
-segment_values = np.log(prot_expectations)
+# prot_expectations = np.genfromtxt("mRNA_expectations.dat", delimiter='\n')
+
+segment_values = np.flip(np.log(prot_expectations))
 
 # Convert the neuron morphology into a mesh for visualization in PyVista
 
@@ -35,12 +56,12 @@ segment_values = np.log(prot_expectations)
 # Make a tube for each segment to represent dendrites
 dendrite_tubes = []
 all_scalars = [] # Collect scalars for the final mesh
-for i in range(len(neuron.segments)):
+for i in range(len(segments)):
     start, end = start_points[i], end_points[i]
     radius = radii[i]  # Radius of the current segment
 
     # Create a tube (cylinder) between two coordinates
-    tube = pv.Line(start, end).tube(radius=radius*10)
+    tube = pv.Line(start, end).tube(radius=radius)
     dendrite_tubes.append(tube)
 
     # Extend scalars to match the number of points in the current tube

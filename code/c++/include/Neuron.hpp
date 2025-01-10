@@ -59,6 +59,8 @@ public:
 
   Neuron& refresh();
 
+  Soma& soma();
+
   // void save(const std::string& file_name) const;
   // Neuron& load(const std::string& file_name);
 

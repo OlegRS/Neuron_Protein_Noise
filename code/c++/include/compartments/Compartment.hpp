@@ -6,6 +6,8 @@
 #include "../engines/stochastic/events/Event.hpp"
 #include <math.h>
 
+#define PI 3.141592653589793
+
 class Neuron;
 class Spine;
 class Dendritic_segment;
@@ -92,8 +94,8 @@ protected:
     void operator()();
   } mRNA_decay;
 
-  double n_mRNA_expectation, n_prot_expectation;
-  unsigned int n_mRNAs=0, n_proteins=0;
+  double n_mRNA_expectation=0, n_prot_expectation=0;
+  size_t n_mRNAs=0, n_proteins=0;
 
   Compartment& clear_junctions() {
     it_p_out_junctions.clear();
@@ -108,8 +110,11 @@ public:
                                                      mRNA_creation(this),
                                                      mRNA_decay(this) {}
   
-  Compartment(const double& length=200, const std::string& name = "no_name", const double& x=0, const double& y=0, const double& z=0, const double& radius=10, const double& theta=0, const double& phi=0, const double& mRNA_decay_rate=0.0432, const double& translation_rate=75.6, const double& protein_decay_rate=0.004356, const double& mRNA_diffusion_constant=3.4e-3, const double& protein_diffusion_constant=.24, const double& mRNA_forward_trafficking_velocity=.5e-2, const double& mRNA_backward_trafficking_velocity=.1e-2, const double& protein_forward_trafficking_velocity=0, const double& protein_backward_trafficking_velocity=0) : name(name), length(length), protein_creation(this), protein_decay(this), mRNA_creation(this), mRNA_decay(this), x(x), y(y), z(z), r(radius), theta(theta), phi(phi), mRNA_decay_rate(mRNA_decay_rate), translation_rate(translation_rate), protein_decay_rate(protein_decay_rate), mRNA_diffusion_constant(mRNA_diffusion_constant), protein_diffusion_constant(protein_diffusion_constant), mRNA_forward_trafficking_velocity(mRNA_forward_trafficking_velocity), mRNA_backward_trafficking_velocity(mRNA_backward_trafficking_velocity), protein_forward_trafficking_velocity(protein_forward_trafficking_velocity), protein_backward_trafficking_velocity(protein_backward_trafficking_velocity) {}
-  Compartment(const Compartment& parent, const std::string& name = "no_name", const double& length=200, const double& radius=10, const double& d_theta=0, const double& d_phi=0, const double& mRNA_decay_rate=0.0432, const double& translation_rate=75.6, const double& protein_decay_rate=0.004356, const double& mRNA_diffusion_constant=3.4e-3, const double& protein_diffusion_constant=.24, const double& mRNA_forward_trafficking_velocity=.5e-2, const double& mRNA_backward_trafficking_velocity=.1e-2, const double& protein_forward_trafficking_velocity=0, const double& protein_backward_trafficking_velocity=0) : name(name),length(length),protein_creation(this),protein_decay(this),mRNA_creation(this),mRNA_decay(this), x(parent.x + parent.length*sin(parent.theta)*cos(parent.phi)), y(parent.y + parent.length*sin(parent.theta)*sin(parent.phi)), z(parent.z + parent.length*cos(parent.theta)), r(radius), theta(parent.theta+d_theta), phi(parent.phi+d_phi), mRNA_decay_rate(mRNA_decay_rate), translation_rate(translation_rate), protein_decay_rate(protein_decay_rate), mRNA_diffusion_constant(mRNA_diffusion_constant), protein_diffusion_constant(protein_diffusion_constant), mRNA_forward_trafficking_velocity(mRNA_forward_trafficking_velocity), mRNA_backward_trafficking_velocity(mRNA_backward_trafficking_velocity), protein_forward_trafficking_velocity(protein_forward_trafficking_velocity), protein_backward_trafficking_velocity(protein_backward_trafficking_velocity) {}
+  Compartment(const double& length=200, const std::string& name = "no_name", const double& x=0, const double& y=0, const double& z=0, const double& radius=10, const double& theta=0, const double& phi=0, const double& mRNA_decay_rate=0.0432, const double& translation_rate=75.6, const double& protein_decay_rate=0.004356, const double& mRNA_diffusion_constant=1.082e-5, const double& protein_diffusion_constant=7.6e-4, const double& mRNA_forward_trafficking_velocity=1.59e-5, const double& mRNA_backward_trafficking_velocity=3.18e-6, const double& protein_forward_trafficking_velocity=0, const double& protein_backward_trafficking_velocity=0) : name(name), length(length), protein_creation(this), protein_decay(this), mRNA_creation(this), mRNA_decay(this), x(x), y(y), z(z), r(radius), theta(theta), phi(phi), mRNA_decay_rate(mRNA_decay_rate), translation_rate(translation_rate), protein_decay_rate(protein_decay_rate), mRNA_diffusion_constant(mRNA_diffusion_constant), protein_diffusion_constant(protein_diffusion_constant), mRNA_forward_trafficking_velocity(mRNA_forward_trafficking_velocity), mRNA_backward_trafficking_velocity(mRNA_backward_trafficking_velocity), protein_forward_trafficking_velocity(protein_forward_trafficking_velocity), protein_backward_trafficking_velocity(protein_backward_trafficking_velocity) {}
+
+  Compartment(const Compartment& parent, const double& x, const double& y, const double& z, const double& radius=10, const std::string& name = "no_name", const double& length=200, const double& d_theta=0, const double& d_phi=0, const double& mRNA_decay_rate=0.0432, const double& translation_rate=75.6, const double& protein_decay_rate=0.004356, const double& mRNA_diffusion_constant=1.082e-5, const double& protein_diffusion_constant=7.6e-4, const double& mRNA_forward_trafficking_velocity=1.59e-5, const double& mRNA_backward_trafficking_velocity=3.18e-6, const double& protein_forward_trafficking_velocity=0, const double& protein_backward_trafficking_velocity=0) : name(name),length(length),protein_creation(this),protein_decay(this),mRNA_creation(this),mRNA_decay(this), x(x), y(y), z(z), r(radius), theta(parent.theta+d_theta), phi(parent.phi+d_phi), mRNA_decay_rate(mRNA_decay_rate), translation_rate(translation_rate), protein_decay_rate(protein_decay_rate), mRNA_diffusion_constant(mRNA_diffusion_constant), protein_diffusion_constant(protein_diffusion_constant), mRNA_forward_trafficking_velocity(mRNA_forward_trafficking_velocity), mRNA_backward_trafficking_velocity(mRNA_backward_trafficking_velocity), protein_forward_trafficking_velocity(protein_forward_trafficking_velocity), protein_backward_trafficking_velocity(protein_backward_trafficking_velocity) {}
+
+  Compartment(const Compartment& parent, const std::string& name = "no_name", const double& length=200, const double& radius=10, const double& d_theta=0, const double& d_phi=0, const double& mRNA_decay_rate=0.0432, const double& translation_rate=75.6, const double& protein_decay_rate=0.004356, const double& mRNA_diffusion_constant=1.082e-5, const double& protein_diffusion_constant=7.6e-4, const double& mRNA_forward_trafficking_velocity=1.59e-5, const double& mRNA_backward_trafficking_velocity=3.18e-6, const double& protein_forward_trafficking_velocity=0, const double& protein_backward_trafficking_velocity=0) : name(name),length(length),protein_creation(this),protein_decay(this),mRNA_creation(this),mRNA_decay(this), x(parent.x + parent.length*sin(parent.theta)*cos(parent.phi)), y(parent.y + parent.length*sin(parent.theta)*sin(parent.phi)), z(parent.z + parent.length*cos(parent.theta)), r(radius), theta(parent.theta+d_theta), phi(parent.phi+d_phi), mRNA_decay_rate(mRNA_decay_rate), translation_rate(translation_rate), protein_decay_rate(protein_decay_rate), mRNA_diffusion_constant(mRNA_diffusion_constant), protein_diffusion_constant(protein_diffusion_constant), mRNA_forward_trafficking_velocity(mRNA_forward_trafficking_velocity), mRNA_backward_trafficking_velocity(mRNA_backward_trafficking_velocity), protein_forward_trafficking_velocity(protein_forward_trafficking_velocity), protein_backward_trafficking_velocity(protein_backward_trafficking_velocity) {}
 
   // Compartment(Compartment *parent, const std::string& name = "no_name") = 0; //This only needs to be implemented in actual compartments
   // Compartment(const Compartment&);
@@ -120,6 +125,8 @@ public:
 
   Neuron* which_neuron() {return p_neuron;}
 
+  double cross_section() {return PI*r*r;}
+  
   Compartment& connect_to(Compartment&); // Linking another compartment
   Compartment& disconnect_from(Compartment&); // Unlinking another compartment
 

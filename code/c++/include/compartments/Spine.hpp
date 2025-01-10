@@ -3,8 +3,6 @@
 
 #include "../Neuron.hpp"
 
-#define PI 3.141592653589793
-
 class Spine : public Compartment {
   friend class Neuron::Den_syn_junction;
   friend class Analytic_engine;

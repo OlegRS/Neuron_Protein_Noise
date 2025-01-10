@@ -94,6 +94,17 @@ Neuron& Neuron::refresh() {
   return *this;
 }
 
+Soma& Neuron::soma() {
+  if(!p_soma) {
+    std::cerr << "-----------------------------------------------\n"
+              << "- ERROR: Soma of uninitialised neuron requested\n"
+              << "-----------------------------------------------\n";
+    exit(1);
+  }
+
+  return *p_soma;
+}
+
 Neuron::Neuron(Soma &soma, const std::string &name) : name(name) {
   p_soma = &soma;
   associate(static_cast<Compartment&>(soma));
@@ -138,9 +149,9 @@ Neuron::Neuron(const std::string& file_name, const std::string& name) : name(nam
         p_comps[id-offset-1] = p_soma = new Soma("soma_" + std::to_string(id-offset), 3*r);
       else if(type == BASAL_DENDRITE || type == APICAL_DENDRITE) {
         if(parent_id != SOMA)
-          p_comps[id-offset-1] = new Dendritic_segment(*p_comps[parent_id-offset-1], "ds_" + std::to_string(id), 2*r);
+          p_comps[id-offset-1] = new Dendritic_segment(*p_comps[parent_id-offset-1], x, y, x, r, "ds_" + std::to_string(id),2*r);
         else
-          p_comps[id-offset-1] = new Dendritic_segment(*p_comps[0], "ds_" + std::to_string(id), 2*r);
+          p_comps[id-offset-1] = new Dendritic_segment(*p_comps[0], x, y, x, r, "ds_" + std::to_string(id),2*r);
       }
     }
     associate(*p_soma);

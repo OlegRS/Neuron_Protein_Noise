@@ -18,5 +18,7 @@ void bind_Neuron(py::module& m) {
     .def(py::init<const std::string&, const std::string&>(),
          py::arg("swc_file_name"), py::arg("name")="no_name",
          "Load a neuron from .swc file")
-    .def("__str__", &to_string); // Link Python's str() to C++'s << 
+    .def("__str__", &to_string)
+    .def("soma", &Neuron::soma,
+         "Return soma of the neuron"); // Link Python's str() to C++'s << 
 }

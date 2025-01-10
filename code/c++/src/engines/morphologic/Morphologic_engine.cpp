@@ -24,11 +24,11 @@ std::vector<double> Morphologic_engine::volumes() {
   std::vector<double> vols(p_neuron->p_dend_segments.size() + p_neuron->p_synapses.size() + 1);
 
   for(auto& p_junc : p_neuron->p_junctions) {
-    vols[p_junc->p_from->id] = PI*p_junc->p_from->r*p_junc->p_from->r*p_junc->p_from->length;
+    vols[p_junc->p_from->id] = PI * p_junc->p_from->r*p_junc->p_from->r * p_junc->p_from->length;
 
     // Handling the ends of the tree
     if(p_junc->p_to->p_descendants.empty())
-      vols[p_junc->p_to->id] = PI*p_junc->p_to->r*p_junc->p_to->r*p_junc->p_to->length;
+      vols[p_junc->p_to->id] = PI * p_junc->p_to->r*p_junc->p_to->r * p_junc->p_to->length;
   }
 
   return vols;
