@@ -47,5 +47,7 @@ void bind_Analytic_engine(py::module& m) {
            "Return mRNA-protein correlation <n_mRNA*n_prot>")
       .def("protein_protein_correlation", &Analytic_engine::protein_protein_correlation,
            py::arg("compartment"), py::arg("compartment"),
-           "Return protein-protein correlation <n_prot*n_prot>");
+           "Return protein-protein correlation <n_prot*n_prot>")
+      .def("clear", &Analytic_engine::clear_all,
+           "Clears all matrices used in computation of moments. Computational functions would rebuild these matrices.");
 }

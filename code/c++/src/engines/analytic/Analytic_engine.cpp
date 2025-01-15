@@ -1430,15 +1430,15 @@ Analytic_engine& Analytic_engine::nonstationary_prot_prot_covariances_direct_ODE
 
 Analytic_engine& Analytic_engine::stationary_expectations_and_correlations() {
   std::ofstream
-    ofs_active_gene_expectations("active_gene_expectation.dat"),
-    ofs_active_gene_variance("active_gene_variance.dat"),
-    ofs_mRNA_expectations("mRNA_expectations.dat"),
-    ofs_protein_expectations("protein_expectations.dat"),
-    ofs_gene_mRNA_covariances("gene_mRNA_covariances.dat"),
-    ofs_gene_prot_covariances("gene_prot_covariances.dat"),
-    ofs_mRNA_covariances("mRNA_covariances.dat"),
-    ofs_mRNA_prot_covariances("mRNA_prot_covariances.dat"),
-    ofs_prot_prot_covariances("prot_prot_covariances.dat");
+    ofs_active_gene_expectations("active_gene_expectation.csv"),
+    ofs_active_gene_variance("active_gene_variance.csv"),
+    ofs_mRNA_expectations("mRNA_expectations.csv"),
+    ofs_protein_expectations("protein_expectations.csv"),
+    ofs_gene_mRNA_covariances("gene_mRNA_covariances.csv"),
+    ofs_gene_prot_covariances("gene_prot_covariances.csv"),
+    ofs_mRNA_covariances("mRNA_covariances.csv"),
+    ofs_mRNA_prot_covariances("mRNA_prot_covariances.csv"),
+    ofs_prot_prot_covariances("prot_prot_covariances.csv");
 
   auto& soma = *p_neuron->p_soma;
   size_t mRNA_dim = 1+p_neuron->p_dend_segments.size(),
@@ -1452,16 +1452,27 @@ Analytic_engine& Analytic_engine::stationary_expectations_and_correlations() {
   // Computing stationary expectations using matrix inversion
   mRNA_stationary_expectations().protein_stationary_expectations();
 
-  ofs_mRNA_expectations << mRNA_expectations;
+  ofs_mRNA_expectations << mRNA_expectations(0);
+  for(size_t i=1; i<mRNA_dim; ++i)
+    ofs_mRNA_expectations << ',' << mRNA_expectations(i);  
   ofs_mRNA_expectations.close();
-  ofs_protein_expectations << protein_expectations;
+
+  ofs_protein_expectations << protein_expectations(0);
+  for(size_t i=1; i<prot_dim; ++i)
+    ofs_protein_expectations << ',' << protein_expectations(i);  
   ofs_protein_expectations.close();
 
   // Computing gene-mRNA and gene-Protein covariances using matrix inversion
   gene_mRNA_stationary_covariances().gene_protein_stationary_covariances();
-  ofs_gene_mRNA_covariances << *o2_gene_mRNA;
+
+  ofs_gene_mRNA_covariances << (*o2_gene_mRNA)(0);
+  for(size_t i=1; i<mRNA_dim; ++i)
+    ofs_gene_mRNA_covariances << ',' << (*o2_gene_mRNA)(i);  
   ofs_gene_mRNA_covariances.close();
-  ofs_gene_prot_covariances << *o2_gene_prot;
+
+  ofs_gene_prot_covariances << (*o2_gene_prot)(0);
+  for(size_t i=1; i<prot_dim; ++i)
+    ofs_gene_prot_covariances << ',' << (*o2_gene_prot)(i);  
   ofs_gene_prot_covariances.close();
 
   // Computing the rest by solving the ODEs to convergence
@@ -1511,7 +1522,13 @@ Analytic_engine& Analytic_engine::stationary_expectations_and_correlations() {
   for(double t=t_start; t<t_fin; t+=dt)
       nonstationary_mRNA_mRNA_covariances_direct_ODE_solver_step(dt);
 
-  ofs_mRNA_covariances << *p_mRNA_mRNA_cov_mat;
+
+  for(size_t i=0; i<mRNA_dim; ++i) {
+    ofs_mRNA_covariances << (*p_mRNA_mRNA_cov_mat)(i,0);
+    for(size_t j=1; j<mRNA_dim; ++j)
+      ofs_mRNA_covariances << ',' << (*p_mRNA_mRNA_cov_mat)(i,j);
+    ofs_mRNA_covariances << std::endl;
+  }  
   ofs_mRNA_covariances.close();
 
   set_prot_As(*set_prot_As_soma());
@@ -1556,8 +1573,13 @@ Analytic_engine& Analytic_engine::stationary_expectations_and_correlations() {
   
   for(double t=t_start; t<t_fin; t+=dt)
     nonstationary_mRNA_prot_covariances_direct_ODE_solver_step(dt);
-  
-  ofs_mRNA_prot_covariances << *p_mRNA_prot_cov_mat;
+
+  for(size_t i=0; i<mRNA_dim; ++i) {
+    ofs_mRNA_prot_covariances << (*p_mRNA_prot_cov_mat)(i,0);
+    for(size_t j=1; j<prot_dim; ++j)
+      ofs_mRNA_prot_covariances << ',' << (*p_mRNA_prot_cov_mat)(i,j);
+    ofs_mRNA_prot_covariances << std::endl;
+  }  
   ofs_mRNA_prot_covariances.close();
   
   std::cout << "Computing Protein-Protein covariances...\n";
@@ -1568,7 +1590,12 @@ Analytic_engine& Analytic_engine::stationary_expectations_and_correlations() {
   for(double t=t_start; t<t_fin_prot; t+=dt)
     nonstationary_prot_prot_covariances_direct_ODE_solver_step(dt);
 
-  ofs_prot_prot_covariances << *p_prot_prot_cov_mat;
+  for(size_t i=0; i<mRNA_dim; ++i) {
+    ofs_prot_prot_covariances << (*p_prot_prot_cov_mat)(i,0);
+    for(size_t j=1; j<prot_dim; ++j)
+      ofs_prot_prot_covariances << ',' << (*p_prot_prot_cov_mat)(i,j);
+    ofs_prot_prot_covariances << std::endl;
+  }
   ofs_prot_prot_covariances.close();
   
   return *this;

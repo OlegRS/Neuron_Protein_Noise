@@ -46,3 +46,4 @@ code/c++/build*
 code/extern/*
 
 *.dat
+*.csv

@@ -5,7 +5,6 @@ matplotlib.rcParams['mathtext.fontset']='cm'
 import numpy as np
 import matplotlib.pyplot as plt
 
-
 gene_activation_rate = 1/12/3600
 gene_deactivation_rate = 1/12/3600
 

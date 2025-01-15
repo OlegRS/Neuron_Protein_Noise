@@ -14,11 +14,14 @@ std::string to_string(const Neuron& neuron) {
 
 void bind_Neuron(py::module& m) {    
   py::class_<Neuron>(m, "Neuron")
-    .def(py::init<Soma&, const std::string&>())
+    .def(py::init<Soma&, const std::string&>(),
+         py::arg("soma"), py::arg("name")="no_name")
     .def(py::init<const std::string&, const std::string&>(),
          py::arg("swc_file_name"), py::arg("name")="no_name",
          "Load a neuron from .swc file")
-    .def("__str__", &to_string)
     .def("soma", &Neuron::soma,
-         "Return soma of the neuron"); // Link Python's str() to C++'s << 
+         "Return soma of the neuron")
+    .def("refresh", &Neuron::refresh,
+         "Update the parameters of the neuron with the current parameters of the compartments")
+    .def("__str__", &to_string); // Link Python's str() to C++'s << 
 }

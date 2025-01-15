@@ -54,8 +54,8 @@ public:
  
   Neuron() {};
   Neuron(Soma &soma, const std::string& name="no_name");
-  Neuron(const Neuron&);
-  Neuron(const std::string& file_name, const std::string& name);
+  // Neuron(const Neuron&);
+  Neuron(const std::string& swc_file_name, const std::string& name);
 
   Neuron& refresh();
 
