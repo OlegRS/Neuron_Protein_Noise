@@ -5,8 +5,8 @@ Junction& Neuron::Den_syn_junction::set_hopping_rate_constants() {
   // bkwd_prot_hop_rate = static_cast<Spine*>(p_to)->protein_unbinding_rate;
 
   double
-    diffusion_scaling_factor = ( p_from->cross_section()/((p_from->length)*(p_from->length)) + p_to->cross_section()/((p_to->length)*(p_to->length)) )/2,
-    trafficking_scaling_factor = ( p_from->cross_section()/(p_from->length) + p_to->cross_section()/(p_to->length) )/2;
+    diffusion_scaling_factor = ( 1/((p_from->length)*(p_from->length)) + 1/((p_to->length)*(p_to->length)) )/2,
+    trafficking_scaling_factor = ( 1/(p_from->length) + 1/(p_to->length) )/2;
 
   
   double

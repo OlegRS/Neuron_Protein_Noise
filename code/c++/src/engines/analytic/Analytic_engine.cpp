@@ -50,11 +50,8 @@ Analytic_engine& Analytic_engine::mRNA_stationary_expectations() {
 }
 
 std::vector<double> Analytic_engine::stationary_mRNA_expectations() {
-  
-  set_o1_mRNA_matrix(*set_o1_mRNA_soma());
-  mRNA_expectations = o1_mRNA_matrix.i()*o1_mRNA_RHS;
 
-  internalise_mRNA_expectations();
+  mRNA_stationary_expectations();
 
   size_t dim = p_neuron->p_dend_segments.size() + p_neuron->p_synapses.size() + 1;
   std::vector<double> expectations(dim);
@@ -146,10 +143,7 @@ Analytic_engine& Analytic_engine::protein_stationary_expectations() {
 
 std::vector<double> Analytic_engine::stationary_protein_expectations() {
 
-  set_o1_prot_matrix(*set_o1_prot_soma());
-  protein_expectations = o1_prot_matrix.i()*o1_prot_RHS;
-
-  internalise_prot_expectations();
+  protein_stationary_expectations();
 
   size_t dim = p_neuron->p_dend_segments.size() + p_neuron->p_synapses.size() + 1;
   
@@ -1428,21 +1422,21 @@ Analytic_engine& Analytic_engine::nonstationary_prot_prot_covariances_direct_ODE
   return *this;
 }
 
-Analytic_engine& Analytic_engine::stationary_expectations_and_correlations() {
+Analytic_engine& Analytic_engine::stationary_expectations_and_correlations(const std::string& active_gene_expectation_file_name, const std::string& active_gene_variance_file_name, const std::string& mRNA_expectations_file_name, const std::string& protein_expectations_file_name, const std::string& gene_mRNA_covariances_file_name, const std::string& gene_prot_covariances_file_name, const std::string& mRNA_mRNA_covariances_file_name, const std::string& mRNA_prot_covariances_file_name, const std::string& prot_prot_covariances_file_name) {
   std::ofstream
-    ofs_active_gene_expectations("active_gene_expectation.csv"),
-    ofs_active_gene_variance("active_gene_variance.csv"),
-    ofs_mRNA_expectations("mRNA_expectations.csv"),
-    ofs_protein_expectations("protein_expectations.csv"),
-    ofs_gene_mRNA_covariances("gene_mRNA_covariances.csv"),
-    ofs_gene_prot_covariances("gene_prot_covariances.csv"),
-    ofs_mRNA_covariances("mRNA_covariances.csv"),
-    ofs_mRNA_prot_covariances("mRNA_prot_covariances.csv"),
-    ofs_prot_prot_covariances("prot_prot_covariances.csv");
+    ofs_active_gene_expectations(active_gene_expectation_file_name),
+    ofs_active_gene_variance(active_gene_variance_file_name),
+    ofs_mRNA_expectations(mRNA_expectations_file_name),
+    ofs_protein_expectations(protein_expectations_file_name),
+    ofs_gene_mRNA_covariances(gene_mRNA_covariances_file_name),
+    ofs_gene_prot_covariances(gene_prot_covariances_file_name),
+    ofs_mRNA_covariances(mRNA_mRNA_covariances_file_name),
+    ofs_mRNA_prot_covariances(mRNA_prot_covariances_file_name),
+    ofs_prot_prot_covariances(prot_prot_covariances_file_name);
 
   auto& soma = *p_neuron->p_soma;
-  size_t mRNA_dim = 1+p_neuron->p_dend_segments.size(),
-    prot_dim = mRNA_dim+p_neuron->p_synapses.size();
+  size_t mRNA_dim = 1 + p_neuron->p_dend_segments.size(),
+    prot_dim = mRNA_dim + p_neuron->p_synapses.size();
 
   ofs_active_gene_expectations << soma.n_active_genes_expectation;
   ofs_active_gene_expectations.close();
@@ -1507,7 +1501,7 @@ Analytic_engine& Analytic_engine::stationary_expectations_and_correlations() {
   // eigval_max(2) = arma::max(eigval);
 
   double t_start=0,
-    t_fin= 3/arma::min(eigval_min),// 3 x (slowest timescale)
+    t_fin= 10/arma::min(eigval_min),// 3 x (slowest timescale)
     dt = 1/(5*arma::max(eigval_max)); // 1/5 x (fastest timescale)
   
   std::cout << "Computing mRNA-mRNA covariances...\n";
@@ -1521,7 +1515,6 @@ Analytic_engine& Analytic_engine::stationary_expectations_and_correlations() {
 
   for(double t=t_start; t<t_fin; t+=dt)
       nonstationary_mRNA_mRNA_covariances_direct_ODE_solver_step(dt);
-
 
   for(size_t i=0; i<mRNA_dim; ++i) {
     ofs_mRNA_covariances << (*p_mRNA_mRNA_cov_mat)(i,0);
@@ -1601,6 +1594,114 @@ Analytic_engine& Analytic_engine::stationary_expectations_and_correlations() {
   return *this;
 }
 
+Analytic_engine& Analytic_engine::stationary_expectations_and_correlations(const double& dt_mRNA, const double& dt_prot, const double& t_fin_mRNA, const double& t_fin_prot, const std::string& active_gene_expectation_file_name, const std::string& active_gene_variance_file_name, const std::string& mRNA_expectations_file_name, const std::string& protein_expectations_file_name, const std::string& gene_mRNA_covariances_file_name, const std::string& gene_prot_covariances_file_name, const std::string& mRNA_mRNA_covariances_file_name, const std::string& mRNA_prot_covariances_file_name, const std::string& prot_prot_covariances_file_name) {
+  std::ofstream
+    ofs_active_gene_expectations(active_gene_expectation_file_name),
+    ofs_active_gene_variance(active_gene_variance_file_name),
+    ofs_mRNA_expectations(mRNA_expectations_file_name),
+    ofs_protein_expectations(protein_expectations_file_name),
+    ofs_gene_mRNA_covariances(gene_mRNA_covariances_file_name),
+    ofs_gene_prot_covariances(gene_prot_covariances_file_name),
+    ofs_mRNA_covariances(mRNA_mRNA_covariances_file_name),
+    ofs_mRNA_prot_covariances(mRNA_prot_covariances_file_name),
+    ofs_prot_prot_covariances(prot_prot_covariances_file_name);
+
+  auto& soma = *p_neuron->p_soma;
+  size_t mRNA_dim = 1 + p_neuron->p_dend_segments.size(),
+    prot_dim = mRNA_dim + p_neuron->p_synapses.size();
+
+  ofs_active_gene_expectations << soma.n_active_genes_expectation;
+  ofs_active_gene_expectations.close();
+  ofs_active_gene_variance << soma.n_active_genes_variance;
+  ofs_active_gene_variance.close();
+
+  // Computing stationary expectations using matrix inversion
+  mRNA_stationary_expectations().protein_stationary_expectations();
+
+  ofs_mRNA_expectations << mRNA_expectations(0);
+  for(size_t i=1; i<mRNA_dim; ++i)
+    ofs_mRNA_expectations << ',' << mRNA_expectations(i);  
+  ofs_mRNA_expectations.close();
+
+  ofs_protein_expectations << protein_expectations(0);
+  for(size_t i=1; i<prot_dim; ++i)
+    ofs_protein_expectations << ',' << protein_expectations(i);  
+  ofs_protein_expectations.close();
+
+  // Computing gene-mRNA and gene-Protein covariances using matrix inversion
+  gene_mRNA_stationary_covariances().gene_protein_stationary_covariances();
+
+  ofs_gene_mRNA_covariances << (*o2_gene_mRNA)(0);
+  for(size_t i=1; i<mRNA_dim; ++i)
+    ofs_gene_mRNA_covariances << ',' << (*o2_gene_mRNA)(i);  
+  ofs_gene_mRNA_covariances.close();
+
+  ofs_gene_prot_covariances << (*o2_gene_prot)(0);
+  for(size_t i=1; i<prot_dim; ++i)
+    ofs_gene_prot_covariances << ',' << (*o2_gene_prot)(i);  
+  ofs_gene_prot_covariances.close();
+
+  // Computing the rest by solving the ODEs to convergence
+  if(p_mRNA_mRNA_cov_mat) delete p_mRNA_mRNA_cov_mat;
+  p_mRNA_mRNA_cov_mat = new arma::mat(mRNA_dim, mRNA_dim);
+  set_mRNA_As(*set_mRNA_As_soma());
+  initialise_mRNA_hopping_rate_matrix();
+  set_mRNA_hopping_rate_matrix(soma);
+
+  std::cout << "Computing mRNA-mRNA covariances...\n";
+  
+  for(double t=0; t<t_fin_mRNA; t+=dt_mRNA)
+      nonstationary_mRNA_mRNA_covariances_direct_ODE_solver_step(dt_mRNA);
+
+  for(size_t i=0; i<mRNA_dim; ++i) {
+    ofs_mRNA_covariances << (*p_mRNA_mRNA_cov_mat)(i,0);
+    for(size_t j=1; j<mRNA_dim; ++j)
+      ofs_mRNA_covariances << ',' << (*p_mRNA_mRNA_cov_mat)(i,j);
+    ofs_mRNA_covariances << std::endl;
+  }  
+  ofs_mRNA_covariances.close();
+
+  set_prot_As(*set_prot_As_soma());
+  initialise_prot_hopping_rate_matrix();
+  set_prot_hopping_rate_matrix(soma);
+  set_PM(*set_PM_soma());
+  
+  double t_fin = std::max(t_fin_mRNA, t_fin_prot);
+  double dt = std::min(dt_mRNA, dt_prot);
+  
+  std::cout << "Computing mRNA-Protein covariances...\n";
+
+  if(o2_mRNA_prot) delete o2_mRNA_prot;
+  p_mRNA_prot_cov_mat = new arma::mat(mRNA_dim, prot_dim);
+  
+  for(double t=0; t<t_fin; t+=dt)
+    nonstationary_mRNA_prot_covariances_direct_ODE_solver_step(dt);
+
+  for(size_t i=0; i<mRNA_dim; ++i) {
+    ofs_mRNA_prot_covariances << (*p_mRNA_prot_cov_mat)(i,0);
+    for(size_t j=1; j<prot_dim; ++j)
+      ofs_mRNA_prot_covariances << ',' << (*p_mRNA_prot_cov_mat)(i,j);
+    ofs_mRNA_prot_covariances << std::endl;
+  }  
+  ofs_mRNA_prot_covariances.close();
+  
+  std::cout << "Computing Protein-Protein covariances...\n";
+  if(p_prot_prot_cov_mat) delete p_prot_prot_cov_mat;
+  p_prot_prot_cov_mat = new arma::mat(prot_dim, prot_dim);
+
+  for(double t=0; t<t_fin_prot; t+=dt)
+    nonstationary_prot_prot_covariances_direct_ODE_solver_step(dt);
+
+  for(size_t i=0; i<mRNA_dim; ++i) {
+    ofs_prot_prot_covariances << (*p_prot_prot_cov_mat)(i,0);
+    for(size_t j=1; j<prot_dim; ++j)
+      ofs_prot_prot_covariances << ',' << (*p_prot_prot_cov_mat)(i,j);
+    ofs_prot_prot_covariances << std::endl;
+  }
+  ofs_prot_prot_covariances.close();
+  
+  return *this;
+}
 
 Analytic_engine& Analytic_engine::nonstationary_gene_prot_covariances_direct_ODE_solver_step(const double& dt, const bool& reset) {
 
@@ -2825,18 +2926,13 @@ Analytic_engine& Analytic_engine::gene_mRNA_stationary_covariances() {
 
 std::vector<double> Analytic_engine::stationary_gene_mRNA_covariances() {
 
-  set_o2_gene_mRNA_matrix(*set_o2_gene_mRNA_soma());
-  
-  o2_gene_mRNA = new arma::vec((*o2_gene_mRNA_mat).i()*(*o2_gene_mRNA_RHS));
+  gene_mRNA_stationary_covariances();
 
-  size_t dim = p_neuron->p_dend_segments.size() + 1;
+  size_t dim = 1+p_neuron->p_dend_segments.size();
   
   std::vector<double> correlations(dim);
   for(size_t i=0; i<dim; ++i)
     correlations[i] = (*o2_gene_mRNA)(i);
-
-  delete o2_gene_mRNA_mat; o2_gene_mRNA_mat=NULL;
-  delete o2_gene_mRNA_RHS; o2_gene_mRNA_RHS=NULL;
 
   return correlations;
 }
@@ -2897,18 +2993,12 @@ Analytic_engine& Analytic_engine::gene_protein_stationary_covariances() {
 
 std::vector<double> Analytic_engine::stationary_gene_protein_covariances() {
 
-  set_o2_gene_prot_matrix(*set_o2_gene_prot_soma());
-  
-  o2_gene_prot = new arma::vec((*o2_gene_prot_mat).i()*(*o2_gene_prot_RHS));
+  gene_protein_stationary_covariances();
 
-  size_t dim = p_neuron->p_dend_segments.size() + p_neuron->p_synapses.size() + 1;
-  
+  size_t dim = p_neuron->p_dend_segments.size() + p_neuron->p_synapses.size() + 1;  
   std::vector<double> correlations(dim);
   for(size_t i=0; i<dim; ++i)
     correlations[i] = (*o2_gene_prot)(i);
-
-  delete o2_gene_prot_mat; o2_gene_prot_mat=NULL;
-  delete o2_gene_prot_RHS; o2_gene_prot_RHS=NULL;
 
   return correlations;
 }
@@ -2958,72 +3048,26 @@ void Analytic_engine::set_o2_mRNA_mRNA_matrix(const Compartment& parent) {
 }
 
 Analytic_engine& Analytic_engine::mRNA_mRNA_stationary_covariances() {
-  std::cout << "Computing mRNA_mRNA_stationary_covariances...\n";
+  if(!(o2_gene_mRNA)) {
+    std::cerr << "ERROR in computing mRNA-mRNA covariances:\n"
+              << "Prior to computing mRNA-mRNA covariances coompute\n"
+              << "mRNA expectations and gene-mRNA stationary covariances()\n";
+    exit(1);
+  }
+    
   set_o2_mRNA_mRNA_matrix(*set_o2_mRNA_mRNA_soma());
   
   o2_mRNA_mRNA = new arma::vec((*o2_mRNA_mRNA_mat).i()*(*o2_mRNA_mRNA_RHS));
 
-  std::cerr << "mRNA_mRNA_covariances:\n" << *o2_mRNA_mRNA << std::endl;
-
   delete o2_mRNA_mRNA_mat; o2_mRNA_mRNA_mat=NULL;
   delete o2_mRNA_mRNA_RHS; o2_mRNA_mRNA_RHS=NULL;
-
-  //////////// COMPUTING VARIANCES //////////
-  size_t sz = 1 + p_neuron->p_dend_segments.size();
-  std::cout << "mRNA-mRNA means and standard deviations:\n";
-  std::vector<double> rmss(o1_dim);
-  for(size_t i=0; i<sz; ++i) {
-    rmss[i] = sqrt((*o2_mRNA_mRNA)[o2_ind(i, i, sz)] - mRNA_expectations[i]*(mRNA_expectations[i]-1));
-    if(rmss[i]>=0)
-      std::cout << o1_prot_names[i] + ": " << mRNA_expectations(i) << ", " << rmss[i] << std::endl;
-    else
-      std::cout << o1_mRNA_names[i] + ": " << mRNA_expectations(i) << ", " << rmss[i] << " NEGATIVE!\n";
-  }
-
-  std::cerr << "mRNA-mRNA PCCs:\n";
-  std::cerr << "--,";
-  for(unsigned int i=0; i<sz; ++i)
-    std::cerr << o1_prot_names[i] << ',';
-  for(unsigned int i=0; i<sz; ++i) {
-    std::cerr << std::endl << o1_prot_names[i] << ',';
-    for(unsigned int j=0; j<sz; ++j)
-      if(i != j)
-        std::cerr << ((*o2_mRNA_mRNA)[o2_ind(i, j, sz)] - mRNA_expectations(i)*mRNA_expectations(j))/(rmss[i]*rmss[j]) << ',';
-      else
-        std::cerr << "1,";
-  }
-  std::cerr << "mRNA-mRNA PCCs END\n";
-  //////////////////////////////////////////
-
-  // INITIALIZING ODE SOLVER (DEBUG)
-  if(p_mRNA_mRNA_cov_mat)
-    delete p_mRNA_mRNA_cov_mat;
-  p_mRNA_mRNA_cov_mat = new arma::mat(sz, sz);
-  for(size_t i=0; i<sz; ++i)
-    (*p_mRNA_mRNA_cov_mat)(i,i) = (*o2_mRNA_mRNA)[o2_ind(i, i, sz)] + mRNA_expectations[i];
-  for(unsigned int i=0; i<sz; ++i)
-    for(unsigned int j=0; j<sz; ++j)
-      if(i != j)
-        (*p_mRNA_mRNA_cov_mat)(i,j) = (*o2_mRNA_mRNA)[o2_ind(i, j, sz)];
 
   return *this;
 }
 
 std::vector<std::vector<double>> Analytic_engine::stationary_mRNA_mRNA_covariances() {
-  if(!(o2_gene_mRNA)) {
-    std::cerr << "ERROR in Analytic_engine::stationary_protein_protein_covariances():\n"
-              << "Prior to calling stationary_protein_protein_covariances() call\n"
-              << "mRNA_expectations()\n"
-              << "gene_mRNA_stationary_covariances()\n";
-    return std::vector<std::vector<double>>();
-  }
 
-  set_o2_mRNA_mRNA_matrix(*set_o2_mRNA_mRNA_soma());
-  
-  o2_mRNA_mRNA = new arma::vec((*o2_mRNA_mRNA_mat).i()*(*o2_mRNA_mRNA_RHS));
-
-  delete o2_mRNA_mRNA_mat; o2_mRNA_mRNA_mat=NULL;
-  delete o2_mRNA_mRNA_RHS; o2_mRNA_mRNA_RHS=NULL;
+  mRNA_mRNA_stationary_covariances();
 
   size_t dim = p_neuron->p_dend_segments.size() + 1;  
   std::vector<std::vector<double>> correlations(dim, std::vector<double>(dim));
@@ -3032,6 +3076,7 @@ std::vector<std::vector<double>> Analytic_engine::stationary_mRNA_mRNA_covarianc
       correlations[i][j] = correlations[j][i] = (*o2_mRNA_mRNA)(o2_ind(i,j,dim));
   for(size_t i=0; i<dim; ++i)
     correlations[i][i] = (*o2_mRNA_mRNA)(o2_ind(i,i,dim)) + mRNA_expectations(i);
+
   return correlations;
 }
 
@@ -3111,12 +3156,9 @@ void Analytic_engine::set_o2_mRNA_prot_matrix(const Compartment& parent) {
 }
 
 Analytic_engine& Analytic_engine::mRNA_protein_stationary_covariances() {
-  std::cout << "Computing mRNA_protein_stationary_covariances...\n";
   set_o2_mRNA_prot_matrix(*set_o2_mRNA_prot_soma());
   
   o2_mRNA_prot = new arma::vec((*o2_mRNA_prot_mat).i()*(*o2_mRNA_prot_RHS));
-
-  std::cerr << "mRNA_prot_covariances:\n" << *o2_mRNA_prot << std::endl;
 
   delete o2_mRNA_prot_mat; o2_mRNA_prot_mat=NULL;
   delete o2_mRNA_prot_RHS; o2_mRNA_prot_RHS=NULL;
@@ -3125,12 +3167,8 @@ Analytic_engine& Analytic_engine::mRNA_protein_stationary_covariances() {
 }
 
 std::vector<std::vector<double>> Analytic_engine::stationary_mRNA_protein_covariances() {
-  set_o2_mRNA_prot_matrix(*set_o2_mRNA_prot_soma());
-  
-  o2_mRNA_prot = new arma::vec((*o2_mRNA_prot_mat).i()*(*o2_mRNA_prot_RHS));
 
-  delete o2_mRNA_prot_mat; o2_mRNA_prot_mat=NULL;
-  delete o2_mRNA_prot_RHS; o2_mRNA_prot_RHS=NULL;
+  mRNA_protein_stationary_covariances();
 
   size_t mRNA_dim = p_neuron->p_dend_segments.size() + 1,
     prot_dim = mRNA_dim + p_neuron->p_synapses.size();
@@ -3138,6 +3176,7 @@ std::vector<std::vector<double>> Analytic_engine::stationary_mRNA_protein_covari
   for(size_t i=0; i<mRNA_dim; ++i)
     for(size_t j=0; j<prot_dim; ++j)
       correlations[i][j] = (*o2_mRNA_prot)(o2_ind_asym(i,j,prot_dim));
+  
   return correlations;
 }
 
@@ -3199,65 +3238,6 @@ void Analytic_engine::set_o2_prot_prot_matrix(const Compartment& parent) {
 }
 
 Analytic_engine& Analytic_engine::protein_protein_stationary_covariances() {
-  std::cout << "Computing protein_protein_stationary_covariances...\n";
-  set_o2_prot_prot_matrix(*set_o2_prot_prot_soma());
-  
-  o2_prot_prot = new arma::vec((*o2_prot_prot_mat).i()*(*o2_prot_prot_RHS));
-
-  std::cerr << "protein_protein_covariances:\n" << *o2_prot_prot << std::endl;
-
-  delete o2_prot_prot_mat; o2_prot_prot_mat=NULL;
-  delete o2_prot_prot_RHS; o2_prot_prot_RHS=NULL;
-
-  //////////// COMPUTING VARIANCES and PCCs //////////
-  std::cout << "Protein means and standard deviations:\n";
-  size_t sz = 1 + p_neuron->p_dend_segments.size() + p_neuron->p_synapses.size();
-  std::vector<double> rmss(sz);
-  for(size_t i=0; i<sz; ++i) {
-    rmss[i] = sqrt((*o2_prot_prot)[o2_ind(i, i, sz)] - protein_expectations[i]*(protein_expectations[i]-1));
-    if(rmss[i]>=0) {
-      std::cout << o1_prot_names[i] + ": " << protein_expectations(i) << ", " << rmss[i] << std::endl;
-    }
-    else
-      std::cout << o1_prot_names[i] + ": " << protein_expectations(i) << ", " << rmss[i] << " NEGATIVE!\n";
-  }
-
-  std::cerr << "Protein-Protein PCCs:\n";
-  std::cerr << "--,";
-  for(unsigned int i=0; i<sz; ++i)
-    std::cerr << o1_prot_names[i] << ',';
-  for(unsigned int i=0; i<sz; ++i) {
-    std::cerr << std::endl << o1_prot_names[i] << ',';
-    for(unsigned int j=0; j<sz; ++j)
-      if(i != j)
-        std::cerr << ((*o2_prot_prot)[o2_ind(i, j, sz)] - protein_expectations(i)*protein_expectations(j))/(rmss[i]*rmss[j]) << ',';
-      else
-        std::cerr << "1,";
-  }
-
-  std::cerr << "Synaptic Protein-Protein PCCs:\n";
-  std::cerr << "--,";
-  for(unsigned int i=0; i<sz; ++i)
-    if(o1_prot_names[i][0]=='s' && o1_prot_names[i]!="soma")
-      std::cerr << o1_prot_names[i] << ',';
-  for(unsigned int i=0; i<sz; ++i) {
-    if(o1_prot_names[i][0]=='s' && o1_prot_names[i]!="soma") {
-      std::cerr << std::endl << o1_prot_names[i] << ',';
-      for(unsigned int j=0; j<sz; ++j)
-        if(o1_prot_names[j][0]=='s' && o1_prot_names[j]!="soma") {
-          if(i != j)
-            std::cerr << ((*o2_prot_prot)[o2_ind(i, j, sz)] - protein_expectations(i)*protein_expectations(j))/(rmss[i]*rmss[j]) << ',';
-          else
-            std::cerr << "1,";
-        }
-    }
-  }
-  //////////////////////////////////////////
-
-  return *this;
-}
-
-std::vector<std::vector<double>> Analytic_engine::stationary_protein_protein_covariances() {
   if(!(o2_gene_mRNA && o2_gene_prot && o2_mRNA_mRNA && o2_mRNA_prot)) {
     std::cerr << "-----------------------------------------------------------------------\n"
               << "*** ERROR in Analytic_engine::stationary_protein_protein_covariances():\n"
@@ -3271,15 +3251,21 @@ std::vector<std::vector<double>> Analytic_engine::stationary_protein_protein_cov
               << "This is needed because protein-protein correleations depend on mRNA-protein correlations and active genes, mRNA and protein expectations.\n"
               << "-----------------------------------------------------------------------\n";
     exit(1);
-    // return std::vector<std::vector<double>>();
   }
-    
+  
   set_o2_prot_prot_matrix(*set_o2_prot_prot_soma());
   
   o2_prot_prot = new arma::vec((*o2_prot_prot_mat).i()*(*o2_prot_prot_RHS));
 
   delete o2_prot_prot_mat; o2_prot_prot_mat=NULL;
   delete o2_prot_prot_RHS; o2_prot_prot_RHS=NULL;
+
+  return *this;
+}
+
+std::vector<std::vector<double>> Analytic_engine::stationary_protein_protein_covariances() {
+
+  protein_protein_stationary_covariances();
 
   size_t dim = p_neuron->p_dend_segments.size() + p_neuron->p_synapses.size() + 1;
   std::vector<std::vector<double>> correlations(dim, std::vector<double>(dim));
@@ -3520,12 +3506,22 @@ double Analytic_engine::protein_expectation(const Compartment& comp) {
   return protein_expectations(comp.id);
 }
 double Analytic_engine::gene_mRNA_correlation(const Compartment& comp) {
+  if(!o2_gene_mRNA) {
+    std::cerr << "--------------------------------------------------------------\n"
+              << "ERROR in gene_mRNA_correlation: Correlations are not computed.\n"
+              << "--------------------------------------------------------------\n";
+  }
   if(comp.type() != SPINE)
     return (*o2_gene_mRNA)(comp.mRNA_ind-1);
   else
     return 0;
 }
 double Analytic_engine::mRNA_mRNA_correlation(const Compartment& comp1, const Compartment& comp2) {
+  if(!o2_mRNA_mRNA) {
+    std::cerr << "--------------------------------------------------------------\n"
+              << "ERROR in mRNA_mRNA_correlation: Correlations are not computed.\n"
+              << "--------------------------------------------------------------\n";
+  }
   size_t mRNA_dim = 1+p_neuron->p_dend_segments.size();
   if(comp1.type()!=SPINE && comp1.type()!=SPINE) {
     if(comp1.mRNA_ind != comp2.mRNA_ind)
@@ -3537,9 +3533,21 @@ double Analytic_engine::mRNA_mRNA_correlation(const Compartment& comp1, const Co
     return 0;
 }
 double Analytic_engine::gene_protein_correlation(const Compartment& comp) {
+  if(!o2_gene_prot) {
+    std::cerr << "-----------------------------------------------------------------\n"
+              << "ERROR in gene_protein_correlation: Correlations are not computed.\n"
+              << "-----------------------------------------------------------------\n";
+    exit(1);
+  }
   return (*o2_gene_prot)(comp.id);
 }
 double Analytic_engine::mRNA_protein_correlation(const Compartment& comp1, const Compartment& comp2) {
+  if(!o2_mRNA_prot) {
+    std::cerr << "-----------------------------------------------------------------\n"
+              << "ERROR in mRNA_protein_correlation: Correlations are not computed.\n"
+              << "-----------------------------------------------------------------\n";
+    exit(1);
+  }
   size_t prot_dim = 1+p_neuron->p_dend_segments.size()+p_neuron->p_synapses.size();
   if(comp1.type() != SPINE)
     return (*o2_mRNA_prot)(o2_ind_asym(comp1.mRNA_ind-1,comp2.id, prot_dim));
@@ -3547,11 +3555,17 @@ double Analytic_engine::mRNA_protein_correlation(const Compartment& comp1, const
     return 0;
 }
 double Analytic_engine::protein_protein_correlation(const Compartment& comp1, const Compartment& comp2) {
+  if(!o2_prot_prot) {
+    std::cerr << "--------------------------------------------------------------------\n"
+              << "ERROR in protein_protein_correlation: Correlations are not computed.\n"
+              << "--------------------------------------------------------------------\n";
+    exit(1);
+  }
   size_t prot_dim = 1+p_neuron->p_dend_segments.size()+p_neuron->p_synapses.size();
   if(comp1.id != comp2.id)
-    return (*o2_prot_prot)(o2_ind(comp1.id, comp2.id, prot_dim));
-  else
-    return (*o2_prot_prot)(o2_ind(comp1.id, comp2.id, prot_dim)) + protein_expectations(comp1.id);
+      return (*o2_prot_prot)(o2_ind(comp1.id, comp2.id, prot_dim));
+    else
+      return (*o2_prot_prot)(o2_ind(comp1.id, comp2.id, prot_dim)) + protein_expectations(comp1.id);
 }
 
 Analytic_engine& Analytic_engine::clear_o1_mat_and_RHS() {
